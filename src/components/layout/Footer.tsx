@@ -41,8 +41,11 @@ const Footer = () => (
       </div>
     </div>
     <div className="border-t border-background/10">
-      <div className="container py-4 text-center text-xs text-background/50">
-        © {new Date().getFullYear()} Loyaltygroup B.V. Alle rechten voorbehouden.
+      <div className="container py-4 flex items-center justify-between text-xs text-background/50">
+        <span>© {new Date().getFullYear()} Loyaltygroup B.V. Alle rechten voorbehouden.</span>
+        <Link to="/admin/login" className="hover:text-background transition-colors">
+          Log in als administrator
+        </Link>
       </div>
     </div>
   </footer>
