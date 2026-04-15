@@ -17,7 +17,7 @@ const Header = () => {
   const location = useLocation();
 
   return (
-    <header className="sticky top-0 z-50 border-b" style={{ backgroundImage: 'url(/header-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+    <header className="sticky top-0 z-50 border-b" style={{ backgroundImage: 'url(/header-bg.png)', backgroundSize: 'cover', backgroundPosition: 'left center', backgroundRepeat: 'no-repeat' }}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <span className="sr-only">Loyaltygroup B.V.</span>
