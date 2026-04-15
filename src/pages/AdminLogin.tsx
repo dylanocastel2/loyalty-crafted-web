@@ -16,13 +16,8 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/admin");
-      }
-    });
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate("/admin");
+      if (session) navigate("/admin", { replace: true });
     });
   }, [navigate]);
 
@@ -33,6 +28,8 @@ const AdminLogin = () => {
     setLoading(false);
     if (error) {
       toast({ title: "Inloggen mislukt", description: error.message, variant: "destructive" });
+    } else {
+      navigate("/admin", { replace: true });
     }
   };
 
