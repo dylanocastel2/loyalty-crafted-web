@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       klantcases: {
         Row: {
+          branche: string | null
           category: string
           created_at: string
           description: string
@@ -27,6 +28,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          branche?: string | null
           category?: string
           created_at?: string
           description?: string
@@ -38,6 +40,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          branche?: string | null
           category?: string
           created_at?: string
           description?: string

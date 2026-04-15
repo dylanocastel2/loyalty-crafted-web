@@ -1,0 +1,1 @@
+ALTER TABLE public.klantcases ADD COLUMN branche TEXT DEFAULT NULL;
