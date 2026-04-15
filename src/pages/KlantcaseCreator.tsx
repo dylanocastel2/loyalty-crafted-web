@@ -21,6 +21,7 @@ const KlantcaseCreator = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Gemeenten");
+  const [branche, setBranche] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [published, setPublished] = useState(false);
@@ -40,6 +41,7 @@ const KlantcaseCreator = () => {
       title: title.trim(),
       description: description.trim(),
       category,
+      branche: branche.trim() || null,
       image_url: imageUrl.trim() || null,
       header_image_url: headerImageUrl.trim() || null,
       published,
@@ -96,6 +98,17 @@ const KlantcaseCreator = () => {
                   <SelectItem value="Overig">Overig</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="branche" className="text-base font-semibold">Branche</Label>
+              <Input
+                id="branche"
+                value={branche}
+                onChange={(e) => setBranche(e.target.value)}
+                placeholder="Bijv. Horeca, Retail, Overheid, Sport"
+                className="mt-1"
+              />
             </div>
 
             <div>

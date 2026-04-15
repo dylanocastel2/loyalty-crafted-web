@@ -15,13 +15,14 @@ interface KlantcaseItem {
   description: string;
   image_url: string | null;
   header_image_url: string | null;
+  branche: string | null;
 }
 
 const placeholderCases: KlantcaseItem[] = [
-  { id: "1", title: "Gemeente Amsterdam", category: "Gemeenten", description: "Implementatie van een stadspas voor 850.000 inwoners met koppelingen aan lokale ondernemers en culturele instellingen.", image_url: null, header_image_url: null },
-  { id: "2", title: "Retailketen Nederland", category: "Commercieel", description: "Omnichannel loyaliteitsprogramma met digitale spaarpas, mobiele app en POS-integratie voor 200+ vestigingen.", image_url: null, header_image_url: null },
-  { id: "3", title: "Gemeente Utrecht", category: "Gemeenten", description: "Digitaal minimaregelingen-platform met automatische toekenning van kortingen en subsidies aan inwoners.", image_url: null, header_image_url: null },
-  { id: "4", title: "Horeca Groep", category: "Commercieel", description: "Spaarprogramma voor een keten van 50+ horecagelegenheden met gepersonaliseerde beloningen en analytics.", image_url: null, header_image_url: null },
+  { id: "1", title: "Gemeente Amsterdam", category: "Gemeenten", description: "Implementatie van een stadspas voor 850.000 inwoners met koppelingen aan lokale ondernemers en culturele instellingen.", image_url: null, header_image_url: null, branche: "Overheid" },
+  { id: "2", title: "Retailketen Nederland", category: "Commercieel", description: "Omnichannel loyaliteitsprogramma met digitale spaarpas, mobiele app en POS-integratie voor 200+ vestigingen.", image_url: null, header_image_url: null, branche: "Retail" },
+  { id: "3", title: "Gemeente Utrecht", category: "Gemeenten", description: "Digitaal minimaregelingen-platform met automatische toekenning van kortingen en subsidies aan inwoners.", image_url: null, header_image_url: null, branche: "Overheid" },
+  { id: "4", title: "Horeca Groep", category: "Commercieel", description: "Spaarprogramma voor een keten van 50+ horecagelegenheden met gepersonaliseerde beloningen en analytics.", image_url: null, header_image_url: null, branche: "Horeca" },
 ];
 
 const Klantcases = () => {
@@ -86,7 +87,12 @@ const Klantcases = () => {
                       )}
                     </div>
                     <div className="p-6">
-                      <span className="text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
+                        {c.branche && (
+                          <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{c.branche}</span>
+                        )}
+                      </div>
                       <h3 className="text-lg font-semibold mt-1 mb-2">{c.title}</h3>
                       <p className="text-sm text-muted-foreground line-clamp-2">{c.description}</p>
                       {isReal && (

@@ -12,6 +12,7 @@ interface KlantcaseData {
   description: string;
   image_url: string | null;
   header_image_url: string | null;
+  branche: string | null;
   created_at: string;
 }
 
@@ -72,15 +73,25 @@ const KlantcaseDetail = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 container pb-8">
+          <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-white/80 uppercase tracking-wider">{kcase.category}</span>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mt-1">{kcase.title}</h1>
+            {kcase.branche && (
+              <span className="text-xs bg-white/20 text-white px-2 py-0.5 rounded">{kcase.branche}</span>
+            )}
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mt-1">{kcase.title}</h1>
           </div>
         </div>
       ) : (
         <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
           <div className="container text-center">
+          <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-primary-foreground/80 uppercase tracking-wider">{kcase.category}</span>
-            <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mt-2">{kcase.title}</h1>
+            {kcase.branche && (
+              <span className="text-xs bg-primary-foreground/20 text-primary-foreground px-2 py-0.5 rounded">{kcase.branche}</span>
+            )}
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mt-2">{kcase.title}</h1>
           </div>
         </section>
       )}
