@@ -1,0 +1,1 @@
+ALTER TABLE public.klantcases ADD COLUMN header_image_url TEXT DEFAULT NULL;
