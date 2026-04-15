@@ -20,7 +20,7 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b" style={{ backgroundImage: 'url(/header-bg.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.jpg" alt="Loyaltygroup B.V." className="h-10 w-auto" loading="eager" />
+          <span className="sr-only">Loyaltygroup B.V.</span>
         </Link>
 
         {/* Desktop nav */}
