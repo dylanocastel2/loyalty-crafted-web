@@ -67,22 +67,18 @@ const Admin = () => {
 
   const saveCase = async () => {
     if (!editCase?.title) return;
+    const payload = {
+      title: editCase.title,
+      description: editCase.description || "",
+      category: editCase.category || "Gemeenten",
+      image_url: editCase.image_url || null,
+      header_image_url: (editCase as any).header_image_url || null,
+      published: editCase.published ?? false,
+    };
     if (editCase.id) {
-      await supabase.from("klantcases").update({
-        title: editCase.title,
-        description: editCase.description || "",
-        category: editCase.category || "Gemeenten",
-        image_url: editCase.image_url || null,
-        published: editCase.published ?? false,
-      }).eq("id", editCase.id);
+      await supabase.from("klantcases").update(payload).eq("id", editCase.id);
     } else {
-      await supabase.from("klantcases").insert({
-        title: editCase.title,
-        description: editCase.description || "",
-        category: editCase.category || "Gemeenten",
-        image_url: editCase.image_url || null,
-        published: editCase.published ?? false,
-      });
+      await supabase.from("klantcases").insert(payload);
     }
     setEditCase(null);
     fetchCases();
@@ -141,11 +137,19 @@ const Admin = () => {
                   <Textarea value={editCase.description || ""} onChange={(e) => setEditCase({ ...editCase, description: e.target.value })} rows={3} />
                 </div>
                 <div>
-                  <Label>Afbeelding</Label>
+                  <Label>Afbeelding (in detail pagina)</Label>
                   <FileUpload
                     onUpload={(url) => setEditCase({ ...editCase, image_url: url || null })}
                     currentUrl={editCase.image_url || undefined}
                     folder="klantcases"
+                  />
+                </div>
+                <div>
+                  <Label>Headerfoto (overzichtspagina)</Label>
+                  <FileUpload
+                    onUpload={(url) => setEditCase({ ...editCase, header_image_url: url } as any)}
+                    currentUrl={(editCase as any).header_image_url || undefined}
+                    folder="klantcases/headers"
                   />
                 </div>
                 <div className="flex items-center gap-2">

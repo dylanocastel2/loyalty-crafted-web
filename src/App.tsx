@@ -17,6 +17,7 @@ import Demo from "./pages/Demo";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import KlantcaseCreator from "./pages/KlantcaseCreator";
+import KlantcaseDetail from "./pages/KlantcaseDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/spaarprogramma" element={<Spaarprogramma />} />
             <Route path="/klantcases" element={<Klantcases />} />
             <Route path="/klantcases/nieuw" element={<KlantcaseCreator />} />
+            <Route path="/klantcases/:id" element={<KlantcaseDetail />} />
             <Route path="/support" element={<Support />} />
             <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />

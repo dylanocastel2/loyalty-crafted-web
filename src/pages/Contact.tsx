@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import EditableText from "@/components/EditableText";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -25,10 +26,8 @@ const Contact = () => {
     <Layout>
       <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
         <div className="container text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Contact</h1>
-          <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
-            Neem contact met ons op. Wij helpen u graag verder.
-          </p>
+          <EditableText page="contact" contentKey="hero_title" defaultValue="Contact" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
+          <EditableText page="contact" contentKey="hero_subtitle" defaultValue="Neem contact met ons op. Wij helpen u graag verder." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
         </div>
       </section>
 
@@ -36,7 +35,7 @@ const Contact = () => {
         <div className="container max-w-5xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="text-2xl font-bold mb-6">Stuur ons een bericht</h2>
+              <EditableText page="contact" contentKey="form_title" defaultValue="Stuur ons een bericht" as="h2" className="text-2xl font-bold mb-6" />
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -67,26 +66,26 @@ const Contact = () => {
             </div>
 
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">Contactgegevens</h2>
+              <EditableText page="contact" contentKey="info_title" defaultValue="Contactgegevens" as="h2" className="text-2xl font-bold mb-6" />
               <div className="flex items-start gap-4">
-                <Mail className="h-6 w-6 text-primary mt-0.5" />
+                <Mail className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">E-mail</h3>
-                  <p className="text-muted-foreground">info@loyaltygroup.nl</p>
+                  <EditableText page="contact" contentKey="email_label" defaultValue="E-mail" as="h3" className="font-semibold" />
+                  <EditableText page="contact" contentKey="email_value" defaultValue="info@loyaltygroup.nl" as="p" className="text-muted-foreground" />
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <Phone className="h-6 w-6 text-primary mt-0.5" />
+                <Phone className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">Telefoon</h3>
-                  <p className="text-muted-foreground">Ma-Vr 9:00 - 17:00</p>
+                  <EditableText page="contact" contentKey="phone_label" defaultValue="Telefoon" as="h3" className="font-semibold" />
+                  <EditableText page="contact" contentKey="phone_value" defaultValue="Ma-Vr 9:00 - 17:00" as="p" className="text-muted-foreground" />
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <MapPin className="h-6 w-6 text-primary mt-0.5" />
+                <MapPin className="h-6 w-6 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold">Adres</h3>
-                  <p className="text-muted-foreground">Nederland</p>
+                  <EditableText page="contact" contentKey="address_label" defaultValue="Adres" as="h3" className="font-semibold" />
+                  <EditableText page="contact" contentKey="address_value" defaultValue="Nederland" as="p" className="text-muted-foreground" />
                 </div>
               </div>
             </div>

@@ -22,6 +22,7 @@ const KlantcaseCreator = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Gemeenten");
   const [imageUrl, setImageUrl] = useState("");
+  const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [published, setPublished] = useState(false);
 
   useEffect(() => {
@@ -40,8 +41,9 @@ const KlantcaseCreator = () => {
       description: description.trim(),
       category,
       image_url: imageUrl.trim() || null,
+      header_image_url: headerImageUrl.trim() || null,
       published,
-    });
+    } as any);
 
     setLoading(false);
     if (error) {
@@ -97,7 +99,18 @@ const KlantcaseCreator = () => {
             </div>
 
             <div>
-              <Label className="text-base font-semibold">Afbeelding</Label>
+              <Label className="text-base font-semibold">Headerfoto (getoond op overzichtspagina)</Label>
+              <div className="mt-1">
+                <FileUpload
+                  onUpload={(url) => setHeaderImageUrl(url)}
+                  currentUrl={headerImageUrl || undefined}
+                  folder="klantcases/headers"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-base font-semibold">Afbeelding (getoond op detailpagina)</Label>
               <div className="mt-1">
                 <FileUpload
                   onUpload={(url) => setImageUrl(url)}
