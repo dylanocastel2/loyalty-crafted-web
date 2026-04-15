@@ -119,7 +119,7 @@ const EditableButton = ({
       </Link>
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true); }}
-        className="absolute -top-2 -right-8 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10"
+        className="absolute top-0 -right-7 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md z-10"
         title="Knoptekst bewerken"
       >
         <Pencil className="h-3.5 w-3.5" />
