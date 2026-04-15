@@ -86,7 +86,7 @@ const Klantcases = () => {
       <section className="py-16 bg-accent">
         <div className="container text-center">
           <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4" />
-          <Link to="/contact"><Button size="lg">Neem contact op</Button></Link>
+          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" />
         </div>
       </section>
     </Layout>

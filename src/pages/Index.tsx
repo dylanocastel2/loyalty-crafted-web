@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, ShoppingBag, Settings, Smartphone, Users, Zap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const features = [
   {
@@ -119,8 +120,8 @@ const Index = () => (
           multiline
         />
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/demo"><Button size="lg">Demo aanvragen</Button></Link>
-          <Link to="/contact"><Button size="lg" variant="outline">Neem contact op</Button></Link>
+          <EditableButton page="homepage" contentKey="cta_btn_demo" defaultValue="Demo aanvragen" to="/demo" />
+          <EditableButton page="homepage" contentKey="cta_btn_contact" defaultValue="Neem contact op" to="/contact" variant="outline" />
         </div>
       </div>
     </section>

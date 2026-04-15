@@ -60,7 +60,7 @@ const Spaarprogramma = () => (
           ))}
         </div>
         <div className="text-center mt-10">
-          <Link to="/demo"><Button size="lg">Start uw programma</Button></Link>
+          <EditableButton page="spaarprogramma" contentKey="cta_btn" defaultValue="Start uw programma" to="/demo" />
         </div>
       </div>
     </section>
