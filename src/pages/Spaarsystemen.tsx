@@ -109,7 +109,7 @@ const services = [
 const Spaarsystemen = () => (
   <Layout>
     {/* Hero */}
-    <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+    <section className="py-16 md:py-24">
       <div className="container">
         <div className="max-w-3xl">
           <EditableText
@@ -117,14 +117,14 @@ const Spaarsystemen = () => (
             contentKey="hero_title"
             defaultValue="Spaarsystemen"
             as="h1"
-            className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 tracking-wide"
+            className="text-3xl md:text-5xl font-bold mb-6 tracking-wide"
           />
           <EditableText
             page="spaarsystemen"
             contentKey="hero_subtitle"
             defaultValue="Met het Loyalty Spaarsysteem kunnen klanten met hun aankopen sparen voor beloningen die u zelf kunt samenstellen. Met de gratis meegeleverde CRM Tools houdt u klanten altijd op de hoogte van de laatste nieuwtjes, acties en aanbiedingen! Sparen is nog nooit zo makkelijk geweest."
             as="p"
-            className="text-lg text-primary-foreground/90 leading-relaxed"
+            className="text-lg text-muted-foreground leading-relaxed"
             multiline
           />
         </div>

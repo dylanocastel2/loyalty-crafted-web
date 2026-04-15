@@ -45,10 +45,10 @@ const Klantcases = () => {
 
   return (
     <Layout>
-      <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+      <section className="py-16 md:py-24 pb-0">
         <div className="container text-center relative">
-          <EditableText page="klantcases" contentKey="hero_title" defaultValue="Klantcases" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
-          <EditableText page="klantcases" contentKey="hero_subtitle" defaultValue="Ontdek hoe wij organisaties helpen met op maat gemaakte loyaliteitsoplossingen." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
+          <EditableText page="klantcases" contentKey="hero_title" defaultValue="Klantcases" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
+          <EditableText page="klantcases" contentKey="hero_subtitle" defaultValue="Ontdek hoe wij organisaties helpen met op maat gemaakte loyaliteitsoplossingen." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto" multiline />
         </div>
       </section>
 
@@ -109,10 +109,10 @@ const Klantcases = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-accent">
+      <section className="py-16 bg-gradient-to-br from-primary to-secondary">
         <div className="container text-center">
-          <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4" />
-          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" />
+          <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4 text-primary-foreground" />
+          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
         </div>
       </section>
     </Layout>
