@@ -1,0 +1,103 @@
+import { useState } from "react";
+import Layout from "@/components/layout/Layout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircle } from "lucide-react";
+
+const Demo = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      toast({ title: "Demo aangevraagd", description: "Wij nemen binnen 24 uur contact met u op." });
+      (e.target as HTMLFormElement).reset();
+    }, 1000);
+  };
+
+  return (
+    <Layout>
+      <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+        <div className="container text-center">
+          <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Demo Aanvragen</h1>
+          <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
+            Ervaar onze spaarsystemen in actie. Vraag een vrijblijvende demo aan.
+          </p>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24">
+        <div className="container max-w-5xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div>
+              <h2 className="text-2xl font-bold mb-6">Vul het formulier in</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">Naam *</Label>
+                    <Input id="name" required placeholder="Uw naam" />
+                  </div>
+                  <div>
+                    <Label htmlFor="email">E-mail *</Label>
+                    <Input id="email" type="email" required placeholder="uw@email.nl" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="company">Organisatie *</Label>
+                  <Input id="company" required placeholder="Uw organisatie" />
+                </div>
+                <div>
+                  <Label htmlFor="type">Type organisatie</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecteer type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="gemeente">Gemeente</SelectItem>
+                      <SelectItem value="commercieel">Commercieel bedrijf</SelectItem>
+                      <SelectItem value="overig">Overig</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="message">Toelichting</Label>
+                  <Textarea id="message" placeholder="Vertel ons meer over uw wensen..." rows={4} />
+                </div>
+                <Button type="submit" disabled={loading} size="lg" className="w-full sm:w-auto">
+                  {loading ? "Verzenden..." : "Demo aanvragen"}
+                </Button>
+              </form>
+            </div>
+
+            <div className="bg-accent rounded-lg p-8">
+              <h3 className="text-xl font-bold mb-6">Wat kunt u verwachten?</h3>
+              <ul className="space-y-4">
+                {[
+                  "Persoonlijke demonstratie op maat",
+                  "Overzicht van alle mogelijkheden",
+                  "Antwoord op al uw vragen",
+                  "Vrijblijvend en kosteloos",
+                  "Reactie binnen 24 uur",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+};
+
+export default Demo;
