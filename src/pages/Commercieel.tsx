@@ -16,11 +16,11 @@ const benefits = [
 
 const Commercieel = () => (
   <Layout>
-    <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+    <section className="py-16 md:py-24">
       <div className="container text-center">
-        <EditableText page="commercieel" contentKey="hero_title" defaultValue="Commerciële Loyaliteitsoplossingen" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
-        <EditableText page="commercieel" contentKey="hero_subtitle" defaultValue="Bouw duurzame klantrelaties op met een op maat gemaakt loyaliteitsprogramma dat past bij uw merk." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto mb-8" multiline />
-        <EditableButton page="commercieel" contentKey="hero_btn" defaultValue="Demo aanvragen" to="/demo" variant="secondary" />
+        <EditableText page="commercieel" contentKey="hero_title" defaultValue="Commerciële Loyaliteitsoplossingen" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
+        <EditableText page="commercieel" contentKey="hero_subtitle" defaultValue="Bouw duurzame klantrelaties op met een op maat gemaakt loyaliteitsprogramma dat past bij uw merk." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8" multiline />
+        <EditableButton page="commercieel" contentKey="hero_btn" defaultValue="Demo aanvragen" to="/demo" />
       </div>
     </section>
 
@@ -39,11 +39,11 @@ const Commercieel = () => (
       </div>
     </section>
 
-    <section className="py-16 bg-accent">
+    <section className="py-16 bg-gradient-to-br from-primary to-secondary">
       <div className="container text-center">
-        <EditableText page="commercieel" contentKey="cta_title" defaultValue="Start vandaag nog" as="h2" className="text-2xl font-bold mb-4" />
-        <EditableText page="commercieel" contentKey="cta_text" defaultValue="Ontdek hoe een loyaliteitsprogramma op maat uw bedrijf kan laten groeien." as="p" className="text-muted-foreground mb-8 max-w-xl mx-auto" multiline />
-        <EditableButton page="commercieel" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" />
+        <EditableText page="commercieel" contentKey="cta_title" defaultValue="Start vandaag nog" as="h2" className="text-2xl font-bold mb-4 text-primary-foreground" />
+        <EditableText page="commercieel" contentKey="cta_text" defaultValue="Ontdek hoe een loyaliteitsprogramma op maat uw bedrijf kan laten groeien." as="p" className="text-primary-foreground/90 mb-8 max-w-xl mx-auto" multiline />
+        <EditableButton page="commercieel" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
       </div>
     </section>
   </Layout>

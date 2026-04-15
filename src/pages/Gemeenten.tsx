@@ -16,11 +16,11 @@ const benefits = [
 
 const Gemeenten = () => (
   <Layout>
-    <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+    <section className="py-16 md:py-24">
       <div className="container text-center">
-        <EditableText page="gemeenten" contentKey="hero_title" defaultValue="Oplossingen voor Gemeenten" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
-        <EditableText page="gemeenten" contentKey="hero_subtitle" defaultValue="Versterk uw gemeente met een op maat gemaakt spaarsysteem. Van stadspassen tot minimaregelingen — alles in één platform." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto mb-8" multiline />
-        <EditableButton page="gemeenten" contentKey="hero_btn" defaultValue="Demo aanvragen" to="/demo" variant="secondary" />
+        <EditableText page="gemeenten" contentKey="hero_title" defaultValue="Oplossingen voor Gemeenten" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
+        <EditableText page="gemeenten" contentKey="hero_subtitle" defaultValue="Versterk uw gemeente met een op maat gemaakt spaarsysteem. Van stadspassen tot minimaregelingen — alles in één platform." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8" multiline />
+        <EditableButton page="gemeenten" contentKey="hero_btn" defaultValue="Demo aanvragen" to="/demo" />
       </div>
     </section>
 
@@ -39,11 +39,11 @@ const Gemeenten = () => (
       </div>
     </section>
 
-    <section className="py-16 bg-accent">
+    <section className="py-16 bg-gradient-to-br from-primary to-secondary">
       <div className="container text-center">
-        <EditableText page="gemeenten" contentKey="cta_title" defaultValue="Interesse in een samenwerking?" as="h2" className="text-2xl font-bold mb-4" />
-        <EditableText page="gemeenten" contentKey="cta_text" defaultValue="Neem contact met ons op voor een vrijblijvend gesprek over de mogelijkheden voor uw gemeente." as="p" className="text-muted-foreground mb-8 max-w-xl mx-auto" multiline />
-        <EditableButton page="gemeenten" contentKey="cta_btn" defaultValue="Contact opnemen" to="/contact" />
+        <EditableText page="gemeenten" contentKey="cta_title" defaultValue="Interesse in een samenwerking?" as="h2" className="text-2xl font-bold mb-4 text-primary-foreground" />
+        <EditableText page="gemeenten" contentKey="cta_text" defaultValue="Neem contact met ons op voor een vrijblijvend gesprek over de mogelijkheden voor uw gemeente." as="p" className="text-primary-foreground/90 mb-8 max-w-xl mx-auto" multiline />
+        <EditableButton page="gemeenten" contentKey="cta_btn" defaultValue="Contact opnemen" to="/contact" variant="secondary" />
       </div>
     </section>
   </Layout>

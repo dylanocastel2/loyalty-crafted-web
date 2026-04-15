@@ -39,43 +39,42 @@ const features = [
 const Index = () => (
   <Layout>
     {/* Hero */}
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary to-secondary py-20 md:py-32">
+    <section className="relative overflow-hidden py-20 md:py-32">
       <div className="container relative z-10 text-center">
         <EditableText
           page="homepage"
           contentKey="hero_title"
           defaultValue="Spaarsystemen op maat"
           as="h1"
-          className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight"
+          className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
         />
         <EditableText
           page="homepage"
           contentKey="hero_subtitle"
           defaultValue="Loyaltygroup B.V. ontwikkelt volledig op maat gemaakte loyaliteitssystemen. In-house ontwikkeld, flexibel en schaalbaar."
           as="p"
-          className="text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto mb-10"
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           multiline
         />
 
         {/* Audience selector */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
           <Link to="/gemeenten" className="flex-1">
-            <div className="bg-primary-foreground/10 backdrop-blur border border-primary-foreground/20 rounded-lg p-6 hover:bg-primary-foreground/20 transition-all cursor-pointer group">
-              <Building2 className="h-10 w-10 text-primary-foreground mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-semibold text-primary-foreground">Gemeenten</h3>
-              <p className="text-sm text-primary-foreground/70 mt-1">Stadspas & regelingen</p>
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 hover:bg-primary/10 transition-all cursor-pointer group">
+              <Building2 className="h-10 w-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="text-lg font-semibold">Gemeenten</h3>
+              <p className="text-sm text-muted-foreground mt-1">Stadspas & regelingen</p>
             </div>
           </Link>
           <Link to="/commercieel" className="flex-1">
-            <div className="bg-primary-foreground/10 backdrop-blur border border-primary-foreground/20 rounded-lg p-6 hover:bg-primary-foreground/20 transition-all cursor-pointer group">
-              <ShoppingBag className="h-10 w-10 text-primary-foreground mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-semibold text-primary-foreground">Commercieel</h3>
-              <p className="text-sm text-primary-foreground/70 mt-1">Klantenbinding & loyalty</p>
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 hover:bg-primary/10 transition-all cursor-pointer group">
+              <ShoppingBag className="h-10 w-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
+              <h3 className="text-lg font-semibold">Commercieel</h3>
+              <p className="text-sm text-muted-foreground mt-1">Klantenbinding & loyalty</p>
             </div>
           </Link>
         </div>
       </div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_60%)]" />
     </section>
 
     {/* Features */}
@@ -108,19 +107,19 @@ const Index = () => (
     </section>
 
     {/* CTA */}
-    <section className="py-16 bg-accent">
+    <section className="py-16 bg-gradient-to-br from-primary to-secondary">
       <div className="container text-center">
-        <EditableText page="homepage" contentKey="cta_title" defaultValue="Klaar om te starten?" as="h2" className="text-2xl md:text-3xl font-bold mb-4" />
+        <EditableText page="homepage" contentKey="cta_title" defaultValue="Klaar om te starten?" as="h2" className="text-2xl md:text-3xl font-bold mb-4 text-primary-foreground" />
         <EditableText
           page="homepage"
           contentKey="cta_text"
           defaultValue="Ontdek hoe een op maat gemaakt spaarsysteem uw organisatie kan versterken. Vraag vandaag nog een demo aan."
           as="p"
-          className="text-muted-foreground max-w-xl mx-auto mb-8"
+          className="text-primary-foreground/90 max-w-xl mx-auto mb-8"
           multiline
         />
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <EditableButton page="homepage" contentKey="cta_btn_demo" defaultValue="Demo aanvragen" to="/demo" />
+          <EditableButton page="homepage" contentKey="cta_btn_demo" defaultValue="Demo aanvragen" to="/demo" variant="secondary" />
           <EditableButton page="homepage" contentKey="cta_btn_contact" defaultValue="Neem contact op" to="/contact" variant="outline" />
         </div>
       </div>

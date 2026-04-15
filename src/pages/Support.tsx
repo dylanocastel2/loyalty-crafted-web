@@ -15,10 +15,10 @@ const faqs = [
 
 const Support = () => (
   <Layout>
-    <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+    <section className="py-16 md:py-24">
       <div className="container text-center">
-        <EditableText page="support" contentKey="hero_title" defaultValue="Support" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
-        <EditableText page="support" contentKey="hero_subtitle" defaultValue="Wij staan voor u klaar. Vind antwoorden op veelgestelde vragen of neem direct contact op." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
+        <EditableText page="support" contentKey="hero_title" defaultValue="Support" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
+        <EditableText page="support" contentKey="hero_subtitle" defaultValue="Wij staan voor u klaar. Vind antwoorden op veelgestelde vragen of neem direct contact op." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto" multiline />
       </div>
     </section>
 

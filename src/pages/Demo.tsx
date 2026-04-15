@@ -25,10 +25,10 @@ const Demo = () => {
 
   return (
     <Layout>
-      <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+      <section className="py-16 md:py-24 pb-0">
         <div className="container text-center">
-          <EditableText page="demo" contentKey="hero_title" defaultValue="Demo Aanvragen" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
-          <EditableText page="demo" contentKey="hero_subtitle" defaultValue="Ervaar onze spaarsystemen in actie. Vraag een vrijblijvende demo aan." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
+          <EditableText page="demo" contentKey="hero_title" defaultValue="Demo Aanvragen" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
+          <EditableText page="demo" contentKey="hero_subtitle" defaultValue="Ervaar onze spaarsystemen in actie. Vraag een vrijblijvende demo aan." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto" multiline />
         </div>
       </section>
 
