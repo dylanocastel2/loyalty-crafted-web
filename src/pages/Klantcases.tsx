@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 interface KlantcaseItem {
   id: string;
@@ -86,7 +87,7 @@ const Klantcases = () => {
       <section className="py-16 bg-accent">
         <div className="container text-center">
           <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4" />
-          <Link to="/contact"><Button size="lg">Neem contact op</Button></Link>
+          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" />
         </div>
       </section>
     </Layout>

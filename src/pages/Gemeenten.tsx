@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, CreditCard, Users, BarChart3, Shield, Landmark } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const benefits = [
   { icon: CreditCard, tKey: "gem_stadspas_title", dKey: "gem_stadspas_desc", title: "Stadspas", desc: "Digitale stadspas voor inwoners met kortingen bij lokale ondernemers." },
@@ -19,7 +20,7 @@ const Gemeenten = () => (
       <div className="container text-center">
         <EditableText page="gemeenten" contentKey="hero_title" defaultValue="Oplossingen voor Gemeenten" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
         <EditableText page="gemeenten" contentKey="hero_subtitle" defaultValue="Versterk uw gemeente met een op maat gemaakt spaarsysteem. Van stadspassen tot minimaregelingen — alles in één platform." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto mb-8" multiline />
-        <Link to="/demo"><Button size="lg" variant="secondary">Demo aanvragen</Button></Link>
+        <EditableButton page="gemeenten" contentKey="hero_btn" defaultValue="Demo aanvragen" to="/demo" variant="secondary" />
       </div>
     </section>
 
@@ -42,7 +43,7 @@ const Gemeenten = () => (
       <div className="container text-center">
         <EditableText page="gemeenten" contentKey="cta_title" defaultValue="Interesse in een samenwerking?" as="h2" className="text-2xl font-bold mb-4" />
         <EditableText page="gemeenten" contentKey="cta_text" defaultValue="Neem contact met ons op voor een vrijblijvend gesprek over de mogelijkheden voor uw gemeente." as="p" className="text-muted-foreground mb-8 max-w-xl mx-auto" multiline />
-        <Link to="/contact"><Button size="lg">Contact opnemen</Button></Link>
+        <EditableButton page="gemeenten" contentKey="cta_btn" defaultValue="Contact opnemen" to="/contact" />
       </div>
     </section>
   </Layout>

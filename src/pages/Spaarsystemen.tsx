@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Smartphone, QrCode, Gift, Globe, Layers } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const systems = [
   { icon: Globe, tKey: "ss_online_title", dKey: "ss_online_desc", title: "Online Spaarsysteem", desc: "Webgebaseerd spaarsysteem toegankelijk via elk apparaat met internetverbinding." },
@@ -40,7 +41,7 @@ const Spaarsystemen = () => (
       <div className="container text-center">
         <EditableText page="spaarsystemen" contentKey="cta_title" defaultValue="Welk systeem past bij u?" as="h2" className="text-2xl font-bold mb-4" />
         <EditableText page="spaarsystemen" contentKey="cta_text" defaultValue="Wij adviseren u graag over de beste oplossing voor uw situatie." as="p" className="text-muted-foreground mb-8 max-w-xl mx-auto" multiline />
-        <Link to="/demo"><Button size="lg">Demo aanvragen</Button></Link>
+        <EditableButton page="spaarsystemen" contentKey="cta_btn" defaultValue="Demo aanvragen" to="/demo" />
       </div>
     </section>
   </Layout>

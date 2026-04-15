@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const steps = [
   { step: "1", tKey: "sp_stap1_title", dKey: "sp_stap1_desc", title: "Analyse & Advies", desc: "Wij analyseren uw situatie en adviseren over de beste aanpak voor uw loyaliteitsprogramma." },
@@ -60,7 +61,7 @@ const Spaarprogramma = () => (
           ))}
         </div>
         <div className="text-center mt-10">
-          <Link to="/demo"><Button size="lg">Start uw programma</Button></Link>
+          <EditableButton page="spaarprogramma" contentKey="cta_btn" defaultValue="Start uw programma" to="/demo" />
         </div>
       </div>
     </section>
