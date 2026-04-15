@@ -119,11 +119,11 @@ const EditableText = ({
   }
 
   return (
-    <div className="relative group inline-block">
+    <div className="relative group inline-block pr-8">
       <Tag className={className}>{displayValue}</Tag>
       <button
         onClick={() => setEditing(true)}
-        className="absolute -top-2 -right-8 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+        className="absolute top-0 right-0 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
         title="Bewerken"
       >
         <Pencil className="h-3.5 w-3.5" />
