@@ -231,21 +231,21 @@ const Spaarsystemen = () => (
     </section>
 
     {/* CTA */}
-    <section className="py-16 bg-accent">
+    <section className="py-16 bg-gradient-to-br from-primary to-secondary">
       <div className="container text-center">
         <EditableText
           page="spaarsystemen"
           contentKey="cta_title"
           defaultValue="Wilt u weten wat Loyaltygroup voor u kan betekenen?"
           as="h2"
-          className="text-2xl md:text-3xl font-bold mb-4"
+          className="text-2xl md:text-3xl font-bold mb-4 text-primary-foreground"
         />
         <EditableText
           page="spaarsystemen"
           contentKey="cta_text"
           defaultValue="Wij komen graag geheel vrijblijvend bij u langs om de vele mogelijkheden van het Loyalty Spaarsysteem te demonstreren."
           as="p"
-          className="text-muted-foreground mb-8 max-w-xl mx-auto"
+          className="text-primary-foreground/90 mb-8 max-w-xl mx-auto"
           multiline
         />
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
