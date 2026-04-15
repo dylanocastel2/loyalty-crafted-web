@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Mail, Phone, MessageSquare } from "lucide-react";
+import EditableText from "@/components/EditableText";
 
 const faqs = [
   { q: "Hoe lang duurt de ontwikkeling van een spaarsysteem?", a: "De doorlooptijd varieert per project, maar gemiddeld duurt een implementatie 6-12 weken, afhankelijk van de complexiteit en gewenste integraties." },
@@ -16,16 +17,14 @@ const Support = () => (
   <Layout>
     <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
       <div className="container text-center">
-        <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Support</h1>
-        <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
-          Wij staan voor u klaar. Vind antwoorden op veelgestelde vragen of neem direct contact op.
-        </p>
+        <EditableText page="support" contentKey="hero_title" defaultValue="Support" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
+        <EditableText page="support" contentKey="hero_subtitle" defaultValue="Wij staan voor u klaar. Vind antwoorden op veelgestelde vragen of neem direct contact op." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
       </div>
     </section>
 
     <section className="py-16 md:py-24">
       <div className="container max-w-3xl">
-        <h2 className="text-2xl font-bold mb-8">Veelgestelde Vragen</h2>
+        <EditableText page="support" contentKey="faq_title" defaultValue="Veelgestelde Vragen" as="h2" className="text-2xl font-bold mb-8" />
         <Accordion type="single" collapsible className="w-full">
           {faqs.map((faq, i) => (
             <AccordionItem key={i} value={`faq-${i}`}>
@@ -39,7 +38,7 @@ const Support = () => (
 
     <section className="py-16 bg-accent">
       <div className="container">
-        <h2 className="text-2xl font-bold text-center mb-8">Nog vragen?</h2>
+        <EditableText page="support" contentKey="contact_title" defaultValue="Nog vragen?" as="h2" className="text-2xl font-bold text-center mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
           <div className="text-center p-6 rounded-lg border bg-card">
             <Mail className="h-8 w-8 text-primary mx-auto mb-3" />
