@@ -81,53 +81,53 @@ const EditableText = ({
     return <Tag className={className}>{displayValue}</Tag>;
   }
 
-  if (editing) {
+  if (!editing) {
     return (
-      <div className="relative border-2 border-primary rounded-md p-2 bg-background">
-        {multiline ? (
-          <Textarea
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="min-h-[80px] text-foreground"
-            autoFocus
-          />
-        ) : (
-          <Input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            className="text-foreground"
-            autoFocus
-          />
-        )}
-        <div className="flex gap-1 mt-2 justify-end">
-          <button
-            onClick={handleSave}
-            disabled={loading}
-            className="p-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <Check className="h-4 w-4" />
-          </button>
-          <button
-            onClick={handleCancel}
-            className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+      <div className="relative group inline-block pr-8">
+        <Tag className={className}>{displayValue}</Tag>
+        <button
+          onClick={() => setEditing(true)}
+          className="absolute top-0 right-0 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+          title="Bewerken"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="relative group inline-block pr-8">
-      <Tag className={className}>{displayValue}</Tag>
-      <button
-        onClick={() => setEditing(true)}
-        className="absolute top-0 right-0 p-1 rounded bg-primary text-primary-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-        title="Bewerken"
-      >
-        <Pencil className="h-3.5 w-3.5" />
-      </button>
+    <div className="relative border-2 border-primary rounded-md p-2 bg-background">
+      {multiline ? (
+        <Textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="min-h-[80px] text-foreground"
+          autoFocus
+        />
+      ) : (
+        <Input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          className="text-foreground"
+          autoFocus
+        />
+      )}
+      <div className="flex gap-1 mt-2 justify-end">
+        <button
+          onClick={handleSave}
+          disabled={loading}
+          className="p-1.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <Check className="h-4 w-4" />
+        </button>
+        <button
+          onClick={handleCancel}
+          className="p-1.5 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
     </div>
   );
 };
