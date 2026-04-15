@@ -18,8 +18,8 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 border-b" style={{ backgroundImage: 'url(/header-bg.png)', backgroundSize: 'cover', backgroundPosition: 'left center', backgroundRepeat: 'no-repeat' }}>
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
+      <div className="container relative flex h-16 items-center justify-end">
+        <Link to="/" className="absolute left-0 top-0 h-full w-48" aria-label="Naar homepage">
           <span className="sr-only">Loyaltygroup B.V.</span>
         </Link>
 
