@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, ImagePlus, X } from "lucide-react";
-import { useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
+import FileUpload from "@/components/FileUpload";
 
 const KlantcaseCreator = () => {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -97,37 +97,13 @@ const KlantcaseCreator = () => {
             </div>
 
             <div>
-              <Label htmlFor="image" className="text-base font-semibold">Afbeelding URL</Label>
-              <div className="mt-1 space-y-2">
-                <Input
-                  id="image"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://voorbeeld.nl/afbeelding.jpg"
+              <Label className="text-base font-semibold">Afbeelding</Label>
+              <div className="mt-1">
+                <FileUpload
+                  onUpload={(url) => setImageUrl(url)}
+                  currentUrl={imageUrl || undefined}
+                  folder="klantcases"
                 />
-                {imageUrl && (
-                  <div className="relative inline-block">
-                    <img
-                      src={imageUrl}
-                      alt="Preview"
-                      className="max-h-48 rounded-lg border object-cover"
-                      onError={(e) => (e.currentTarget.style.display = "none")}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setImageUrl("")}
-                      className="absolute top-1 right-1 p-1 rounded-full bg-destructive text-destructive-foreground"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                )}
-                {!imageUrl && (
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center text-muted-foreground">
-                    <ImagePlus className="h-8 w-8 mx-auto mb-2" />
-                    <p className="text-sm">Voer een afbeelding URL in hierboven</p>
-                  </div>
-                )}
               </div>
             </div>
 
