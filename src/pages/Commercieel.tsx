@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, TrendingUp, Gift, QrCode, BarChart3, Repeat } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const benefits = [
   { icon: TrendingUp, tKey: "com_binding_title", dKey: "com_binding_desc", title: "Klantenbinding", desc: "Verhoog klantloyaliteit met een persoonlijk spaarprogramma." },

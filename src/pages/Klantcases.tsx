@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Plus } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 interface KlantcaseItem {
   id: string;

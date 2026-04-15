@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Smartphone, QrCode, Gift, Globe, Layers } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const systems = [
   { icon: Globe, tKey: "ss_online_title", dKey: "ss_online_desc", title: "Online Spaarsysteem", desc: "Webgebaseerd spaarsysteem toegankelijk via elk apparaat met internetverbinding." },

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Building2, CreditCard, Users, BarChart3, Shield, Landmark } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
+import EditableButton from "@/components/EditableButton";
 
 const benefits = [
   { icon: CreditCard, tKey: "gem_stadspas_title", dKey: "gem_stadspas_desc", title: "Stadspas", desc: "Digitale stadspas voor inwoners met kortingen bij lokale ondernemers." },
