@@ -66,6 +66,23 @@ const Demo = () => {
                   </Select>
                 </div>
                 <div>
+                  <Label htmlFor="branche">Branche</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecteer branche" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="retail">Retail</SelectItem>
+                      <SelectItem value="horeca">Horeca</SelectItem>
+                      <SelectItem value="overheid">Overheid</SelectItem>
+                      <SelectItem value="sport">Sport & Recreatie</SelectItem>
+                      <SelectItem value="zorg">Zorg</SelectItem>
+                      <SelectItem value="onderwijs">Onderwijs</SelectItem>
+                      <SelectItem value="anders">Anders</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <Label htmlFor="message">Toelichting</Label>
                   <Textarea id="message" placeholder="Vertel ons meer over uw wensen..." rows={4} />
                 </div>

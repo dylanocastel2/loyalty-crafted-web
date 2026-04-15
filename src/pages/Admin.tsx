@@ -71,6 +71,7 @@ const Admin = () => {
       title: editCase.title,
       description: editCase.description || "",
       category: editCase.category || "Gemeenten",
+      branche: (editCase as any).branche || null,
       image_url: editCase.image_url || null,
       header_image_url: (editCase as any).header_image_url || null,
       published: editCase.published ?? false,
@@ -130,6 +131,10 @@ const Admin = () => {
                   <div>
                     <Label>Categorie</Label>
                     <Input value={editCase.category || ""} onChange={(e) => setEditCase({ ...editCase, category: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Branche</Label>
+                    <Input value={(editCase as any).branche || ""} onChange={(e) => setEditCase({ ...editCase, branche: e.target.value } as any)} placeholder="Bijv. Horeca, Retail, Overheid" />
                   </div>
                 </div>
                 <div>
