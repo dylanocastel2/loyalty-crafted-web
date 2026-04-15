@@ -3,6 +3,9 @@ import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Plus } from "lucide-react";
+import EditableText from "@/components/EditableText";
 
 interface KlantcaseItem {
   id: string;
@@ -13,6 +16,7 @@ interface KlantcaseItem {
 }
 
 const Klantcases = () => {
+  const { isAdmin } = useAuth();
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +26,6 @@ const Klantcases = () => {
       if (data && data.length > 0) {
         setCases(data);
       } else {
-        // Fallback placeholder data
         setCases([
           { id: "1", title: "Gemeente Amsterdam", category: "Gemeenten", description: "Implementatie van een stadspas voor 850.000 inwoners met koppelingen aan lokale ondernemers en culturele instellingen.", image_url: null },
           { id: "2", title: "Retailketen Nederland", category: "Commercieel", description: "Omnichannel loyaliteitsprogramma met digitale spaarpas, mobiele app en POS-integratie voor 200+ vestigingen.", image_url: null },
@@ -38,16 +41,23 @@ const Klantcases = () => {
   return (
     <Layout>
       <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
-        <div className="container text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4">Klantcases</h1>
-          <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto">
-            Ontdek hoe wij organisaties helpen met op maat gemaakte loyaliteitsoplossingen.
-          </p>
+        <div className="container text-center relative">
+          <EditableText page="klantcases" contentKey="hero_title" defaultValue="Klantcases" as="h1" className="text-3xl md:text-5xl font-bold text-primary-foreground mb-4" />
+          <EditableText page="klantcases" contentKey="hero_subtitle" defaultValue="Ontdek hoe wij organisaties helpen met op maat gemaakte loyaliteitsoplossingen." as="p" className="text-lg text-primary-foreground/90 max-w-2xl mx-auto" multiline />
         </div>
       </section>
 
       <section className="py-16 md:py-24">
         <div className="container">
+          {isAdmin && (
+            <div className="flex justify-end mb-6">
+              <Link to="/klantcases/nieuw">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" /> Maak klantcase
+                </Button>
+              </Link>
+            </div>
+          )}
           {loading ? (
             <p className="text-center text-muted-foreground">Laden...</p>
           ) : (
@@ -75,7 +85,7 @@ const Klantcases = () => {
 
       <section className="py-16 bg-accent">
         <div className="container text-center">
-          <h2 className="text-2xl font-bold mb-4">Wilt u de volgende succescase zijn?</h2>
+          <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4" />
           <Link to="/contact"><Button size="lg">Neem contact op</Button></Link>
         </div>
       </section>
