@@ -29,8 +29,8 @@ const Header = () => {
             <Link
               key={item.path}
               to={item.path}
-              className={`px-3 py-2 text-xs font-semibold tracking-wider transition-colors rounded-md hover:bg-accent hover:text-accent-foreground ${
-                location.pathname === item.path ? "text-primary bg-accent" : "text-foreground/70"
+              className={`px-3 py-2 text-xs font-semibold tracking-wider transition-colors rounded-md hover:bg-white hover:text-[#0a83ae] ${
+                location.pathname === item.path ? "text-[#0a83ae] bg-white" : "text-white"
               }`}
             >
               {item.label}
@@ -49,7 +49,7 @@ const Header = () => {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Menu openen"
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
         </button>
       </div>
 
