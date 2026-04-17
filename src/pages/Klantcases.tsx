@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, Pencil } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 
@@ -74,34 +74,42 @@ const Klantcases = () => {
                 const wrapperProps = isReal ? { to: `/klantcases/${c.id}` } : {};
 
                 return (
-                  <CardWrapper
-                    key={c.id}
-                    {...(wrapperProps as any)}
-                    className="border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow group block"
-                  >
-                    <div className="bg-muted h-48 flex items-center justify-center overflow-hidden">
-                      {cardImage ? (
-                        <img src={cardImage} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                      ) : (
-                        <span className="text-muted-foreground text-sm">{c.category}</span>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
-                        {c.branche && (
-                          <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{c.branche}</span>
+                  <div key={c.id} className="relative">
+                    <CardWrapper
+                      {...(wrapperProps as any)}
+                      className="border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow group block"
+                    >
+                      <div className="bg-muted h-48 flex items-center justify-center overflow-hidden">
+                        {cardImage ? (
+                          <img src={cardImage} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                        ) : (
+                          <span className="text-muted-foreground text-sm">{c.category}</span>
                         )}
                       </div>
-                      <h3 className="text-lg font-semibold mt-1 mb-2">{c.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{c.description}</p>
-                      {isReal && (
-                        <span className="inline-flex items-center gap-1 text-sm text-primary font-medium mt-3 group-hover:gap-2 transition-all">
-                          Lees meer <ArrowRight className="h-4 w-4" />
-                        </span>
-                      )}
-                    </div>
-                  </CardWrapper>
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
+                          {c.branche && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{c.branche}</span>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-semibold mt-1 mb-2">{c.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{c.description}</p>
+                        {isReal && (
+                          <span className="inline-flex items-center gap-1 text-sm text-primary font-medium mt-3 group-hover:gap-2 transition-all">
+                            Lees meer <ArrowRight className="h-4 w-4" />
+                          </span>
+                        )}
+                      </div>
+                    </CardWrapper>
+                    {isAdmin && isReal && (
+                      <Link to="/admin" className="absolute top-3 right-3 z-10">
+                        <Button size="sm" variant="secondary" className="shadow-md">
+                          <Pencil className="h-3.5 w-3.5 mr-1" /> Bewerken
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
                 );
               })}
             </div>
