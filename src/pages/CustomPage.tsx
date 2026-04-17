@@ -66,7 +66,7 @@ const CustomPage = () => {
       </Helmet>
 
       {!page.published && isAdmin && (
-        <div className="bg-yellow-100 border-b border-yellow-300 text-yellow-900 text-sm py-2 text-center">
+        <div className="bg-muted border-b text-foreground text-sm py-2 text-center">
           Concept — alleen zichtbaar voor beheerders
         </div>
       )}
