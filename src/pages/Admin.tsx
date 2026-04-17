@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -110,8 +110,23 @@ const Admin = () => {
         <Tabs defaultValue="klantcases">
           <TabsList>
             <TabsTrigger value="klantcases">Klantcases</TabsTrigger>
+            <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="custom-pages" className="mt-6">
+            <div className="bg-card border rounded-lg p-8 text-center">
+              <FileText className="h-12 w-12 mx-auto text-primary mb-3" />
+              <h2 className="text-xl font-bold mb-2">Pagina bouwer</h2>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Maak nieuwe pagina's met de drag & drop bouwer. Voeg blokken toe, stel SEO in en beheer welke pagina's in het hoofdmenu verschijnen.
+              </p>
+              <div className="flex gap-2 justify-center">
+                <Link to="/admin/pages"><Button variant="outline">Bekijk alle pagina's</Button></Link>
+                <Link to="/admin/pages/nieuw/edit"><Button><Plus className="h-4 w-4 mr-1" /> Nieuwe pagina</Button></Link>
+              </div>
+            </div>
+          </TabsContent>
 
           <TabsContent value="klantcases" className="mt-6">
             <div className="flex justify-between items-center mb-4">

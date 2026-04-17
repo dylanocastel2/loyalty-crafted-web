@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      custom_pages: {
+        Row: {
+          blocks: Json
+          canonical_url: string | null
+          created_at: string
+          id: string
+          menu_label: string | null
+          menu_order: number
+          meta_description: string | null
+          meta_keywords: string | null
+          meta_title: string | null
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
+          published: boolean
+          show_in_menu: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          blocks?: Json
+          canonical_url?: string | null
+          created_at?: string
+          id?: string
+          menu_label?: string | null
+          menu_order?: number
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          published?: boolean
+          show_in_menu?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          blocks?: Json
+          canonical_url?: string | null
+          created_at?: string
+          id?: string
+          menu_label?: string | null
+          menu_order?: number
+          meta_description?: string | null
+          meta_keywords?: string | null
+          meta_title?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          published?: boolean
+          show_in_menu?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       klantcases: {
         Row: {
           branche: string | null

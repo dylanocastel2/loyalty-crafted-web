@@ -1,0 +1,77 @@
+export type BlockType =
+  | "heading"
+  | "paragraph"
+  | "image"
+  | "button"
+  | "spacer"
+  | "divider"
+  | "hero"
+  | "two_columns"
+  | "three_columns"
+  | "container"
+  | "feature_list"
+  | "faq"
+  | "testimonial"
+  | "cta_banner"
+  | "contact_form"
+  | "video_embed"
+  | "accordion"
+  | "tabs"
+  | "image_carousel"
+  | "custom_html";
+
+export interface Block {
+  id: string;
+  type: BlockType;
+  props: Record<string, any>;
+}
+
+export interface BlockMeta {
+  type: BlockType;
+  label: string;
+  category: "Basis" | "Layout" | "Content" | "Geavanceerd";
+  icon: string; // lucide icon name
+  defaultProps: Record<string, any>;
+}
+
+export const BLOCK_META: BlockMeta[] = [
+  // Basis
+  { type: "heading", label: "Koptekst", category: "Basis", icon: "Heading", defaultProps: { text: "Nieuwe koptekst", level: 2, align: "left" } },
+  { type: "paragraph", label: "Paragraaf", category: "Basis", icon: "Type", defaultProps: { text: "Schrijf hier je tekst...", align: "left" } },
+  { type: "image", label: "Afbeelding", category: "Basis", icon: "Image", defaultProps: { url: "", alt: "", width: "100%", align: "center" } },
+  { type: "button", label: "Knop", category: "Basis", icon: "MousePointerClick", defaultProps: { label: "Klik hier", link: "/", variant: "default", align: "left" } },
+  { type: "spacer", label: "Tussenruimte", category: "Basis", icon: "MoveVertical", defaultProps: { height: 40 } },
+  { type: "divider", label: "Scheidingslijn", category: "Basis", icon: "Minus", defaultProps: {} },
+
+  // Layout
+  { type: "hero", label: "Hero sectie", category: "Layout", icon: "LayoutTemplate", defaultProps: { title: "Welkom", subtitle: "Een korte beschrijving", bgImage: "", bgColor: "primary", ctaLabel: "Lees meer", ctaLink: "/", textColor: "light" } },
+  { type: "two_columns", label: "Twee kolommen", category: "Layout", icon: "Columns2", defaultProps: { left: "Linkerkolom inhoud", right: "Rechterkolom inhoud" } },
+  { type: "three_columns", label: "Drie kolommen", category: "Layout", icon: "Columns3", defaultProps: { col1: "Kolom 1", col2: "Kolom 2", col3: "Kolom 3" } },
+  { type: "container", label: "Achtergrondblok", category: "Layout", icon: "Square", defaultProps: { content: "Inhoud van het blok", bgColor: "muted", padding: "large" } },
+
+  // Content
+  { type: "feature_list", label: "Featurelijst", category: "Content", icon: "List", defaultProps: { items: [{ title: "Feature 1", description: "Beschrijving" }, { title: "Feature 2", description: "Beschrijving" }, { title: "Feature 3", description: "Beschrijving" }] } },
+  { type: "faq", label: "FAQ", category: "Content", icon: "HelpCircle", defaultProps: { items: [{ question: "Vraag 1?", answer: "Antwoord op vraag 1." }, { question: "Vraag 2?", answer: "Antwoord op vraag 2." }] } },
+  { type: "testimonial", label: "Testimonial", category: "Content", icon: "Quote", defaultProps: { quote: "Een geweldig product!", name: "Jan Jansen", role: "CEO bij Bedrijf", photo: "" } },
+  { type: "cta_banner", label: "CTA banner", category: "Content", icon: "Megaphone", defaultProps: { title: "Klaar om te beginnen?", subtitle: "", ctaLabel: "Neem contact op", ctaLink: "/contact" } },
+  { type: "contact_form", label: "Contactformulier", category: "Content", icon: "Mail", defaultProps: { title: "Neem contact op" } },
+
+  // Geavanceerd
+  { type: "video_embed", label: "Video embed", category: "Geavanceerd", icon: "Video", defaultProps: { url: "https://www.youtube.com/embed/dQw4w9WgXcQ" } },
+  { type: "accordion", label: "Accordeon", category: "Geavanceerd", icon: "ChevronsUpDown", defaultProps: { items: [{ title: "Item 1", content: "Inhoud 1" }, { title: "Item 2", content: "Inhoud 2" }] } },
+  { type: "tabs", label: "Tabbladen", category: "Geavanceerd", icon: "LayoutGrid", defaultProps: { items: [{ label: "Tab 1", content: "Inhoud 1" }, { label: "Tab 2", content: "Inhoud 2" }] } },
+  { type: "image_carousel", label: "Afbeeldingen carrousel", category: "Geavanceerd", icon: "GalleryHorizontal", defaultProps: { images: [] } },
+  { type: "custom_html", label: "Custom HTML", category: "Geavanceerd", icon: "Code", defaultProps: { html: "<p>Custom HTML</p>" } },
+];
+
+export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>
+  BLOCK_META.find((b) => b.type === type);
+
+export const createBlock = (type: BlockType): Block => {
+  const meta = getBlockMeta(type);
+  return {
+    id: crypto.randomUUID(),
+    type,
+    props: JSON.parse(JSON.stringify(meta?.defaultProps ?? {})),
+  };
+};

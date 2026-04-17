@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
-const navItems = [
+const baseNavItems = [
   { label: "SPAARSYSTEMEN", path: "/spaarsystemen" },
   { label: "SPAARPROGRAMMA", path: "/spaarprogramma" },
   { label: "KLANTCASES", path: "/klantcases" },
@@ -15,8 +16,31 @@ const navItems = [
 
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [customItems, setCustomItems] = useState<{ label: string; path: string }[]>([]);
   const location = useLocation();
   const { isAdmin, signOut } = useAuth();
+
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await supabase
+        .from("custom_pages")
+        .select("title, slug, menu_label, menu_order")
+        .eq("published", true)
+        .eq("show_in_menu", true)
+        .order("menu_order", { ascending: true });
+      if (data) {
+        setCustomItems(
+          data.map((p) => ({
+            label: (p.menu_label || p.title).toUpperCase(),
+            path: `/p/${p.slug}`,
+          }))
+        );
+      }
+    };
+    fetch();
+  }, []);
+
+  const navItems = [...baseNavItems, ...customItems];
 
   return (
     <>

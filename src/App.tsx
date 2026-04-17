@@ -18,6 +18,9 @@ import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import KlantcaseCreator from "./pages/KlantcaseCreator";
 import KlantcaseDetail from "./pages/KlantcaseDetail";
+import PagesAdmin from "./pages/admin/PagesAdmin";
+import PageEditor from "./pages/admin/PageEditor";
+import CustomPage from "./pages/CustomPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +47,9 @@ const App = () => (
             <Route path="/demo" element={<Demo />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/pages" element={<PagesAdmin />} />
+            <Route path="/admin/pages/:id/edit" element={<PageEditor />} />
+            <Route path="/p/:slug" element={<CustomPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
