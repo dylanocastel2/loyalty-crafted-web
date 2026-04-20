@@ -1,0 +1,1 @@
+DELETE FROM public.page_blocks WHERE page_key = 'over-ons';
