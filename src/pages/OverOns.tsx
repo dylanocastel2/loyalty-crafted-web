@@ -1,6 +1,7 @@
 import Layout from "@/components/layout/Layout";
 import { Code, Users, Heart, Shield } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const values = [
   { icon: Code, tKey: "oo_inhouse_title", dKey: "oo_inhouse_desc", title: "In-house Ontwikkeling", desc: "Al onze systemen worden volledig in eigen huis ontwikkeld door ons ervaren team. Geen outsourcing, volledige controle over kwaliteit." },
@@ -11,6 +12,7 @@ const values = [
 
 const OverOns = () => (
   <Layout>
+      <PageBuilderSlot pageKey="over-ons" position="before" />
     <section className="py-16 md:py-24">
       <div className="container text-center">
         <EditableText page="over-ons" contentKey="hero_title" defaultValue="Over Ons" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -39,6 +41,7 @@ const OverOns = () => (
         </div>
       </div>
     </section>
+    <PageBuilderSlot pageKey="over-ons" position="after" />
   </Layout>
 );
 

@@ -3,6 +3,7 @@ import { Database, Share2, Settings, Smartphone, Gift, Monitor, ArrowRightLeft, 
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const highlights = [
   {
@@ -108,6 +109,7 @@ const services = [
 
 const Spaarsystemen = () => (
   <Layout>
+      <PageBuilderSlot pageKey="spaarsystemen" position="before" />
     {/* Hero */}
     <section className="py-16 md:py-24">
       <div className="container">
@@ -254,6 +256,7 @@ const Spaarsystemen = () => (
         </div>
       </div>
     </section>
+    <PageBuilderSlot pageKey="spaarsystemen" position="after" />
   </Layout>
 );
 

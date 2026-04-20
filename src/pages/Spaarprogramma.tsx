@@ -4,6 +4,7 @@ import { CheckCircle } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const steps = [
   { step: "1", tKey: "sp_stap1_title", dKey: "sp_stap1_desc", title: "Analyse & Advies", desc: "Wij analyseren uw situatie en adviseren over de beste aanpak voor uw loyaliteitsprogramma." },
@@ -25,6 +26,7 @@ const benefits = [
 
 const Spaarprogramma = () => (
   <Layout>
+      <PageBuilderSlot pageKey="spaarprogramma" position="before" />
     <section className="py-16 md:py-24">
       <div className="container text-center">
         <EditableText page="spaarprogramma" contentKey="hero_title" defaultValue="Spaarprogramma" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -65,6 +67,7 @@ const Spaarprogramma = () => (
         </div>
       </div>
     </section>
+    <PageBuilderSlot pageKey="spaarprogramma" position="after" />
   </Layout>
 );
 
