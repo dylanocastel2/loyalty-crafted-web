@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, Pencil, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { BUILTIN_PAGES } from "@/lib/builtinPages";
 
 interface PageRow {
   id: string;
@@ -21,17 +22,29 @@ const PagesAdmin = () => {
   const { toast } = useToast();
   const [pages, setPages] = useState<PageRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [slotCounts, setSlotCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!authLoading && !isAdmin) navigate("/");
   }, [authLoading, isAdmin, navigate]);
 
   const fetchPages = async () => {
-    const { data } = await supabase
-      .from("custom_pages")
-      .select("id, slug, title, published, show_in_menu, updated_at")
-      .order("updated_at", { ascending: false });
-    if (data) setPages(data as PageRow[]);
+    const [pagesRes, slotsRes] = await Promise.all([
+      supabase
+        .from("custom_pages")
+        .select("id, slug, title, published, show_in_menu, updated_at")
+        .order("updated_at", { ascending: false }),
+      supabase.from("page_blocks").select("page_key, blocks"),
+    ]);
+    if (pagesRes.data) setPages(pagesRes.data as PageRow[]);
+    if (slotsRes.data) {
+      const counts: Record<string, number> = {};
+      for (const row of slotsRes.data as { page_key: string; blocks: any }[]) {
+        const len = Array.isArray(row.blocks) ? row.blocks.length : 0;
+        counts[row.page_key] = (counts[row.page_key] || 0) + len;
+      }
+      setSlotCounts(counts);
+    }
     setLoading(false);
   };
 
