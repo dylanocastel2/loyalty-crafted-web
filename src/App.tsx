@@ -20,6 +20,7 @@ import KlantcaseCreator from "./pages/KlantcaseCreator";
 import KlantcaseDetail from "./pages/KlantcaseDetail";
 import PagesAdmin from "./pages/admin/PagesAdmin";
 import PageEditor from "./pages/admin/PageEditor";
+import BuiltinPageEditor from "./pages/admin/BuiltinPageEditor";
 import CustomPage from "./pages/CustomPage";
 import NotFound from "./pages/NotFound";
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/pages" element={<PagesAdmin />} />
             <Route path="/admin/pages/:id/edit" element={<PageEditor />} />
+            <Route path="/admin/pages/builtin/:pageKey" element={<BuiltinPageEditor />} />
             <Route path="/p/:slug" element={<CustomPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
