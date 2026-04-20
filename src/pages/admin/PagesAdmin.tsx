@@ -91,6 +91,50 @@ const PagesAdmin = () => {
       </header>
 
       <div className="container py-8">
+        <section className="mb-8">
+          <div className="mb-3">
+            <h2 className="font-bold text-lg">Bestaande pagina's</h2>
+            <p className="text-sm text-muted-foreground">Voeg extra blokken toe boven of onder de bestaande inhoud</p>
+          </div>
+          <div className="bg-card border rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Pagina</th>
+                  <th className="px-4 py-3 font-semibold">Pad</th>
+                  <th className="px-4 py-3 font-semibold">Extra blokken</th>
+                  <th className="px-4 py-3 font-semibold text-right">Acties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {BUILTIN_PAGES.map((bp) => (
+                  <tr key={bp.key} className="border-t hover:bg-muted/20">
+                    <td className="px-4 py-3 font-medium">{bp.label}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground font-mono">{bp.path}</td>
+                    <td className="px-4 py-3 text-sm">{slotCounts[bp.key] || 0}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-1">
+                        <a href={bp.path} target="_blank" rel="noreferrer">
+                          <Button variant="ghost" size="icon" title="Bekijken"><ExternalLink className="h-4 w-4" /></Button>
+                        </a>
+                        <Link to={`/admin/pages/builtin/${bp.key}`}>
+                          <Button variant="ghost" size="icon" title="Bewerken"><Pencil className="h-4 w-4" /></Button>
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-lg">Custom pagina's</h2>
+            <p className="text-sm text-muted-foreground">Volledig zelf opgebouwde pagina's via de blokkenbouwer</p>
+          </div>
+        </div>
         {pages.length === 0 ? (
           <div className="bg-card border rounded-lg p-12 text-center">
             <p className="text-muted-foreground mb-4">Nog geen pagina's aangemaakt</p>
