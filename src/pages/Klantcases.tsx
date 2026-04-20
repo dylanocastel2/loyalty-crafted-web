@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Plus, ArrowRight, Pencil } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 interface KlantcaseItem {
   id: string;
@@ -45,6 +46,7 @@ const Klantcases = () => {
 
   return (
     <Layout>
+      <PageBuilderSlot pageKey="klantcases" position="before" />
       <section className="py-16 md:py-24 pb-0">
         <div className="container text-center relative">
           <EditableText page="klantcases" contentKey="hero_title" defaultValue="Klantcases" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -123,6 +125,7 @@ const Klantcases = () => {
           <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
         </div>
       </section>
+      <PageBuilderSlot pageKey="klantcases" position="after" />
     </Layout>
   );
 };

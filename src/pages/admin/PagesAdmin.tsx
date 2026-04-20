@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plus, Pencil, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { BUILTIN_PAGES } from "@/lib/builtinPages";
 
 interface PageRow {
   id: string;
@@ -21,17 +22,29 @@ const PagesAdmin = () => {
   const { toast } = useToast();
   const [pages, setPages] = useState<PageRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [slotCounts, setSlotCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (!authLoading && !isAdmin) navigate("/");
   }, [authLoading, isAdmin, navigate]);
 
   const fetchPages = async () => {
-    const { data } = await supabase
-      .from("custom_pages")
-      .select("id, slug, title, published, show_in_menu, updated_at")
-      .order("updated_at", { ascending: false });
-    if (data) setPages(data as PageRow[]);
+    const [pagesRes, slotsRes] = await Promise.all([
+      supabase
+        .from("custom_pages")
+        .select("id, slug, title, published, show_in_menu, updated_at")
+        .order("updated_at", { ascending: false }),
+      supabase.from("page_blocks").select("page_key, blocks"),
+    ]);
+    if (pagesRes.data) setPages(pagesRes.data as PageRow[]);
+    if (slotsRes.data) {
+      const counts: Record<string, number> = {};
+      for (const row of slotsRes.data as { page_key: string; blocks: any }[]) {
+        const len = Array.isArray(row.blocks) ? row.blocks.length : 0;
+        counts[row.page_key] = (counts[row.page_key] || 0) + len;
+      }
+      setSlotCounts(counts);
+    }
     setLoading(false);
   };
 
@@ -78,6 +91,50 @@ const PagesAdmin = () => {
       </header>
 
       <div className="container py-8">
+        <section className="mb-8">
+          <div className="mb-3">
+            <h2 className="font-bold text-lg">Bestaande pagina's</h2>
+            <p className="text-sm text-muted-foreground">Voeg extra blokken toe boven of onder de bestaande inhoud</p>
+          </div>
+          <div className="bg-card border rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-muted/40 text-left text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">Pagina</th>
+                  <th className="px-4 py-3 font-semibold">Pad</th>
+                  <th className="px-4 py-3 font-semibold">Extra blokken</th>
+                  <th className="px-4 py-3 font-semibold text-right">Acties</th>
+                </tr>
+              </thead>
+              <tbody>
+                {BUILTIN_PAGES.map((bp) => (
+                  <tr key={bp.key} className="border-t hover:bg-muted/20">
+                    <td className="px-4 py-3 font-medium">{bp.label}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground font-mono">{bp.path}</td>
+                    <td className="px-4 py-3 text-sm">{slotCounts[bp.key] || 0}</td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-1">
+                        <a href={bp.path} target="_blank" rel="noreferrer">
+                          <Button variant="ghost" size="icon" title="Bekijken"><ExternalLink className="h-4 w-4" /></Button>
+                        </a>
+                        <Link to={`/admin/pages/builtin/${bp.key}`}>
+                          <Button variant="ghost" size="icon" title="Bewerken"><Pencil className="h-4 w-4" /></Button>
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-lg">Custom pagina's</h2>
+            <p className="text-sm text-muted-foreground">Volledig zelf opgebouwde pagina's via de blokkenbouwer</p>
+          </div>
+        </div>
         {pages.length === 0 ? (
           <div className="bg-card border rounded-lg p-12 text-center">
             <p className="text-muted-foreground mb-4">Nog geen pagina's aangemaakt</p>

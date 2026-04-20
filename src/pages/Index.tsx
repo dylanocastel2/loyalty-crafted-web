@@ -4,6 +4,7 @@ import { Building2, ShoppingBag, Settings, Smartphone, Users, Zap } from "lucide
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const features = [
   {
@@ -38,6 +39,7 @@ const features = [
 
 const Index = () => (
   <Layout>
+      <PageBuilderSlot pageKey="index" position="before" />
     {/* Hero */}
     <section className="relative overflow-hidden py-20 md:py-32">
       <div className="container relative z-10 text-center">
@@ -124,6 +126,7 @@ const Index = () => (
         </div>
       </div>
     </section>
+    <PageBuilderSlot pageKey="index" position="after" />
   </Layout>
 );
 

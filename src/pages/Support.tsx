@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Mail, Phone, MessageSquare } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const faqs = [
   { key: "faq_1", q: "Hoe lang duurt de ontwikkeling van een spaarsysteem?", a: "De doorlooptijd varieert per project, maar gemiddeld duurt een implementatie 6-12 weken, afhankelijk van de complexiteit en gewenste integraties." },
@@ -15,6 +16,7 @@ const faqs = [
 
 const Support = () => (
   <Layout>
+      <PageBuilderSlot pageKey="support" position="before" />
     <section className="py-16 md:py-24">
       <div className="container text-center">
         <EditableText page="support" contentKey="hero_title" defaultValue="Support" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -62,6 +64,7 @@ const Support = () => (
         </div>
       </div>
     </section>
+    <PageBuilderSlot pageKey="support" position="after" />
   </Layout>
 );
 

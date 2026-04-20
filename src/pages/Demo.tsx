@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
 
 const Demo = () => {
   const { toast } = useToast();
@@ -25,6 +26,7 @@ const Demo = () => {
 
   return (
     <Layout>
+      <PageBuilderSlot pageKey="demo" position="before" />
       <section className="py-16 md:py-24 pb-0">
         <div className="container text-center">
           <EditableText page="demo" contentKey="hero_title" defaultValue="Demo Aanvragen" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -112,6 +114,7 @@ const Demo = () => {
           </div>
         </div>
       </section>
+      <PageBuilderSlot pageKey="demo" position="after" />
     </Layout>
   );
 };

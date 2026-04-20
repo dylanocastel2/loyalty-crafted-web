@@ -113,6 +113,33 @@ export type Database = {
         }
         Relationships: []
       }
+      page_blocks: {
+        Row: {
+          blocks: Json
+          created_at: string
+          id: string
+          page_key: string
+          position: string
+          updated_at: string
+        }
+        Insert: {
+          blocks?: Json
+          created_at?: string
+          id?: string
+          page_key: string
+          position?: string
+          updated_at?: string
+        }
+        Update: {
+          blocks?: Json
+          created_at?: string
+          id?: string
+          page_key?: string
+          position?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       page_content: {
         Row: {
           content: string
