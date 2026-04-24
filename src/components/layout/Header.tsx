@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 const baseNavItems = [
   { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
   { label: "GEMEENTEN", path: "/gemeenten" },
-  { label: "COMMERCIEEL", path: "/commercieel" },
   { label: "KLANTCASES", path: "/klantcases" },
   { label: "SUPPORT", path: "/support" },
   { label: "OVER ONS", path: "/over-ons" },
