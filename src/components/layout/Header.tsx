@@ -68,12 +68,12 @@ const Header = () => {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1 flex-wrap justify-end">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 text-xs font-semibold tracking-wider transition-colors rounded-md hover:bg-white hover:text-[#0a83ae] ${
+                className={`px-2 py-2 text-[11px] font-semibold tracking-wider transition-colors rounded-md hover:bg-white hover:text-[#0a83ae] whitespace-nowrap ${
                   location.pathname === item.path ? "text-[#0a83ae] bg-white" : "text-white"
                 }`}
               >
@@ -81,7 +81,7 @@ const Header = () => {
               </Link>
             ))}
             <Link to="/demo">
-              <Button size="sm" className="ml-2 text-xs font-semibold tracking-wider">
+              <Button size="sm" className="ml-2 text-[11px] font-semibold tracking-wider">
                 DEMO
               </Button>
             </Link>
@@ -89,7 +89,7 @@ const Header = () => {
 
           {/* Mobile toggle */}
           <button
-            className="lg:hidden p-2"
+            className="md:hidden p-2"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu openen"
           >
@@ -99,7 +99,7 @@ const Header = () => {
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <nav className="lg:hidden border-t bg-background pb-4">
+          <nav className="md:hidden border-t bg-background pb-4">
             <div className="container flex flex-col gap-1 pt-2">
               {navItems.map((item) => (
                 <Link
