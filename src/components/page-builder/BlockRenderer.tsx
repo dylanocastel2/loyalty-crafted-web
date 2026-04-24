@@ -32,7 +32,16 @@ interface Props {
 
 const BlockRenderer = ({ block }: Props) => {
   const p = block.props;
+  const wrapperStyle: React.CSSProperties = {
+    marginTop: p.marginTop != null ? `${p.marginTop}px` : undefined,
+    marginBottom: p.marginBottom != null ? `${p.marginBottom}px` : undefined,
+    paddingLeft: p.offsetX ? `${p.offsetX}px` : undefined,
+  };
+  const wrap = (node: React.ReactNode) => (
+    <div style={wrapperStyle}>{node}</div>
+  );
 
+  const rendered = (() => {
   switch (block.type) {
     case "heading": {
       const Tag = (`h${p.level || 2}`) as keyof JSX.IntrinsicElements;
@@ -298,6 +307,8 @@ const BlockRenderer = ({ block }: Props) => {
     default:
       return null;
   }
+  })();
+  return wrap(rendered);
 };
 
 export default BlockRenderer;
