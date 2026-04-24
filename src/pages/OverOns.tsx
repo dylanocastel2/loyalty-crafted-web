@@ -2,6 +2,10 @@ import Layout from "@/components/layout/Layout";
 import { Code, Users, Heart, Shield } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import BlockRenderer from "@/components/page-builder/BlockRenderer";
+import { Block } from "@/components/page-builder/blockSchema";
 
 const values = [
   { icon: Code, tKey: "oo_inhouse_title", dKey: "oo_inhouse_desc", title: "In-house Ontwikkeling", desc: "Al onze systemen worden volledig in eigen huis ontwikkeld door ons ervaren team. Geen outsourcing, volledige controle over kwaliteit." },
@@ -10,8 +14,38 @@ const values = [
   { icon: Shield, tKey: "oo_betrouwbaar_title", dKey: "oo_betrouwbaar_desc", title: "Betrouwbaar & Veilig", desc: "Veiligheid en betrouwbaarheid staan centraal in alles wat wij doen. Onze systemen voldoen aan de hoogste standaarden." },
 ];
 
-const OverOns = () => (
-  <Layout>
+const OverOns = () => {
+  const [fullBlocks, setFullBlocks] = useState<Block[] | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("page_blocks")
+      .select("blocks")
+      .eq("page_key", "over-ons")
+      .eq("position", "full")
+      .maybeSingle()
+      .then(({ data }) => {
+        const blocks = (data?.blocks as unknown as Block[]) || [];
+        setFullBlocks(blocks.length > 0 ? blocks : null);
+        setLoaded(true);
+      });
+  }, []);
+
+  if (!loaded) {
+    return <Layout><div className="min-h-[60vh]" /></Layout>;
+  }
+
+  if (fullBlocks) {
+    return (
+      <Layout>
+        {fullBlocks.map((b) => <BlockRenderer key={b.id} block={b} />)}
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
       <PageBuilderSlot pageKey="over-ons" position="before" />
     <section className="py-16 md:py-24">
       <div className="container text-center">
@@ -42,7 +76,8 @@ const OverOns = () => (
       </div>
     </section>
     <PageBuilderSlot pageKey="over-ons" position="after" />
-  </Layout>
-);
+    </Layout>
+  );
+};
 
 export default OverOns;
