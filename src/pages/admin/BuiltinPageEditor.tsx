@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
-import BlockCanvas from "@/components/page-builder/BlockCanvas";
+import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import { getBuiltinPage } from "@/lib/builtinPages";
 
@@ -68,7 +68,7 @@ const BuiltinPageEditor = () => {
 
   const blocks = active === "before" ? beforeBlocks : afterBlocks;
   const setBlocks = active === "before" ? setBeforeBlocks : setAfterBlocks;
-  const selectedBlock = blocks.find((b) => b.id === selectedId) || null;
+  const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
@@ -77,7 +77,8 @@ const BuiltinPageEditor = () => {
   };
 
   const updateSelected = (props: Record<string, any>) => {
-    setBlocks(blocks.map((b) => (b.id === selectedId ? { ...b, props } : b)));
+    if (!selectedId) return;
+    setBlocks(updateBlockPropsById(blocks, selectedId, props));
   };
 
   const deleteBlock = (bid: string) => {
