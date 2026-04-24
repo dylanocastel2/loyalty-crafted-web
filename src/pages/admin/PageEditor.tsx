@@ -208,9 +208,7 @@ const PageEditor = () => {
                     blocks={blocks}
                     selectedId={selectedId}
                     onSelect={setSelectedId}
-                    onReorder={setBlocks}
-                    onDelete={deleteBlock}
-                    onDuplicate={duplicateBlock}
+                    onChange={setBlocks}
                   />
                 </div>
               </main>
