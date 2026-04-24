@@ -340,6 +340,20 @@ const BlockInspector = ({ block, onChange }: Props) => {
         <p className="text-xs text-muted-foreground">{getBlockMeta(block.type)?.label}</p>
       </div>
       {renderFields()}
+
+      <div className="pt-4 mt-4 border-t space-y-3">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Positie & marges</h4>
+        <Field label="Marge boven (px)">
+          <Input type="number" value={p.marginTop ?? ""} onChange={(e) => set("marginTop", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+        </Field>
+        <Field label="Marge onder (px)">
+          <Input type="number" value={p.marginBottom ?? ""} onChange={(e) => set("marginBottom", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+        </Field>
+        <Field label="Horizontale offset (px)">
+          <Input type="number" value={p.offsetX ?? ""} onChange={(e) => set("offsetX", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+        </Field>
+        <p className="text-[10px] text-muted-foreground leading-snug">Tip: gebruik 'Uitlijning' bovenaan en deze velden om je tekst of afbeelding precies op de juiste plek te zetten.</p>
+      </div>
     </div>
   );
 };
