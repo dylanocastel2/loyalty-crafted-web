@@ -7,8 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Gemeenten from "./pages/Gemeenten";
 import Commercieel from "./pages/Commercieel";
-import Spaarsystemen from "./pages/Spaarsystemen";
-import Spaarprogramma from "./pages/Spaarprogramma";
+import Spaarsysteem from "./pages/Spaarsysteem";
 import Klantcases from "./pages/Klantcases";
 import Support from "./pages/Support";
 import OverOns from "./pages/OverOns";
@@ -37,8 +36,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/gemeenten" element={<Gemeenten />} />
             <Route path="/commercieel" element={<Commercieel />} />
-            <Route path="/spaarsystemen" element={<Spaarsystemen />} />
-            <Route path="/spaarprogramma" element={<Spaarprogramma />} />
+            <Route path="/spaarsysteem" element={<Spaarsysteem />} />
+            <Route path="/spaarsystemen" element={<Spaarsysteem />} />
+            <Route path="/spaarprogramma" element={<Spaarsysteem />} />
             <Route path="/klantcases" element={<Klantcases />} />
             <Route path="/klantcases/nieuw" element={<KlantcaseCreator />} />
             <Route path="/klantcases/:id" element={<KlantcaseDetail />} />

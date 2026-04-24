@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ExternalLink, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas from "@/components/page-builder/BlockCanvas";
@@ -27,6 +27,8 @@ const BuiltinPageEditor = () => {
   const [beforeBlocks, setBeforeBlocks] = useState<Block[]>([]);
   const [afterBlocks, setAfterBlocks] = useState<Block[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
+  const [previewKey, setPreviewKey] = useState(0);
 
   useEffect(() => {
     if (!authLoading && !isAdmin) navigate("/");
@@ -114,6 +116,7 @@ const BuiltinPageEditor = () => {
       return;
     }
     toast({ title: "Opgeslagen" });
+    setPreviewKey((k) => k + 1);
   };
 
   return (
@@ -128,6 +131,10 @@ const BuiltinPageEditor = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowPreview((v) => !v)}>
+              {showPreview ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+              {showPreview ? "Verberg preview" : "Toon preview"}
+            </Button>
             <Button variant="outline" size="sm" onClick={() => window.open(builtin.path, "_blank")}>
               <ExternalLink className="h-4 w-4 mr-1" /> Bekijken
             </Button>
@@ -149,10 +156,10 @@ const BuiltinPageEditor = () => {
 
           <TabsContent value={active} className="flex-1 mt-0">
             <div className="grid grid-cols-12 gap-4 p-4 h-[calc(100vh-7.5rem)]">
-              <aside className="col-span-12 lg:col-span-3 bg-card border rounded-lg p-4 overflow-y-auto">
+              <aside className="col-span-12 lg:col-span-2 bg-card border rounded-lg p-4 overflow-y-auto">
                 <BlockLibrary onAdd={addBlock} />
               </aside>
-              <main className="col-span-12 lg:col-span-6 bg-card border rounded-lg p-4 overflow-y-auto" onClick={() => setSelectedId(null)}>
+              <main className={`col-span-12 ${showPreview ? "lg:col-span-4" : "lg:col-span-7"} bg-card border rounded-lg p-4 overflow-y-auto`} onClick={() => setSelectedId(null)}>
                 <div onClick={(e) => e.stopPropagation()}>
                   <BlockCanvas
                     blocks={blocks}
@@ -167,6 +174,26 @@ const BuiltinPageEditor = () => {
               <aside className="col-span-12 lg:col-span-3 bg-card border rounded-lg p-4 overflow-y-auto">
                 <BlockInspector block={selectedBlock} onChange={updateSelected} />
               </aside>
+              {showPreview && (
+                <aside className="col-span-12 lg:col-span-3 bg-card border rounded-lg overflow-hidden flex flex-col">
+                  <div className="flex items-center justify-between px-3 py-2 border-b bg-muted/40">
+                    <span className="text-xs font-semibold">Live preview</span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setPreviewKey((k) => k + 1)} title="Vernieuwen">
+                      <RefreshCw className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="flex-1 bg-background overflow-hidden">
+                    <iframe
+                      key={previewKey}
+                      src={builtin.path}
+                      title="Live preview"
+                      className="w-full h-full border-0"
+                      style={{ transform: "scale(0.6)", transformOrigin: "top left", width: "166.67%", height: "166.67%" }}
+                    />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground px-3 py-1.5 border-t">Klik op opslaan om de preview te updaten.</p>
+                </aside>
+              )}
             </div>
           </TabsContent>
         </Tabs>

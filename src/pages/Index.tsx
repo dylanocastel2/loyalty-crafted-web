@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Building2, ShoppingBag, Settings, Smartphone, Users, Zap } from "lucide-react";
+import { Settings, Smartphone, Users, Zap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
@@ -59,21 +59,12 @@ const Index = () => (
           multiline
         />
 
-        {/* Audience selector */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-          <Link to="/gemeenten" className="flex-1">
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 hover:bg-primary/10 transition-all cursor-pointer group">
-              <Building2 className="h-10 w-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-semibold">Gemeenten</h3>
-              <p className="text-sm text-muted-foreground mt-1">Stadspas & regelingen</p>
-            </div>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to="/spaarsysteem">
+            <Button size="lg">Bekijk ons spaarsysteem</Button>
           </Link>
-          <Link to="/commercieel" className="flex-1">
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 hover:bg-primary/10 transition-all cursor-pointer group">
-              <ShoppingBag className="h-10 w-10 text-primary mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <h3 className="text-lg font-semibold">Commercieel</h3>
-              <p className="text-sm text-muted-foreground mt-1">Klantenbinding & loyalty</p>
-            </div>
+          <Link to="/demo">
+            <Button size="lg" variant="outline">Demo aanvragen</Button>
           </Link>
         </div>
       </div>
