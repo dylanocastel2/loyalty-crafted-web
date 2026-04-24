@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Eye, Save, Loader2 } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
-import BlockCanvas from "@/components/page-builder/BlockCanvas";
+import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import SeoFields, { SeoData } from "@/components/page-builder/SeoFields";
 import PageSettingsForm, { PageSettingsData } from "@/components/page-builder/PageSettings";
@@ -84,7 +84,7 @@ const PageEditor = () => {
     if (!slugTouched) setSlug(slugify(title));
   }, [title, slugTouched]);
 
-  const selectedBlock = blocks.find((b) => b.id === selectedId) || null;
+  const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
@@ -93,7 +93,8 @@ const PageEditor = () => {
   };
 
   const updateSelected = (props: Record<string, any>) => {
-    setBlocks(blocks.map((b) => (b.id === selectedId ? { ...b, props } : b)));
+    if (!selectedId) return;
+    setBlocks(updateBlockPropsById(blocks, selectedId, props));
   };
 
   const deleteBlock = (bid: string) => {
@@ -208,9 +209,7 @@ const PageEditor = () => {
                     blocks={blocks}
                     selectedId={selectedId}
                     onSelect={setSelectedId}
-                    onReorder={setBlocks}
-                    onDelete={deleteBlock}
-                    onDuplicate={duplicateBlock}
+                    onChange={setBlocks}
                   />
                 </div>
               </main>

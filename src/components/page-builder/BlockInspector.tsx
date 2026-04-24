@@ -197,6 +197,87 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </>
         );
 
+      case "row":
+        return (
+          <>
+            <Field label="Aantal kolommen">
+              <Select value={String(p.columns || 2)} onValueChange={(v) => set("columns", parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 kolom</SelectItem>
+                  <SelectItem value="2">2 kolommen</SelectItem>
+                  <SelectItem value="3">3 kolommen</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Tussenruimte (px)">
+              <Input type="number" value={p.gap ?? 32} onChange={(e) => set("gap", parseInt(e.target.value) || 0)} />
+            </Field>
+            <Field label="Verticale uitlijning">
+              <Select value={p.verticalAlign || "start"} onValueChange={(v) => set("verticalAlign", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="start">Boven</SelectItem>
+                  <SelectItem value="center">Midden</SelectItem>
+                  <SelectItem value="end">Onder</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <p className="text-[11px] text-muted-foreground">Voeg blokken toe in elke kolom via de + knop in de kolom op het canvas.</p>
+          </>
+        );
+
+      case "icon_card":
+        return (
+          <>
+            <Field label="Icoon (Lucide naam, bv. Star, Heart, Code)">
+              <Input value={p.icon || ""} onChange={(e) => set("icon", e.target.value)} />
+            </Field>
+            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
+            <Field label="Beschrijving"><Textarea value={p.description || ""} onChange={(e) => set("description", e.target.value)} rows={4} /></Field>
+            <Field label="Icoonkleur">
+              <Select value={p.iconColor || "primary"} onValueChange={(v) => set("iconColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </>
+        );
+
+      case "stat":
+        return (
+          <>
+            <Field label="Waarde (bv. 100+)"><Input value={p.value || ""} onChange={(e) => set("value", e.target.value)} /></Field>
+            <Field label="Label"><Input value={p.label || ""} onChange={(e) => set("label", e.target.value)} /></Field>
+          </>
+        );
+
       case "feature_list":
         return (
           <>

@@ -8,11 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
-import BlockCanvas from "@/components/page-builder/BlockCanvas";
+import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import { getBuiltinPage } from "@/lib/builtinPages";
 
-type Position = "before" | "after";
+type Position = "before" | "after" | "full";
 
 const BuiltinPageEditor = () => {
   const { pageKey } = useParams<{ pageKey: string }>();
@@ -26,6 +26,7 @@ const BuiltinPageEditor = () => {
   const [active, setActive] = useState<Position>("before");
   const [beforeBlocks, setBeforeBlocks] = useState<Block[]>([]);
   const [afterBlocks, setAfterBlocks] = useState<Block[]>([]);
+  const [fullBlocks, setFullBlocks] = useState<Block[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
   const [previewKey, setPreviewKey] = useState(0);
@@ -44,8 +45,10 @@ const BuiltinPageEditor = () => {
       if (data) {
         const before = data.find((r) => r.position === "before");
         const after = data.find((r) => r.position === "after");
+        const full = data.find((r) => r.position === "full");
         if (before?.blocks) setBeforeBlocks(before.blocks as unknown as Block[]);
         if (after?.blocks) setAfterBlocks(after.blocks as unknown as Block[]);
+        if (full?.blocks) setFullBlocks(full.blocks as unknown as Block[]);
       }
       setLoading(false);
     };
@@ -66,9 +69,9 @@ const BuiltinPageEditor = () => {
   }
   if (!isAdmin || !builtin) return null;
 
-  const blocks = active === "before" ? beforeBlocks : afterBlocks;
-  const setBlocks = active === "before" ? setBeforeBlocks : setAfterBlocks;
-  const selectedBlock = blocks.find((b) => b.id === selectedId) || null;
+  const blocks = active === "before" ? beforeBlocks : active === "after" ? afterBlocks : fullBlocks;
+  const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
+  const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
@@ -77,7 +80,8 @@ const BuiltinPageEditor = () => {
   };
 
   const updateSelected = (props: Record<string, any>) => {
-    setBlocks(blocks.map((b) => (b.id === selectedId ? { ...b, props } : b)));
+    if (!selectedId) return;
+    setBlocks(updateBlockPropsById(blocks, selectedId, props));
   };
 
   const deleteBlock = (bid: string) => {
@@ -106,13 +110,14 @@ const BuiltinPageEditor = () => {
 
   const save = async () => {
     setSaving(true);
-    const [r1, r2] = await Promise.all([
+    const [r1, r2, r3] = await Promise.all([
       saveSlot("before", beforeBlocks),
       saveSlot("after", afterBlocks),
+      saveSlot("full", fullBlocks),
     ]);
     setSaving(false);
-    if (r1.error || r2.error) {
-      toast({ title: "Fout bij opslaan", description: (r1.error || r2.error)?.message, variant: "destructive" });
+    if (r1.error || r2.error || r3.error) {
+      toast({ title: "Fout bij opslaan", description: (r1.error || r2.error || r3.error)?.message, variant: "destructive" });
       return;
     }
     toast({ title: "Opgeslagen" });
@@ -149,9 +154,15 @@ const BuiltinPageEditor = () => {
         <Tabs value={active} onValueChange={(v) => { setActive(v as Position); setSelectedId(null); }} className="flex-1 flex flex-col">
           <div className="bg-card border-b px-4">
             <TabsList>
-              <TabsTrigger value="before">Boven bestaande inhoud ({beforeBlocks.length})</TabsTrigger>
-              <TabsTrigger value="after">Onder bestaande inhoud ({afterBlocks.length})</TabsTrigger>
+              <TabsTrigger value="full">Volledige pagina {fullBlocks.length > 0 && `(${fullBlocks.length})`}</TabsTrigger>
+              <TabsTrigger value="before">Extra boven ({beforeBlocks.length})</TabsTrigger>
+              <TabsTrigger value="after">Extra onder ({afterBlocks.length})</TabsTrigger>
             </TabsList>
+            {active === "full" && (
+              <p className="text-[11px] text-muted-foreground py-1.5">
+                Als je hier blokken plaatst, vervangt de pagina volledig de originele inhoud. Laat leeg om de originele pagina te tonen.
+              </p>
+            )}
           </div>
 
           <TabsContent value={active} className="flex-1 mt-0">
@@ -165,9 +176,7 @@ const BuiltinPageEditor = () => {
                     blocks={blocks}
                     selectedId={selectedId}
                     onSelect={setSelectedId}
-                    onReorder={setBlocks}
-                    onDelete={deleteBlock}
-                    onDuplicate={duplicateBlock}
+                    onChange={setBlocks}
                   />
                 </div>
               </main>

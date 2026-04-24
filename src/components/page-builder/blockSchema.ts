@@ -9,6 +9,7 @@ export type BlockType =
   | "two_columns"
   | "three_columns"
   | "container"
+  | "row"
   | "feature_list"
   | "faq"
   | "testimonial"
@@ -18,12 +19,16 @@ export type BlockType =
   | "accordion"
   | "tabs"
   | "image_carousel"
+  | "icon_card"
+  | "stat"
   | "custom_html";
 
 export interface Block {
   id: string;
   type: BlockType;
   props: Record<string, any>;
+  // For row blocks: per-column nested children
+  children?: Block[][];
 }
 
 export interface BlockMeta {
@@ -48,6 +53,7 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "two_columns", label: "Twee kolommen", category: "Layout", icon: "Columns2", defaultProps: { left: "Linkerkolom inhoud", right: "Rechterkolom inhoud" } },
   { type: "three_columns", label: "Drie kolommen", category: "Layout", icon: "Columns3", defaultProps: { col1: "Kolom 1", col2: "Kolom 2", col3: "Kolom 3" } },
   { type: "container", label: "Achtergrondblok", category: "Layout", icon: "Square", defaultProps: { content: "Inhoud van het blok", bgColor: "muted", padding: "large" } },
+  { type: "row", label: "Rij met kolommen", category: "Layout", icon: "Columns", defaultProps: { columns: 2, gap: 32, bgColor: "background", padding: "medium", verticalAlign: "start" } },
 
   // Content
   { type: "feature_list", label: "Featurelijst", category: "Content", icon: "List", defaultProps: { items: [{ title: "Feature 1", description: "Beschrijving" }, { title: "Feature 2", description: "Beschrijving" }, { title: "Feature 3", description: "Beschrijving" }] } },
@@ -61,6 +67,8 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "accordion", label: "Accordeon", category: "Geavanceerd", icon: "ChevronsUpDown", defaultProps: { items: [{ title: "Item 1", content: "Inhoud 1" }, { title: "Item 2", content: "Inhoud 2" }] } },
   { type: "tabs", label: "Tabbladen", category: "Geavanceerd", icon: "LayoutGrid", defaultProps: { items: [{ label: "Tab 1", content: "Inhoud 1" }, { label: "Tab 2", content: "Inhoud 2" }] } },
   { type: "image_carousel", label: "Afbeeldingen carrousel", category: "Geavanceerd", icon: "GalleryHorizontal", defaultProps: { images: [] } },
+  { type: "icon_card", label: "Icoon-kaart", category: "Content", icon: "Square", defaultProps: { icon: "Star", title: "Titel", description: "Korte beschrijving", iconColor: "primary" } },
+  { type: "stat", label: "Statistiek", category: "Content", icon: "BarChart3", defaultProps: { value: "100+", label: "Klanten" } },
   { type: "custom_html", label: "Custom HTML", category: "Geavanceerd", icon: "Code", defaultProps: { html: "<p>Custom HTML</p>" } },
 ];
 
@@ -69,9 +77,14 @@ export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>
 
 export const createBlock = (type: BlockType): Block => {
   const meta = getBlockMeta(type);
-  return {
+  const block: Block = {
     id: crypto.randomUUID(),
     type,
     props: JSON.parse(JSON.stringify(meta?.defaultProps ?? {})),
   };
+  if (type === "row") {
+    const cols = block.props.columns || 2;
+    block.children = Array.from({ length: cols }, () => []);
+  }
+  return block;
 };
