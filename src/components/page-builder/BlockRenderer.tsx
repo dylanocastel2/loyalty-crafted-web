@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
+import * as Icons from "lucide-react";
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
@@ -145,6 +146,48 @@ const BlockRenderer = ({ block }: Props) => {
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container whitespace-pre-wrap">{p.content}</div>
         </section>
+      );
+
+    case "row": {
+      const cols = p.columns || 2;
+      const colsClass = cols === 1 ? "grid-cols-1" : cols === 3 ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1 md:grid-cols-2";
+      const valign = p.verticalAlign === "center" ? "items-center" : p.verticalAlign === "end" ? "items-end" : "items-start";
+      const children = block.children || [];
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            <div className={`grid ${colsClass} ${valign}`} style={{ gap: `${p.gap ?? 32}px` }}>
+              {Array.from({ length: cols }).map((_, ci) => (
+                <div key={ci} className="min-w-0">
+                  {(children[ci] || []).map((child) => (
+                    <BlockRenderer key={child.id} block={child} />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    case "icon_card": {
+      const Icon = (Icons as any)[p.icon] || Icons.Star;
+      const colorClass = p.iconColor === "secondary" ? "text-secondary" : p.iconColor === "accent" ? "text-accent-foreground" : "text-primary";
+      return (
+        <div className="border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow h-full">
+          <Icon className={`h-8 w-8 ${colorClass} mb-4`} />
+          <h3 className="font-semibold mb-2">{p.title}</h3>
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{p.description}</p>
+        </div>
+      );
+    }
+
+    case "stat":
+      return (
+        <div className="text-center py-4">
+          <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{p.value}</div>
+          <div className="text-sm text-muted-foreground uppercase tracking-wider">{p.label}</div>
+        </div>
       );
 
     case "feature_list":
