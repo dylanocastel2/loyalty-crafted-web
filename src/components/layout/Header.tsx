@@ -60,18 +60,14 @@ const Header = () => {
           </div>
         </div>
       )}
-      <header className="sticky top-0 z-50 border-b border-white/10 glass-dark">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-white via-[hsl(var(--primary)/0.85)] to-[hsl(var(--primary-glow))] opacity-95" />
+      <header className="sticky top-0 z-50 glass">
         <div className="container relative flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group" aria-label="Naar homepage">
-            <div className="relative">
-              <div className="absolute inset-0 blur-md bg-[hsl(var(--primary-glow))] opacity-60 group-hover:opacity-90 transition-opacity rounded-full" />
-              <div className="relative h-8 w-8 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-[hsl(var(--ink))] text-sm shadow-glow">
-                L
-              </div>
+          <Link to="/" className="flex items-center gap-2.5 group" aria-label="Naar homepage">
+            <div className="h-8 w-8 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-white text-sm">
+              L
             </div>
-            <span className="text-white font-display font-bold tracking-tight text-base hidden sm:inline">
-              Loyalty<span className="text-gradient-aqua">group</span>
+            <span className="text-foreground font-display font-bold tracking-tight text-base hidden sm:inline">
+              Loyalty<span className="text-primary">group</span>
             </span>
           </Link>
 
@@ -81,17 +77,17 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative px-3 py-2 text-[11px] font-semibold tracking-wider transition-all rounded-full whitespace-nowrap ${
+                className={`nav-underline px-3 py-5 text-[11px] font-semibold tracking-wider whitespace-nowrap transition-colors ${
                   location.pathname === item.path
-                    ? "text-[hsl(var(--ink))] bg-white shadow-glow"
-                    : "text-white/85 hover:text-white hover:bg-white/10"
+                    ? "text-primary is-active"
+                    : "text-foreground/70 hover:text-foreground"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
             <Link to="/demo">
-              <Button size="sm" className="ml-2 text-[11px] font-semibold tracking-wider rounded-full bg-white text-[hsl(var(--ink))] hover:bg-white/90 shadow-glow">
+              <Button size="sm" className="ml-3 text-[11px] font-semibold tracking-wider rounded-full bg-gradient-aqua text-white hover:opacity-90 shadow-soft">
                 DEMO →
               </Button>
             </Link>
@@ -103,7 +99,7 @@ const Header = () => {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu openen"
           >
-            {mobileOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
+            {mobileOpen ? <X className="h-6 w-6 text-foreground" /> : <Menu className="h-6 w-6 text-foreground" />}
           </button>
         </div>
 

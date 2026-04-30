@@ -40,17 +40,14 @@ const features = [
 const Index = () => (
   <Layout>
       <PageBuilderSlot pageKey="index" position="before" />
-    {/* Hero */}
-    <section className="relative overflow-hidden bg-hero text-white py-24 md:py-36">
-      {/* Decorative grid + orbs */}
-      <div className="absolute inset-0 grid-pattern opacity-40" />
-      <div className="absolute -top-32 -left-32 h-[28rem] w-[28rem] rounded-full bg-[hsl(var(--primary)/0.45)] blur-3xl animate-float-slow" />
-      <div className="absolute -bottom-40 -right-32 h-[32rem] w-[32rem] rounded-full bg-[hsl(var(--primary-glow)/0.35)] blur-3xl animate-pulse-glow" />
-      <div className="absolute top-1/3 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[hsl(var(--secondary)/0.25)] blur-3xl" />
+    {/* Hero — clean */}
+    <section className="relative overflow-hidden bg-background py-24 md:py-36">
+      <div className="absolute inset-0 dot-grid opacity-50 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]" />
+      <div className="absolute -top-40 -right-32 h-[28rem] w-[28rem] rounded-full bg-[hsl(var(--primary)/0.07)] blur-3xl animate-float-slow" />
 
-      <div className="container relative z-10 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/80 backdrop-blur mb-6">
-          <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--primary-glow))] animate-pulse" />
+      <div className="container relative z-10 text-center max-w-4xl">
+        <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-muted-foreground mb-7">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
           In-house ontwikkeld in Nederland
         </div>
         <EditableText
@@ -58,66 +55,60 @@ const Index = () => (
           contentKey="hero_title"
           defaultValue="Spaarsystemen op maat"
           as="h1"
-          className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-[1.05] tracking-tight bg-gradient-to-br from-white via-white to-[hsl(var(--primary-glow))] bg-clip-text text-transparent"
+          className="text-4xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-[1.05] tracking-tight text-foreground"
         />
         <EditableText
           page="homepage"
           contentKey="hero_subtitle"
           defaultValue="Loyaltygroup B.V. ontwikkelt volledig op maat gemaakte loyaliteitssystemen. In-house ontwikkeld, flexibel en schaalbaar."
           as="p"
-          className="text-lg md:text-xl text-white/75 max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed"
           multiline
         />
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to="/spaarsysteem">
-            <Button size="lg" className="bg-white text-[hsl(var(--ink))] hover:bg-white/90 rounded-full shadow-glow font-semibold">
+            <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
               Bekijk ons spaarsysteem →
             </Button>
           </Link>
           <Link to="/demo">
-            <Button size="lg" variant="outline" className="rounded-full border-white/30 bg-white/5 text-white hover:bg-white/10 hover:text-white backdrop-blur">
+            <Button size="lg" variant="outline" className="rounded-full border-border hover:border-primary hover:text-primary">
               Demo aanvragen
             </Button>
           </Link>
         </div>
       </div>
-
-      {/* Bottom fade into next section */}
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-background" />
     </section>
 
     {/* Features */}
-    <section className="py-20 md:py-28 relative">
+    <section className="py-20 md:py-28 relative bg-surface border-y border-border">
       <div className="container">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="inline-block text-xs font-semibold tracking-[0.2em] text-primary uppercase mb-3">Waarom wij</span>
-        <EditableText
-          page="homepage"
-          contentKey="features_title"
-          defaultValue="Waarom Loyaltygroup?"
-          as="h2"
-          className="text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight"
-        />
-        <EditableText
-          page="homepage"
-          contentKey="features_subtitle"
-          defaultValue="Alles in eigen beheer ontwikkeld. Geen outsourcing, geen beperkingen."
-          as="p"
-          className="text-muted-foreground text-base md:text-lg"
-        />
+        <div className="max-w-2xl mb-14">
+          <span className="accent-bar mb-5" />
+          <EditableText
+            page="homepage"
+            contentKey="features_title"
+            defaultValue="Waarom Loyaltygroup?"
+            as="h2"
+            className="text-3xl md:text-5xl font-display font-bold mb-4 tracking-tight"
+          />
+          <EditableText
+            page="homepage"
+            contentKey="features_subtitle"
+            defaultValue="Alles in eigen beheer ontwikkeld. Geen outsourcing, geen beperkingen."
+            as="p"
+            className="text-muted-foreground text-base md:text-lg"
+          />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden border border-border">
           {features.map((f) => (
-            <div key={f.titleKey} className="group relative rounded-2xl border border-border/60 bg-gradient-card p-6 card-hover overflow-hidden">
-              <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-[hsl(var(--primary-glow)/0.15)] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative">
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-aqua text-[hsl(var(--ink))] shadow-glow mb-5">
-                  <f.icon className="h-6 w-6" />
-                </div>
-                <EditableText page="homepage" contentKey={f.titleKey} defaultValue={f.title} as="h3" className="font-display font-semibold text-lg mb-2" />
-                <EditableText page="homepage" contentKey={f.descKey} defaultValue={f.description} as="p" className="text-sm text-muted-foreground leading-relaxed" multiline />
+            <div key={f.titleKey} className="group relative bg-background p-7 transition-colors hover:bg-surface-2">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary mb-5 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <f.icon className="h-5 w-5" />
               </div>
+              <EditableText page="homepage" contentKey={f.titleKey} defaultValue={f.title} as="h3" className="font-display font-semibold text-lg mb-2" />
+              <EditableText page="homepage" contentKey={f.descKey} defaultValue={f.description} as="p" className="text-sm text-muted-foreground leading-relaxed" multiline />
             </div>
           ))}
         </div>
@@ -125,22 +116,25 @@ const Index = () => (
     </section>
 
     {/* CTA */}
-    <section className="py-20 md:py-28 relative overflow-hidden bg-hero text-white">
-      <div className="absolute inset-0 grid-pattern opacity-30" />
-      <div className="absolute top-0 left-1/4 h-96 w-96 rounded-full bg-[hsl(var(--primary-glow)/0.4)] blur-3xl animate-pulse-glow" />
-      <div className="container relative text-center max-w-3xl">
-        <EditableText page="homepage" contentKey="cta_title" defaultValue="Klaar om te starten?" as="h2" className="text-3xl md:text-5xl font-display font-bold mb-5 tracking-tight bg-gradient-to-br from-white to-[hsl(var(--primary-glow))] bg-clip-text text-transparent" />
-        <EditableText
-          page="homepage"
-          contentKey="cta_text"
-          defaultValue="Ontdek hoe een op maat gemaakt spaarsysteem uw organisatie kan versterken. Vraag vandaag nog een demo aan."
-          as="p"
-          className="text-white/80 max-w-xl mx-auto mb-10 text-lg"
-          multiline
-        />
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <EditableButton page="homepage" contentKey="cta_btn_demo" defaultValue="Demo aanvragen" to="/demo" variant="secondary" />
-          <EditableButton page="homepage" contentKey="cta_btn_contact" defaultValue="Neem contact op" to="/contact" variant="outline" />
+    <section className="py-20 md:py-28 relative bg-background">
+      <div className="container">
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-card p-10 md:p-16 text-center">
+          <div className="absolute inset-0 dot-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
+          <div className="relative max-w-2xl mx-auto">
+            <EditableText page="homepage" contentKey="cta_title" defaultValue="Klaar om te starten?" as="h2" className="text-3xl md:text-4xl font-display font-bold mb-4 tracking-tight" />
+            <EditableText
+              page="homepage"
+              contentKey="cta_text"
+              defaultValue="Ontdek hoe een op maat gemaakt spaarsysteem uw organisatie kan versterken. Vraag vandaag nog een demo aan."
+              as="p"
+              className="text-muted-foreground max-w-xl mx-auto mb-8"
+              multiline
+            />
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <EditableButton page="homepage" contentKey="cta_btn_demo" defaultValue="Demo aanvragen" to="/demo" />
+              <EditableButton page="homepage" contentKey="cta_btn_contact" defaultValue="Neem contact op" to="/contact" variant="outline" />
+            </div>
+          </div>
         </div>
       </div>
     </section>
