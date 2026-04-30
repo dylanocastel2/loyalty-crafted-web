@@ -61,7 +61,7 @@ const Header = () => {
         </div>
       )}
       <header className="sticky top-0 z-50 border-b border-white/10 glass-dark">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(var(--ink))] via-[hsl(var(--primary)/0.85)] to-[hsl(var(--primary-glow)/0.7)] opacity-95" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-white via-[hsl(var(--primary)/0.85)] to-[hsl(var(--primary-glow))] opacity-95" />
         <div className="container relative flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group" aria-label="Naar homepage">
             <div className="relative">
