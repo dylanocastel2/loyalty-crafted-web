@@ -60,10 +60,19 @@ const Header = () => {
           </div>
         </div>
       )}
-      <header className="sticky top-0 z-50 border-b" style={{ backgroundImage: 'url(/header-bg.png)', backgroundSize: 'cover', backgroundPosition: 'left center', backgroundRepeat: 'no-repeat' }}>
-        <div className="container relative flex h-16 items-center justify-end">
-          <Link to="/" className="absolute left-0 top-0 h-full w-48" aria-label="Naar homepage">
-            <span className="sr-only">Loyaltygroup B.V.</span>
+      <header className="sticky top-0 z-50 border-b border-white/10 glass-dark">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(var(--ink))] via-[hsl(var(--primary)/0.85)] to-[hsl(var(--primary-glow)/0.7)] opacity-95" />
+        <div className="container relative flex h-16 items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 group" aria-label="Naar homepage">
+            <div className="relative">
+              <div className="absolute inset-0 blur-md bg-[hsl(var(--primary-glow))] opacity-60 group-hover:opacity-90 transition-opacity rounded-full" />
+              <div className="relative h-8 w-8 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-[hsl(var(--ink))] text-sm shadow-glow">
+                L
+              </div>
+            </div>
+            <span className="text-white font-display font-bold tracking-tight text-base hidden sm:inline">
+              Loyalty<span className="text-gradient-aqua">group</span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
@@ -72,16 +81,18 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-2 py-2 text-[11px] font-semibold tracking-wider transition-colors rounded-md hover:bg-white hover:text-[#0a83ae] whitespace-nowrap ${
-                  location.pathname === item.path ? "text-[#0a83ae] bg-white" : "text-white"
+                className={`relative px-3 py-2 text-[11px] font-semibold tracking-wider transition-all rounded-full whitespace-nowrap ${
+                  location.pathname === item.path
+                    ? "text-[hsl(var(--ink))] bg-white shadow-glow"
+                    : "text-white/85 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
             <Link to="/demo">
-              <Button size="sm" className="ml-2 text-[11px] font-semibold tracking-wider">
-                DEMO
+              <Button size="sm" className="ml-2 text-[11px] font-semibold tracking-wider rounded-full bg-white text-[hsl(var(--ink))] hover:bg-white/90 shadow-glow">
+                DEMO →
               </Button>
             </Link>
           </nav>

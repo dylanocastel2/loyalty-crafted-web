@@ -172,12 +172,16 @@ const BlockRenderer = ({ block }: Props) => {
 
     case "icon_card": {
       const Icon = (Icons as any)[p.icon] || Icons.Star;
-      const colorClass = p.iconColor === "secondary" ? "text-secondary" : p.iconColor === "accent" ? "text-accent-foreground" : "text-primary";
       return (
-        <div className="border rounded-lg p-6 bg-card hover:shadow-lg transition-shadow h-full">
-          <Icon className={`h-8 w-8 ${colorClass} mb-4`} />
-          <h3 className="font-semibold mb-2">{p.title}</h3>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{p.description}</p>
+        <div className="group relative rounded-2xl border border-border/60 bg-gradient-card p-6 card-hover h-full overflow-hidden">
+          <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-[hsl(var(--primary-glow)/0.15)] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="relative">
+            <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-aqua text-[hsl(var(--ink))] shadow-glow mb-4">
+              <Icon className="h-5 w-5" />
+            </div>
+            <h3 className="font-display font-semibold text-lg mb-2">{p.title}</h3>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{p.description}</p>
+          </div>
         </div>
       );
     }
@@ -185,8 +189,8 @@ const BlockRenderer = ({ block }: Props) => {
     case "stat":
       return (
         <div className="text-center py-4">
-          <div className="text-4xl md:text-5xl font-bold text-primary mb-2">{p.value}</div>
-          <div className="text-sm text-muted-foreground uppercase tracking-wider">{p.label}</div>
+          <div className="text-4xl md:text-5xl font-display font-bold text-gradient-aqua mb-2">{p.value}</div>
+          <div className="text-xs md:text-sm text-muted-foreground uppercase tracking-[0.2em] font-medium">{p.label}</div>
         </div>
       );
 
