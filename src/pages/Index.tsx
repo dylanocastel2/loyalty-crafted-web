@@ -4,7 +4,7 @@ import { Settings, Smartphone, Users, Zap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
-import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import PageContent from "@/components/page-builder/PageContent";
 
 const features = [
   {
@@ -39,7 +39,7 @@ const features = [
 
 const Index = () => (
   <Layout>
-      <PageBuilderSlot pageKey="index" position="before" />
+      <PageContent pageKey="index">
     {/* Hero — clean */}
     <section className="relative overflow-hidden bg-hero py-24 md:py-36">
       <div className="absolute inset-0 dot-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)]" />
@@ -141,7 +141,7 @@ const Index = () => (
         </div>
       </div>
     </section>
-    <PageBuilderSlot pageKey="index" position="after" />
+    </PageContent>
   </Layout>
 );
 

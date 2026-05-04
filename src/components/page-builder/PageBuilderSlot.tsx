@@ -5,7 +5,7 @@ import { Block } from "./blockSchema";
 
 interface Props {
   pageKey: string;
-  position: "before" | "after";
+  position: "before" | "after" | "full";
 }
 
 const PageBuilderSlot = ({ pageKey, position }: Props) => {

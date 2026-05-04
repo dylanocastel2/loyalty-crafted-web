@@ -4,7 +4,7 @@ import { Building2, CreditCard, Users, BarChart3, Shield, Landmark } from "lucid
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
-import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import PageContent from "@/components/page-builder/PageContent";
 
 const benefits = [
   { icon: CreditCard, tKey: "gem_stadspas_title", dKey: "gem_stadspas_desc", title: "Stadspas", desc: "Digitale stadspas voor inwoners met kortingen bij lokale ondernemers." },
@@ -17,7 +17,7 @@ const benefits = [
 
 const Gemeenten = () => (
   <Layout>
-      <PageBuilderSlot pageKey="gemeenten" position="before" />
+      <PageContent pageKey="gemeenten">
     <section className="py-16 md:py-24">
       <div className="container text-center">
         <EditableText page="gemeenten" contentKey="hero_title" defaultValue="Oplossingen voor Gemeenten" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -48,7 +48,7 @@ const Gemeenten = () => (
         <EditableButton page="gemeenten" contentKey="cta_btn" defaultValue="Contact opnemen" to="/contact" variant="secondary" />
       </div>
     </section>
-    <PageBuilderSlot pageKey="gemeenten" position="after" />
+    </PageContent>
   </Layout>
 );
 
