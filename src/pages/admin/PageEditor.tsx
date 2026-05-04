@@ -88,8 +88,6 @@ const PageEditor = () => {
 
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
-  const { undo, redo, canUndo, canRedo } = useBlockHistory(blocks, setBlocks, id ?? "new");
-
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
     setBlocks([...blocks, block]);
