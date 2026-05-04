@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 33% 99%;
     --foreground: 210 20% 15%;
 
     --card: 0 0% 100%;
@@ -21,17 +21,17 @@
     --secondary: 193 91% 44%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 96%;
+    --muted: 198 45% 96%;
     --muted-foreground: 210 10% 45%;
 
-    --accent: 196 91% 95%;
+    --accent: 198 60% 93%;
     --accent-foreground: 196 91% 25%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
+    --border: 198 35% 88%;
+    --input: 198 35% 88%;
     --ring: 196 91% 37%;
 
     --radius: 0.5rem;
@@ -40,13 +40,16 @@
     --primary-glow: 193 100% 60%;
     --aqua: 188 92% 50%;
     --ink: 210 30% 12%;
-    --surface: 210 33% 98%;
-    --surface-2: 210 30% 96%;
+    --surface: 198 60% 96%;
+    --surface-2: 198 50% 92%;
+    --mist: 200 80% 97%;
 
-    --gradient-hero: linear-gradient(180deg, hsl(var(--surface)) 0%, hsl(var(--background)) 100%);
+    --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, hsl(var(--surface-2) / 0.6) 0%, hsl(var(--background)) 60%);
+    --gradient-mist: linear-gradient(180deg, hsl(var(--mist)) 0%, hsl(var(--background)) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
     --gradient-aqua: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     --gradient-card: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--surface)) 100%);
+    --gradient-tile: linear-gradient(135deg, hsl(var(--surface)) 0%, hsl(var(--surface-2)) 100%);
 
     --shadow-glow: 0 1px 2px hsl(var(--primary) / 0.06), 0 8px 24px -10px hsl(var(--primary) / 0.18);
     --shadow-soft: 0 1px 2px hsl(var(--ink) / 0.04), 0 6px 20px -10px hsl(var(--ink) / 0.10);
@@ -120,6 +123,8 @@
 
 @layer utilities {
   .bg-hero { background-image: var(--gradient-hero); }
+  .bg-mist { background-image: var(--gradient-mist); }
+  .bg-tile { background-image: var(--gradient-tile); }
   .bg-surface { background-color: hsl(var(--surface)); }
   .bg-surface-2 { background-color: hsl(var(--surface-2)); }
   .bg-gradient-primary { background-image: var(--gradient-primary); }
