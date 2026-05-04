@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
-import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import PageContent from "@/components/page-builder/PageContent";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -25,7 +25,7 @@ const Contact = () => {
 
   return (
     <Layout>
-      <PageBuilderSlot pageKey="contact" position="before" />
+      <PageContent pageKey="contact">
       <section className="py-16 md:py-24 pb-0">
         <div className="container text-center">
           <EditableText page="contact" contentKey="hero_title" defaultValue="Contact" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -94,7 +94,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
-      <PageBuilderSlot pageKey="contact" position="after" />
+      </PageContent>
     </Layout>
   );
 };

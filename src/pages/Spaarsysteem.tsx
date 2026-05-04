@@ -2,7 +2,7 @@ import { Database, Share2, Settings, ArrowRightLeft, Wrench, TrendingUp, CheckCi
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
-import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import PageContent from "@/components/page-builder/PageContent";
 
 const highlights = [
   { icon: Database, tKey: "ss_hl_pakketten_title", dKey: "ss_hl_pakketten_desc", title: "Complete Pakketten", desc: "Al onze spaaroplossingen werken in combinatie met het Loyalty Spaarsysteem." },
@@ -36,7 +36,7 @@ const benefits = ["Volledig op maat gemaakt", "In-house ontwikkeld team", "Geen 
 
 const Spaarsysteem = () => (
   <Layout>
-    <PageBuilderSlot pageKey="spaarsysteem" position="before" />
+    <PageContent pageKey="spaarsysteem">
 
     <section className="py-16 md:py-24">
       <div className="container">
@@ -135,7 +135,7 @@ const Spaarsysteem = () => (
       </div>
     </section>
 
-    <PageBuilderSlot pageKey="spaarsysteem" position="after" />
+    </PageContent>
   </Layout>
 );
 

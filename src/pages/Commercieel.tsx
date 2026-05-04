@@ -4,7 +4,7 @@ import { ShoppingBag, TrendingUp, Gift, QrCode, BarChart3, Repeat } from "lucide
 import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
-import PageBuilderSlot from "@/components/page-builder/PageBuilderSlot";
+import PageContent from "@/components/page-builder/PageContent";
 
 const benefits = [
   { icon: TrendingUp, tKey: "com_binding_title", dKey: "com_binding_desc", title: "Klantenbinding", desc: "Verhoog klantloyaliteit met een persoonlijk spaarprogramma." },
@@ -17,7 +17,7 @@ const benefits = [
 
 const Commercieel = () => (
   <Layout>
-      <PageBuilderSlot pageKey="commercieel" position="before" />
+      <PageContent pageKey="commercieel">
     <section className="py-16 md:py-24">
       <div className="container text-center">
         <EditableText page="commercieel" contentKey="hero_title" defaultValue="Commerciële Loyaliteitsoplossingen" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
@@ -48,7 +48,7 @@ const Commercieel = () => (
         <EditableButton page="commercieel" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
       </div>
     </section>
-    <PageBuilderSlot pageKey="commercieel" position="after" />
+    </PageContent>
   </Layout>
 );
 
