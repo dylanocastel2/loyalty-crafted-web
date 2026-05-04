@@ -63,13 +63,41 @@ const BlockRenderer = ({ block }: Props) => {
 
     case "image":
       if (!p.url) return null;
-      return (
-        <section className="container py-4">
-          <div className={`flex ${p.align === "center" ? "justify-center" : p.align === "right" ? "justify-end" : "justify-start"}`}>
-            <img src={p.url} alt={p.alt || ""} style={{ width: p.width || "100%", maxWidth: "100%" }} className="rounded-lg" loading="lazy" />
-          </div>
-        </section>
-      );
+      {
+        const gradients: Record<string, string> = {
+          "dark-bottom": "linear-gradient(180deg, transparent 40%, hsl(var(--ink) / 0.75) 100%)",
+          "dark-top": "linear-gradient(0deg, transparent 40%, hsl(var(--ink) / 0.75) 100%)",
+          "dark-full": "linear-gradient(180deg, hsl(var(--ink) / 0.35) 0%, hsl(var(--ink) / 0.65) 100%)",
+          "primary": "linear-gradient(135deg, hsl(var(--primary) / 0.55) 0%, hsl(var(--secondary) / 0.45) 100%)",
+          "primary-soft": "linear-gradient(135deg, hsl(var(--primary) / 0.25) 0%, transparent 60%)",
+          "aqua-radial": "radial-gradient(ellipse at top right, hsl(var(--secondary) / 0.45), transparent 60%)",
+          "white-bottom": "linear-gradient(180deg, transparent 50%, hsl(var(--background) / 0.9) 100%)",
+        };
+        const showGradient = !!p.gradientEnabled && !!p.gradient && gradients[p.gradient];
+        return (
+          <section className="container py-4">
+            <div className={`flex ${p.align === "center" ? "justify-center" : p.align === "right" ? "justify-end" : "justify-start"}`}>
+              <div className="relative inline-block rounded-lg overflow-hidden" style={{ width: p.width || "100%", maxWidth: "100%" }}>
+                <img src={p.url} alt={p.alt || ""} className="block w-full h-auto" loading="lazy" />
+                {showGradient && (
+                  <div
+                    className="pointer-events-none absolute inset-0"
+                    style={{ background: gradients[p.gradient], opacity: (p.gradientOpacity ?? 100) / 100 }}
+                  />
+                )}
+                {showGradient && p.overlayText && (
+                  <div className={`absolute inset-0 flex p-6 ${p.overlayPosition === "top" ? "items-start" : p.overlayPosition === "center" ? "items-center" : "items-end"} ${p.overlayAlign === "center" ? "justify-center text-center" : p.overlayAlign === "right" ? "justify-end text-right" : "justify-start text-left"}`}>
+                    <div className={`max-w-xl ${p.gradient?.startsWith("white") ? "text-foreground" : "text-white"}`}>
+                      {p.overlayTitle && <h3 className="font-display font-bold text-2xl md:text-4xl mb-2 drop-shadow">{p.overlayTitle}</h3>}
+                      {p.overlayText && <p className="text-sm md:text-base opacity-95 drop-shadow">{p.overlayText}</p>}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        );
+      }
 
     case "button":
       return (
