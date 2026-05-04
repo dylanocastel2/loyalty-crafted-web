@@ -408,8 +408,8 @@ const BlockRenderer = ({ block }: Props) => {
                     key={i}
                     src={src}
                     alt=""
-                    style={{ height: h }}
-                    className={`w-auto object-contain shrink-0 ${p.grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
+                    style={{ height: h, width: `calc(${h} * 2.4)` }}
+                    className={`object-contain shrink-0 ${p.grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
                     loading="lazy"
                   />
                 ))}
