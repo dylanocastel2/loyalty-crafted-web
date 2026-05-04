@@ -11,6 +11,19 @@ import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import { getBuiltinPage } from "@/lib/builtinPages";
+import { getDefaultPageBlocks, hasPagePreset } from "@/lib/pagePresets";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Download } from "lucide-react";
 
 type Position = "before" | "after" | "full";
 
@@ -72,6 +85,18 @@ const BuiltinPageEditor = () => {
   const blocks = active === "before" ? beforeBlocks : active === "after" ? afterBlocks : fullBlocks;
   const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
+
+  const importDefault = () => {
+    if (!builtin) return;
+    const preset = getDefaultPageBlocks(builtin.key);
+    setFullBlocks(preset);
+    setActive("full");
+    setSelectedId(null);
+    toast({
+      title: "Standaardinhoud geladen",
+      description: "Pas de blokken aan en klik op Opslaan om de pagina te overschrijven.",
+    });
+  };
 
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
@@ -159,9 +184,36 @@ const BuiltinPageEditor = () => {
               <TabsTrigger value="after">Extra onder ({afterBlocks.length})</TabsTrigger>
             </TabsList>
             {active === "full" && (
-              <p className="text-[11px] text-muted-foreground py-1.5">
-                Als je hier blokken plaatst, vervangt de pagina volledig de originele inhoud. Laat leeg om de originele pagina te tonen.
-              </p>
+              <div className="flex items-center justify-between gap-3 py-1.5 flex-wrap">
+                <p className="text-[11px] text-muted-foreground">
+                  Hier zie je de volledige pagina als blokken. Pas direct aan en klik op Opslaan.
+                  Laat leeg om de originele (vaste) pagina te tonen.
+                </p>
+                {hasPagePreset(builtin.key) && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Download className="h-3.5 w-3.5 mr-1.5" />
+                        {fullBlocks.length === 0 ? "Standaardinhoud importeren" : "Reset naar standaard"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Standaardinhoud laden?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Hiermee worden de huidige blokken in "Volledige pagina" vervangen
+                          door de originele inhoud van deze pagina. Dit is pas definitief
+                          nadat je op Opslaan klikt.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuleren</AlertDialogCancel>
+                        <AlertDialogAction onClick={importDefault}>Importeren</AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
             )}
           </div>
 

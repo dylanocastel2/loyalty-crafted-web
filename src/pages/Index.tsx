@@ -102,31 +102,16 @@ const Index = () => (
             className="text-muted-foreground text-base md:text-lg"
           />
         </div>
-        <div className="bento-grid">
-          {features.map((f, i) => {
-            // Bento span pattern: tall, wide, normal, normal
-            const span = i === 0
-              ? "col-span-2 md:col-span-3 md:row-span-2"
-              : i === 1
-              ? "col-span-2 md:col-span-3"
-              : "col-span-1 md:col-span-3";
-            const tall = i === 0 ? "min-h-[280px] md:min-h-[420px]" : "min-h-[200px] md:min-h-[200px]";
-            const tile = i === 0 ? "bg-tile" : "bg-background";
-            return (
-              <div key={f.titleKey} className={`bento-tile group ${span} ${tall} ${tile} p-7 flex flex-col justify-between`}>
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <f.icon className="h-5 w-5" />
-                </div>
-                <div className="mt-6">
-                  <EditableText page="homepage" contentKey={f.titleKey} defaultValue={f.title} as="h3" className="font-display font-semibold text-xl mb-2" />
-                  <EditableText page="homepage" contentKey={f.descKey} defaultValue={f.description} as="p" className="text-sm text-muted-foreground leading-relaxed" multiline />
-                </div>
-                {i === 0 && (
-                  <div className="pointer-events-none absolute -bottom-12 -right-12 h-48 w-48 rounded-full bg-[hsl(var(--primary)/0.10)] blur-2xl" />
-                )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {features.map((f) => (
+            <div key={f.titleKey} className="bento-tile group bg-background p-7 flex flex-col min-h-[220px]">
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground mb-5">
+                <f.icon className="h-5 w-5" />
               </div>
-            );
-          })}
+              <EditableText page="homepage" contentKey={f.titleKey} defaultValue={f.title} as="h3" className="font-display font-semibold text-lg mb-2" />
+              <EditableText page="homepage" contentKey={f.descKey} defaultValue={f.description} as="p" className="text-sm text-muted-foreground leading-relaxed" multiline />
+            </div>
+          ))}
         </div>
       </div>
     </section>
