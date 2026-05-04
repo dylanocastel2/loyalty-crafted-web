@@ -384,7 +384,7 @@ const BlockRenderer = ({ block }: Props) => {
       const textW = 100 - imgW;
       const imageEl = p.imageUrl ? (
         <div className="w-full">
-          <div className="rounded-2xl overflow-hidden bg-muted" style={{ aspectRatio: ratio }}>
+          <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: ratio }}>
             <img src={p.imageUrl} alt={p.imageAlt || ""} className="w-full h-full object-cover" loading="lazy" />
           </div>
         </div>
