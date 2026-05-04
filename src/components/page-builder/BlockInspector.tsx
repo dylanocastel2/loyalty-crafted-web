@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
 import { Plus, Trash2 } from "lucide-react";
+import PagePicker from "./PagePicker";
 
 interface Props {
   block: Block | null;
@@ -507,7 +508,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
             <Field label="Tekst"><Textarea value={p.text || ""} onChange={(e) => set("text", e.target.value)} rows={6} /></Field>
             <Field label="Knoptekst (optioneel)"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
-            <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} placeholder="/contact of https://..." /></Field>
+            <Field label="Knop link (kies pagina)">
+              <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
+            </Field>
             <Field label="Verticale uitlijning">
               <Select value={p.verticalAlign || "center"} onValueChange={(v) => set("verticalAlign", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
