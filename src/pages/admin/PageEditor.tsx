@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Eye, Save, Loader2 } from "lucide-react";
+import { Undo2, Redo2 } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import SeoFields, { SeoData } from "@/components/page-builder/SeoFields";
 import PageSettingsForm, { PageSettingsData } from "@/components/page-builder/PageSettings";
+import { useBlockHistory } from "@/hooks/useBlockHistory";
 
 const slugify = (text: string) =>
   text.toLowerCase()
@@ -85,6 +87,8 @@ const PageEditor = () => {
   }, [title, slugTouched]);
 
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
+
+  const { undo, redo, canUndo, canRedo } = useBlockHistory(blocks, setBlocks, id ?? "new");
 
   const addBlock = (type: BlockType) => {
     const block = createBlock(type);
@@ -171,6 +175,12 @@ const PageEditor = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={undo} disabled={!canUndo} title="Ongedaan maken (Ctrl+Z)">
+              <Undo2 className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={redo} disabled={!canRedo} title="Opnieuw (Ctrl+Shift+Z)">
+              <Redo2 className="h-4 w-4" />
+            </Button>
             {settings.published && !isNew && (
               <Button variant="outline" size="sm" onClick={() => window.open(`/p/${slug}`, "_blank")}>
                 <Eye className="h-4 w-4 mr-1" /> Bekijken
