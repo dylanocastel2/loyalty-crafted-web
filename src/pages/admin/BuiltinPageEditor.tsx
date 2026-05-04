@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
-import { Undo2, Redo2 } from "lucide-react";
+import { Undo2, Redo2, Monitor, Smartphone } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
@@ -46,6 +46,7 @@ const BuiltinPageEditor = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
   const [previewKey, setPreviewKey] = useState(0);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
 
   useEffect(() => {
     if (!authLoading && !isAdmin) navigate("/");
@@ -267,18 +268,55 @@ const BuiltinPageEditor = () => {
                 <aside className="col-span-12 lg:col-span-3 bg-card border rounded-lg overflow-hidden flex flex-col">
                   <div className="flex items-center justify-between px-3 py-2 border-b bg-muted/40">
                     <span className="text-xs font-semibold">Live preview</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setPreviewKey((k) => k + 1)} title="Vernieuwen">
-                      <RefreshCw className="h-3 w-3" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant={previewDevice === "desktop" ? "secondary" : "ghost"}
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => setPreviewDevice("desktop")}
+                        title="Desktop"
+                      >
+                        <Monitor className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant={previewDevice === "mobile" ? "secondary" : "ghost"}
+                        size="icon"
+                        className="h-6 w-6"
+                        onClick={() => setPreviewDevice("mobile")}
+                        title="Mobiel"
+                      >
+                        <Smartphone className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setPreviewKey((k) => k + 1)} title="Vernieuwen">
+                        <RefreshCw className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex-1 bg-background overflow-hidden">
-                    <iframe
-                      key={previewKey}
-                      src={builtin.path}
-                      title="Live preview"
-                      className="w-full h-full border-0"
-                      style={{ transform: "scale(0.6)", transformOrigin: "top left", width: "166.67%", height: "166.67%" }}
-                    />
+                  <div className="flex-1 bg-muted/20 overflow-auto flex items-start justify-center p-2">
+                    {previewDevice === "desktop" ? (
+                      <div className="w-full h-full overflow-hidden">
+                        <iframe
+                          key={previewKey}
+                          src={builtin.path}
+                          title="Live preview"
+                          className="border-0"
+                          style={{ transform: "scale(0.6)", transformOrigin: "top left", width: "166.67%", height: "166.67%" }}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className="bg-background border rounded-[1.5rem] shadow-md overflow-hidden flex-shrink-0"
+                        style={{ width: 280, height: 580 }}
+                      >
+                        <iframe
+                          key={previewKey}
+                          src={builtin.path}
+                          title="Live preview mobiel"
+                          className="border-0"
+                          style={{ width: 375, height: 776, transform: "scale(0.747)", transformOrigin: "top left" }}
+                        />
+                      </div>
+                    )}
                   </div>
                   <p className="text-[10px] text-muted-foreground px-3 py-1.5 border-t">Klik op opslaan om de preview te updaten.</p>
                 </aside>
