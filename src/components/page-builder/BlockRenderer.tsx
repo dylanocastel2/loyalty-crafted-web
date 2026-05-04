@@ -348,6 +348,50 @@ const BlockRenderer = ({ block }: Props) => {
         </section>
       );
 
+    case "logo_marquee": {
+      const logos: string[] = (p.logos || []).filter(Boolean);
+      if (!logos.length) {
+        return (
+          <section className={`${bgColorClass(p.bgColor || "muted")} py-12`}>
+            <div className="container text-center text-sm text-muted-foreground">
+              Voeg logo's toe in het zijpaneel om de bewegende balk te tonen.
+            </div>
+          </section>
+        );
+      }
+      const loop = [...logos, ...logos];
+      const duration = `${Math.max(8, p.speed || 30)}s`;
+      const h = `${p.height || 60}px`;
+      return (
+        <section className={`${bgColorClass(p.bgColor || "muted")} py-12`}>
+          <div className="container">
+            {p.title && (
+              <h3 className="text-center text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8">
+                {p.title}
+              </h3>
+            )}
+            <div className="marquee-mask overflow-hidden">
+              <div
+                className="flex w-max animate-marquee items-center gap-12"
+                style={{ ["--marquee-duration" as any]: duration }}
+              >
+                {loop.map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt=""
+                    style={{ height: h }}
+                    className={`w-auto object-contain shrink-0 ${p.grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
+                    loading="lazy"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
     default:
       return null;
   }
