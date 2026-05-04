@@ -88,6 +88,70 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Alt tekst"><Input value={p.alt || ""} onChange={(e) => set("alt", e.target.value)} /></Field>
             <Field label="Breedte (bv. 100%, 600px)"><Input value={p.width || ""} onChange={(e) => set("width", e.target.value)} /></Field>
             <Field label="Uitlijning">{alignSelect}</Field>
+            <div className="pt-3 mt-2 border-t space-y-3">
+              <Field label="Gradient overlay">
+                <Select value={p.gradientEnabled ? "on" : "off"} onValueChange={(v) => set("gradientEnabled", v === "on")}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="off">Uit</SelectItem>
+                    <SelectItem value="on">Aan</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              {p.gradientEnabled && (
+                <>
+                  <Field label="Stijl gradient">
+                    <Select value={p.gradient || "dark-bottom"} onValueChange={(v) => set("gradient", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dark-bottom">Donker — onderaan</SelectItem>
+                        <SelectItem value="dark-top">Donker — bovenaan</SelectItem>
+                        <SelectItem value="dark-full">Donker — volledig</SelectItem>
+                        <SelectItem value="primary">Aqua merk — diagonaal</SelectItem>
+                        <SelectItem value="primary-soft">Aqua merk — subtiel</SelectItem>
+                        <SelectItem value="aqua-radial">Aqua glow — hoek</SelectItem>
+                        <SelectItem value="white-bottom">Wit — onderaan (lichte tekst)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Intensiteit (%)">
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={p.gradientOpacity ?? 100}
+                      onChange={(e) => set("gradientOpacity", Math.max(0, Math.min(100, parseInt(e.target.value) || 0)))}
+                    />
+                  </Field>
+                  <Field label="Tekst over afbeelding (titel)">
+                    <Input value={p.overlayTitle || ""} onChange={(e) => set("overlayTitle", e.target.value)} placeholder="Optioneel" />
+                  </Field>
+                  <Field label="Tekst over afbeelding (ondertitel)">
+                    <Textarea value={p.overlayText || ""} onChange={(e) => set("overlayText", e.target.value)} rows={2} placeholder="Optioneel" />
+                  </Field>
+                  <Field label="Positie tekst (verticaal)">
+                    <Select value={p.overlayPosition || "bottom"} onValueChange={(v) => set("overlayPosition", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="top">Boven</SelectItem>
+                        <SelectItem value="center">Midden</SelectItem>
+                        <SelectItem value="bottom">Onder</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Uitlijning tekst">
+                    <Select value={p.overlayAlign || "left"} onValueChange={(v) => set("overlayAlign", v)}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="left">Links</SelectItem>
+                        <SelectItem value="center">Midden</SelectItem>
+                        <SelectItem value="right">Rechts</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </>
+              )}
+            </div>
           </>
         );
 
