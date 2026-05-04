@@ -22,6 +22,7 @@ export type BlockType =
   | "icon_card"
   | "stat"
   | "logo_marquee"
+  | "image_text"
   | "custom_html";
 
 export interface Block {
