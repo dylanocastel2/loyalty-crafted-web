@@ -97,12 +97,6 @@ const BuiltinPageEditor = () => {
   const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
-  const { undo, redo, canUndo, canRedo } = useBlockHistory(
-    blocks,
-    setBlocks,
-    `${builtin?.key ?? ""}:${active}`,
-  );
-
   const importDefault = () => {
     if (!builtin) return;
     const preset = getDefaultPageBlocks(builtin.key);
