@@ -376,6 +376,66 @@ const BlockRenderer = ({ block }: Props) => {
         </section>
       );
 
+    case "image_text": {
+      const imgRight = p.imagePosition === "right";
+      const valign = p.verticalAlign === "start" ? "items-start" : p.verticalAlign === "end" ? "items-end" : "items-center";
+      const ratio = p.imageRatio || "4/3";
+      const imgW = Math.max(20, Math.min(80, p.imageWidth ?? 50));
+      const textW = 100 - imgW;
+      const imageEl = p.imageUrl ? (
+        <div className="w-full">
+          <div className="rounded-2xl overflow-hidden bg-muted" style={{ aspectRatio: ratio }}>
+            <img src={p.imageUrl} alt={p.imageAlt || ""} className="w-full h-full object-cover" loading="lazy" />
+          </div>
+        </div>
+      ) : (
+        <div className="w-full rounded-2xl bg-muted flex items-center justify-center text-sm text-muted-foreground" style={{ aspectRatio: ratio }}>
+          Voeg een afbeelding toe
+        </div>
+      );
+      const textEl = (
+        <div className="w-full">
+          {p.title && <h2 className="font-display font-bold text-2xl md:text-3xl mb-3">{p.title}</h2>}
+          {p.text && <p className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap">{p.text}</p>}
+          {p.ctaLabel && (
+            <div className="mt-5">
+              {p.ctaLink?.startsWith("http") ? (
+                <a href={p.ctaLink} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg">{p.ctaLabel}</Button>
+                </a>
+              ) : (
+                <Link to={p.ctaLink || "/"}>
+                  <Button size="lg">{p.ctaLabel}</Button>
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+      );
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            <div
+              className={`grid grid-cols-1 gap-8 md:gap-12 ${valign}`}
+              style={{ gridTemplateColumns: undefined }}
+            >
+              <div
+                className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center"
+                style={{}}
+              >
+                <div className={`${imgRight ? "md:order-2" : ""}`} style={{ gridColumn: `span ${Math.round(imgW / 100 * 12)} / span ${Math.round(imgW / 100 * 12)}` }}>
+                  {imageEl}
+                </div>
+                <div className={`${imgRight ? "md:order-1" : ""}`} style={{ gridColumn: `span ${Math.round(textW / 100 * 12)} / span ${Math.round(textW / 100 * 12)}` }}>
+                  {textEl}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
     case "logo_marquee": {
       const logos: string[] = (p.logos || []).filter(Boolean);
       if (!logos.length) {

@@ -473,6 +473,77 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </Field>
         );
 
+      case "image_text":
+        return (
+          <>
+            <Field label="Afbeelding">
+              <FileUpload onUpload={(url) => set("imageUrl", url || "")} currentUrl={p.imageUrl} folder="page-media" />
+            </Field>
+            <Field label="Alt tekst"><Input value={p.imageAlt || ""} onChange={(e) => set("imageAlt", e.target.value)} /></Field>
+            <Field label="Positie afbeelding">
+              <Select value={p.imagePosition || "left"} onValueChange={(v) => set("imagePosition", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Links</SelectItem>
+                  <SelectItem value="right">Rechts</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Beeldverhouding">
+              <Select value={p.imageRatio || "4/3"} onValueChange={(v) => set("imageRatio", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1/1">Vierkant (1:1)</SelectItem>
+                  <SelectItem value="4/3">Klassiek (4:3)</SelectItem>
+                  <SelectItem value="3/2">Foto (3:2)</SelectItem>
+                  <SelectItem value="16/9">Breedbeeld (16:9)</SelectItem>
+                  <SelectItem value="3/4">Portret (3:4)</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Breedte afbeelding (% — 20–80)">
+              <Input type="number" min={20} max={80} value={p.imageWidth ?? 50} onChange={(e) => set("imageWidth", Math.max(20, Math.min(80, parseInt(e.target.value) || 50)))} />
+            </Field>
+            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
+            <Field label="Tekst"><Textarea value={p.text || ""} onChange={(e) => set("text", e.target.value)} rows={6} /></Field>
+            <Field label="Knoptekst (optioneel)"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
+            <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} placeholder="/contact of https://..." /></Field>
+            <Field label="Verticale uitlijning">
+              <Select value={p.verticalAlign || "center"} onValueChange={(v) => set("verticalAlign", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="start">Boven</SelectItem>
+                  <SelectItem value="center">Midden</SelectItem>
+                  <SelectItem value="end">Onder</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </>
+        );
+
       case "logo_marquee":
         return (
           <>
