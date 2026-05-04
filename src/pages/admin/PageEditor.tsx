@@ -87,7 +87,6 @@ const PageEditor = () => {
   }, [title, slugTouched]);
 
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
-
   const { undo, redo, canUndo, canRedo } = useBlockHistory(blocks, setBlocks, id ?? "new");
 
   const addBlock = (type: BlockType) => {
