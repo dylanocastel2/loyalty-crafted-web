@@ -193,6 +193,52 @@
     background: var(--gradient-aqua);
     display: inline-block;
   }
+
+  /* Bento grid — image-rich tiles */
+  .bento-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 768px) {
+    .bento-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1.25rem; }
+  }
+  .bento-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1.25rem;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    transition: var(--transition-smooth);
+  }
+  .bento-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-elevated);
+    border-color: hsl(var(--primary) / 0.35);
+  }
+  .bento-tile-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, hsl(var(--ink) / 0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* Image frame with soft aqua wash */
+  .img-frame {
+    position: relative;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    border: 1px solid hsl(var(--border));
+  }
+  .img-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.10), transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
 }
 
 @keyframes float-slow {
