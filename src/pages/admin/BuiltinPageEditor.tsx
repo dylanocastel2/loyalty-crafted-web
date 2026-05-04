@@ -51,6 +51,14 @@ const BuiltinPageEditor = () => {
     if (!authLoading && !isAdmin) navigate("/");
   }, [authLoading, isAdmin, navigate]);
 
+  const blocks = active === "before" ? beforeBlocks : active === "after" ? afterBlocks : fullBlocks;
+  const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
+  const { undo, redo, canUndo, canRedo } = useBlockHistory(
+    blocks,
+    setBlocks,
+    `${builtin?.key ?? ""}:${active}`,
+  );
+
   useEffect(() => {
     if (!builtin) return;
     const load = async () => {
@@ -93,8 +101,6 @@ const BuiltinPageEditor = () => {
   }
   if (!isAdmin || !builtin) return null;
 
-  const blocks = active === "before" ? beforeBlocks : active === "after" ? afterBlocks : fullBlocks;
-  const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
   const importDefault = () => {
