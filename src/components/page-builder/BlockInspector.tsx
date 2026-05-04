@@ -409,6 +409,62 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </Field>
         );
 
+      case "logo_marquee":
+        return (
+          <>
+            <Field label="Titel boven (optioneel)">
+              <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} />
+            </Field>
+            <Field label="Achtergrond">
+              <Select value={p.bgColor || "muted"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Wit</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Kaart</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Logo hoogte (px)">
+              <Input type="number" value={p.height ?? 60} onChange={(e) => set("height", parseInt(e.target.value) || 60)} />
+            </Field>
+            <Field label="Snelheid (sec — lager = sneller)">
+              <Input type="number" value={p.speed ?? 30} onChange={(e) => set("speed", parseInt(e.target.value) || 30)} />
+            </Field>
+            <Field label="Grijswaarden tot hover">
+              <Select value={p.grayscale ? "yes" : "no"} onValueChange={(v) => set("grayscale", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Ja</SelectItem>
+                  <SelectItem value="no">Nee</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <div className="space-y-2 pt-2 border-t">
+              <Label className="text-xs font-medium">Logo's</Label>
+              {(p.logos || []).map((img: string, i: number) => (
+                <div key={i} className="border rounded p-3 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-semibold">Logo {i + 1}</span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("logos", i)}><Trash2 className="h-3 w-3" /></Button>
+                  </div>
+                  <FileUpload
+                    onUpload={(url) => {
+                      const arr = [...(p.logos || [])];
+                      arr[i] = url || "";
+                      set("logos", arr);
+                    }}
+                    currentUrl={img}
+                    folder="page-media"
+                  />
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => addItem("logos", "")}><Plus className="h-3 w-3 mr-1" /> Voeg logo toe</Button>
+            </div>
+          </>
+        );
+
       default:
         return null;
     }
