@@ -36,10 +36,11 @@ const BuiltinPageEditor = () => {
   const builtin = pageKey ? getBuiltinPage(pageKey) : undefined;
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [active, setActive] = useState<Position>("before");
+  const [active, setActive] = useState<Position>("full");
   const [beforeBlocks, setBeforeBlocks] = useState<Block[]>([]);
   const [afterBlocks, setAfterBlocks] = useState<Block[]>([]);
   const [fullBlocks, setFullBlocks] = useState<Block[]>([]);
+  const [fullIsSaved, setFullIsSaved] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
   const [previewKey, setPreviewKey] = useState(0);
@@ -61,7 +62,15 @@ const BuiltinPageEditor = () => {
         const full = data.find((r) => r.position === "full");
         if (before?.blocks) setBeforeBlocks(before.blocks as unknown as Block[]);
         if (after?.blocks) setAfterBlocks(after.blocks as unknown as Block[]);
-        if (full?.blocks) setFullBlocks(full.blocks as unknown as Block[]);
+        const savedFull = (full?.blocks as unknown as Block[]) || [];
+        if (savedFull.length > 0) {
+          setFullBlocks(savedFull);
+          setFullIsSaved(true);
+        } else if (hasPagePreset(builtin.key)) {
+          // Auto-load preset so editor immediately shows current page contents
+          setFullBlocks(getDefaultPageBlocks(builtin.key));
+          setFullIsSaved(false);
+        }
       }
       setLoading(false);
     };
@@ -92,6 +101,7 @@ const BuiltinPageEditor = () => {
     setFullBlocks(preset);
     setActive("full");
     setSelectedId(null);
+    setFullIsSaved(false);
     toast({
       title: "Standaardinhoud geladen",
       description: "Pas de blokken aan en klik op Opslaan om de pagina te overschrijven.",
@@ -145,6 +155,7 @@ const BuiltinPageEditor = () => {
       toast({ title: "Fout bij opslaan", description: (r1.error || r2.error || r3.error)?.message, variant: "destructive" });
       return;
     }
+    setFullIsSaved(fullBlocks.length > 0);
     toast({ title: "Opgeslagen" });
     setPreviewKey((k) => k + 1);
   };
@@ -185,21 +196,24 @@ const BuiltinPageEditor = () => {
             </TabsList>
             {active === "full" && (
               <div className="flex items-center justify-between gap-3 py-1.5 flex-wrap">
-                <p className="text-[11px] text-muted-foreground">
-                  Hier zie je de volledige pagina als blokken. Pas direct aan en klik op Opslaan.
-                  Laat leeg om de originele (vaste) pagina te tonen.
+                <p className="text-[11px] text-muted-foreground max-w-2xl">
+                  {fullIsSaved
+                    ? "✓ Deze pagina wordt nu aangestuurd door deze blokken. Pas direct aan en klik op Opslaan."
+                    : hasPagePreset(builtin.key)
+                    ? "Dit is de standaardinhoud van de pagina, geladen als blokken. Pas aan en klik Opslaan om de live pagina te vervangen."
+                    : "Voeg blokken toe om de pagina te bouwen."}
                 </p>
                 {hasPagePreset(builtin.key) && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="outline" size="sm">
                         <Download className="h-3.5 w-3.5 mr-1.5" />
-                        {fullBlocks.length === 0 ? "Standaardinhoud importeren" : "Reset naar standaard"}
+                        Reset naar standaard
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Standaardinhoud laden?</AlertDialogTitle>
+                        <AlertDialogTitle>Reset naar standaardinhoud?</AlertDialogTitle>
                         <AlertDialogDescription>
                           Hiermee worden de huidige blokken in "Volledige pagina" vervangen
                           door de originele inhoud van deze pagina. Dit is pas definitief
@@ -208,7 +222,7 @@ const BuiltinPageEditor = () => {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Annuleren</AlertDialogCancel>
-                        <AlertDialogAction onClick={importDefault}>Importeren</AlertDialogAction>
+                        <AlertDialogAction onClick={importDefault}>Reset</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
