@@ -4,6 +4,7 @@ import { Menu, X, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import logoLg from "@/assets/logo-lg.png";
 
 const baseNavItems = [
   { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
@@ -63,9 +64,7 @@ const Header = () => {
       <header className="sticky top-0 z-50 glass">
         <div className="container relative flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group" aria-label="Naar homepage">
-            <div className="h-8 w-8 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-white text-sm">
-              L
-            </div>
+            <img src={logoLg} alt="Loyaltygroup logo" className="h-9 w-9 rounded-lg object-contain" />
             <span className="text-foreground font-display font-bold tracking-tight text-base hidden sm:inline">
               Loyalty<span className="text-primary">group</span>
             </span>
