@@ -150,4 +150,14 @@ export const getDefaultPageBlocks = (pageKey: string): Block[] => {
 };
 
 export const hasPagePreset = (pageKey: string): boolean =>
-  ["index", "over-ons"].includes(pageKey);
+  [
+    "index",
+    "over-ons",
+    "spaarsysteem",
+    "gemeenten",
+    "commercieel",
+    "klantcases",
+    "support",
+    "demo",
+    "contact",
+  ].includes(pageKey);
