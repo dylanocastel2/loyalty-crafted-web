@@ -6,12 +6,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
+import { Undo2, Redo2 } from "lucide-react";
 import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import { getBuiltinPage } from "@/lib/builtinPages";
 import { getDefaultPageBlocks, hasPagePreset } from "@/lib/pagePresets";
+import { useBlockHistory } from "@/hooks/useBlockHistory";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -95,6 +97,12 @@ const BuiltinPageEditor = () => {
   const setBlocks = active === "before" ? setBeforeBlocks : active === "after" ? setAfterBlocks : setFullBlocks;
   const selectedBlock = selectedId ? getById(blocks, selectedId) : null;
 
+  const { undo, redo, canUndo, canRedo } = useBlockHistory(
+    blocks,
+    setBlocks,
+    `${builtin?.key ?? ""}:${active}`,
+  );
+
   const importDefault = () => {
     if (!builtin) return;
     const preset = getDefaultPageBlocks(builtin.key);
@@ -172,6 +180,12 @@ const BuiltinPageEditor = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={undo} disabled={!canUndo} title="Ongedaan maken (Ctrl+Z)">
+              <Undo2 className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" onClick={redo} disabled={!canRedo} title="Opnieuw (Ctrl+Shift+Z)">
+              <Redo2 className="h-4 w-4" />
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setShowPreview((v) => !v)}>
               {showPreview ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
               {showPreview ? "Verberg preview" : "Toon preview"}
