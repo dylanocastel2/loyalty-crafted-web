@@ -147,13 +147,17 @@ const Admin = () => {
   const addAdmin = async () => {
     if (!newAdminEmail.trim()) return;
     const { data, error } = await supabase.functions.invoke("manage-admins", {
-      body: { action: "add", email: newAdminEmail.trim() },
+      body: {
+        action: "add",
+        email: newAdminEmail.trim(),
+        redirectTo: `${window.location.origin}/admin/activeren`,
+      },
     });
     if (error || data?.error) {
       toast({ title: "Toevoegen mislukt", description: data?.error || error?.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Beheerder toegevoegd" });
+    toast({ title: "Uitnodiging verstuurd", description: "De beheerder ontvangt een activatiemail." });
     setNewAdminEmail("");
     fetchAdmins();
   };
