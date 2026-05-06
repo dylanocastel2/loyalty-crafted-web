@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,11 +23,25 @@ interface Props {
   showBranche?: boolean;
   showCategory?: boolean;
   title?: string;
+  showFilter?: boolean;
 }
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title }: Props) => {
+const SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
+
+const matchesSector = (c: KlantcaseItem, sector: string) => {
+  const haystack = `${c.branche ?? ""} ${c.category ?? ""}`.toLowerCase();
+  if (sector === "Overig") {
+    return !SECTOR_OPTIONS.filter((s) => s !== "Overig").some((s) =>
+      haystack.includes(s.toLowerCase())
+    );
+  }
+  return haystack.includes(sector.toLowerCase());
+};
+
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter }: Props) => {
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeSector, setActiveSector] = useState<string>("all");
 
   useEffect(() => {
     let active = true;
@@ -55,15 +69,48 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   if (loading) return <div className="container py-8 text-center text-sm text-muted-foreground">Klantcases laden...</div>;
   if (!cases.length) return <div className="container py-8 text-center text-sm text-muted-foreground">Geen klantcases gevonden.</div>;
 
+  const visibleCases =
+    showFilter && activeSector !== "all"
+      ? cases.filter((c) => matchesSector(c, activeSector))
+      : cases;
+
   const cols = Math.max(1, Math.min(4, columns || 3));
   const colsClass = cols === 1 ? "md:grid-cols-1" : cols === 2 ? "md:grid-cols-2" : cols === 4 ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2 lg:grid-cols-3";
+
+  const filterBar = showFilter ? (
+    <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+      <Button
+        variant={activeSector === "all" ? "default" : "outline"}
+        size="sm"
+        onClick={() => setActiveSector("all")}
+        className="rounded-full"
+      >
+        Alle
+      </Button>
+      {SECTOR_OPTIONS.map((s) => (
+        <Button
+          key={s}
+          variant={activeSector === s ? "default" : "outline"}
+          size="sm"
+          onClick={() => setActiveSector(s)}
+          className="rounded-full"
+        >
+          {s}
+        </Button>
+      ))}
+    </div>
+  ) : null;
 
   if (view === "short") {
     return (
       <div className="container">
         {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{title}</h2>}
+        {filterBar}
+        {visibleCases.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
+        ) : (
         <div className={`grid grid-cols-1 ${colsClass} gap-6`}>
-          {cases.map((c) => {
+          {visibleCases.map((c) => {
             const img = c.header_image_url || c.image_url;
             return (
               <Link key={c.id} to={`/klantcases/${c.id}`} className="group border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow block">
@@ -87,6 +134,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
             );
           })}
         </div>
+        )}
       </div>
     );
   }
@@ -95,8 +143,12 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   return (
     <div className="container">
       {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{title}</h2>}
+      {filterBar}
+      {visibleCases.length === 0 ? (
+        <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
+      ) : (
       <div className={`grid grid-cols-1 ${cols >= 2 ? "md:grid-cols-2" : ""} gap-8`}>
-        {cases.map((c) => {
+        {visibleCases.map((c) => {
           const img = c.header_image_url || c.image_url;
           return (
             <Link key={c.id} to={`/klantcases/${c.id}`} className="group border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow block">
@@ -122,6 +174,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
           );
         })}
       </div>
+      )}
     </div>
   );
 };
