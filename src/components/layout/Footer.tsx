@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SocialIcons from "@/components/SocialIcons";
 
 const Footer = () => (
   <footer className="relative bg-surface text-muted-foreground mt-auto border-t border-border">
@@ -11,6 +12,7 @@ const Footer = () => (
         <p className="text-sm leading-relaxed">
           Loyaltygroup B.V. ontwikkelt volledig op maat gemaakte spaarsystemen voor gemeenten en commerciële bedrijven.
         </p>
+        <SocialIcons className="mt-5" />
       </div>
       <div>
         <h4 className="text-foreground font-display font-semibold mb-4 text-xs tracking-[0.18em] uppercase">Oplossingen</h4>
