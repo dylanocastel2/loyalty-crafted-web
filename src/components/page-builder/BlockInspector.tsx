@@ -736,6 +736,21 @@ const BlockInspector = ({ block, onChange }: Props) => {
             </Select>
           </Field>
           <p className="text-[10px] text-muted-foreground leading-snug">Past de tekstkleur aan binnen de huisstijl. Werkt op alle teksten in dit blok.</p>
+          <Field label="Tekst gradient (optioneel)">
+            <Select value={p.textGradient || "none"} onValueChange={(v) => set("textGradient", v === "none" ? undefined : v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Geen</SelectItem>
+                <SelectItem value="primary-secondary">Primair → Secundair</SelectItem>
+                <SelectItem value="secondary-primary">Secundair → Primair</SelectItem>
+                <SelectItem value="aqua">Aqua diagonaal</SelectItem>
+                <SelectItem value="sunset">Sunset (oranje → roze)</SelectItem>
+                <SelectItem value="ocean">Ocean (blauw → teal)</SelectItem>
+                <SelectItem value="gold">Goud</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <p className="text-[10px] text-muted-foreground leading-snug">Een gradient overschrijft de tekstkleur en wordt op alle teksten in dit blok toegepast.</p>
         </div>
       )}
 
