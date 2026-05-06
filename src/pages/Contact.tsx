@@ -9,19 +9,37 @@ import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
 import SocialIcons from "@/components/SocialIcons";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    const form = e.target as HTMLFormElement;
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") || "").trim().slice(0, 200),
+      email: String(fd.get("email") || "").trim().slice(0, 255),
+      company: String(fd.get("company") || "").trim().slice(0, 200) || null,
+      subject: String(fd.get("subject") || "").trim().slice(0, 250),
+      message: String(fd.get("message") || "").trim().slice(0, 4000),
+    };
+    if (!payload.name || !payload.email || !payload.subject || !payload.message) {
       setLoading(false);
-      toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
-      (e.target as HTMLFormElement).reset();
-    }, 1000);
+      toast({ title: "Vul alle velden in", variant: "destructive" });
+      return;
+    }
+    const { error } = await supabase.from("contact_submissions").insert(payload);
+    setLoading(false);
+    if (error) {
+      toast({ title: "Versturen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
+    form.reset();
   };
 
   return (
@@ -43,24 +61,24 @@ const Contact = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Naam</Label>
-                    <Input id="name" required placeholder="Uw naam" />
+                    <Input id="name" name="name" required placeholder="Uw naam" />
                   </div>
                   <div>
                     <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" type="email" required placeholder="uw@email.nl" />
+                    <Input id="email" name="email" type="email" required placeholder="uw@email.nl" />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="company">Organisatie</Label>
-                  <Input id="company" placeholder="Uw organisatie" />
+                  <Input id="company" name="company" placeholder="Uw organisatie" />
                 </div>
                 <div>
                   <Label htmlFor="subject">Onderwerp</Label>
-                  <Input id="subject" required placeholder="Onderwerp" />
+                  <Input id="subject" name="subject" required placeholder="Onderwerp" />
                 </div>
                 <div>
                   <Label htmlFor="message">Bericht</Label>
-                  <Textarea id="message" required placeholder="Uw bericht..." rows={5} />
+                  <Textarea id="message" name="message" required placeholder="Uw bericht..." rows={5} />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full sm:w-auto">
                   {loading ? "Verzenden..." : "Verstuur bericht"}

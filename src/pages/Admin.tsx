@@ -8,11 +8,22 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+type Submission = {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  subject: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+};
 
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
@@ -37,6 +48,14 @@ const Admin = () => {
   const [editCase, setEditCase] = useState<Partial<Klantcase> | null>(null);
   const [socials, setSocials] = useState<SocialLink[]>([]);
   const [savingSocials, setSavingSocials] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [openSubmission, setOpenSubmission] = useState<Submission | null>(null);
+  const [admins, setAdmins] = useState<{ user_id: string; email: string | null }[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notifyEnabled, setNotifyEnabled] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -55,8 +74,12 @@ const Admin = () => {
     }
     setIsAdmin(true);
     setLoading(false);
+    setCurrentUserId(session.user.id);
     fetchCases();
     fetchSocials();
+    fetchSubmissions();
+    fetchAdmins();
+    fetchSettings();
   };
 
   const fetchCases = async () => {
@@ -96,6 +119,84 @@ const Admin = () => {
       fetchSocials();
     }
   };
+
+  const fetchSubmissions = async () => {
+    const { data } = await supabase
+      .from("contact_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) setSubmissions(data as Submission[]);
+  };
+
+  const markRead = async (id: string, read: boolean) => {
+    await supabase.from("contact_submissions").update({ read }).eq("id", id);
+    fetchSubmissions();
+  };
+
+  const deleteSubmission = async (id: string) => {
+    await supabase.from("contact_submissions").delete().eq("id", id);
+    setOpenSubmission(null);
+    fetchSubmissions();
+  };
+
+  const fetchAdmins = async () => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
+    if (!error && data?.admins) setAdmins(data.admins);
+  };
+
+  const addAdmin = async () => {
+    if (!newAdminEmail.trim()) return;
+    const { data, error } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "add", email: newAdminEmail.trim() },
+    });
+    if (error || data?.error) {
+      toast({ title: "Toevoegen mislukt", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Beheerder toegevoegd" });
+    setNewAdminEmail("");
+    fetchAdmins();
+  };
+
+  const removeAdmin = async (user_id: string) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "remove", user_id },
+    });
+    if (error || data?.error) {
+      toast({ title: "Verwijderen mislukt", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Beheerder verwijderd" });
+    fetchAdmins();
+  };
+
+  const fetchSettings = async () => {
+    const { data } = await supabase
+      .from("page_content")
+      .select("key,content")
+      .eq("page", "settings")
+      .in("key", ["notify_email", "notify_enabled"]);
+    const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
+    setNotifyEmail(map["notify_email"] || "");
+    setNotifyEnabled(map["notify_enabled"] === "true");
+  };
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    const rows = [
+      { page: "settings", key: "notify_email", content: notifyEmail.trim() },
+      { page: "settings", key: "notify_enabled", content: notifyEnabled ? "true" : "false" },
+    ];
+    const { error } = await supabase.from("page_content").upsert(rows, { onConflict: "page,key" });
+    setSavingSettings(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Instellingen opgeslagen" });
+  };
+
+  const unreadCount = submissions.filter((s) => !s.read).length;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -150,6 +251,10 @@ const Admin = () => {
             <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
             <TabsTrigger value="socials">Social media</TabsTrigger>
+            <TabsTrigger value="aanvragen">
+              Aanvragen{unreadCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">{unreadCount}</span>}
+            </TabsTrigger>
+            <TabsTrigger value="instellingen">Instellingen</TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom-pages" className="mt-6">
@@ -343,6 +448,135 @@ const Admin = () => {
                 <Button size="sm" onClick={saveSocials} disabled={savingSocials}>
                   {savingSocials ? "Opslaan..." : "Opslaan"}
                 </Button>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="aanvragen" className="mt-6">
+            <div className="bg-card border rounded-lg">
+              <div className="p-5 border-b flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Contactaanvragen</h2>
+                <span className="ml-auto text-sm text-muted-foreground">{submissions.length} totaal · {unreadCount} ongelezen</span>
+              </div>
+              {submissions.length === 0 ? (
+                <p className="p-8 text-center text-muted-foreground">Nog geen formulieren ingevuld.</p>
+              ) : (
+                <ul className="divide-y">
+                  {submissions.map((s) => (
+                    <li key={s.id} className={`p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer ${!s.read ? "bg-primary/5" : ""}`} onClick={() => { setOpenSubmission(s); if (!s.read) markRead(s.id, true); }}>
+                      <div className={`mt-1.5 h-2 w-2 rounded-full ${!s.read ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold truncate">{s.name}</span>
+                          <span className="text-xs text-muted-foreground truncate">&lt;{s.email}&gt;</span>
+                        </div>
+                        <p className="text-sm font-medium truncate">{s.subject}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{s.message}</p>
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {openSubmission && (
+              <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenSubmission(null)}>
+                <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-5 border-b flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-bold text-lg">{openSubmission.subject}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {openSubmission.name} &lt;<a href={`mailto:${openSubmission.email}`} className="text-primary hover:underline">{openSubmission.email}</a>&gt;
+                        {openSubmission.company && <> · {openSubmission.company}</>}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{new Date(openSubmission.created_at).toLocaleString("nl-NL")}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => setOpenSubmission(null)}>Sluiten</Button>
+                  </div>
+                  <div className="p-5 whitespace-pre-wrap text-sm leading-relaxed">{openSubmission.message}</div>
+                  <div className="p-5 border-t flex gap-2 justify-end">
+                    <Button variant="outline" size="sm" onClick={() => markRead(openSubmission.id, !openSubmission.read)}>
+                      Markeer als {openSubmission.read ? "ongelezen" : "gelezen"}
+                    </Button>
+                    <a href={`mailto:${openSubmission.email}?subject=Re: ${encodeURIComponent(openSubmission.subject)}`}>
+                      <Button size="sm">Beantwoorden</Button>
+                    </a>
+                    <Button variant="destructive" size="sm" onClick={() => deleteSubmission(openSubmission.id)}>
+                      <Trash2 className="h-4 w-4 mr-1" /> Verwijderen
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="instellingen" className="mt-6 space-y-6">
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Notificaties</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Ontvang een melding wanneer iemand het contactformulier invult.
+              </p>
+              <div className="flex items-center gap-3">
+                <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
+                <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
+              </div>
+              <div>
+                <Label>Notificatie e-mailadres</Label>
+                <Input
+                  type="email"
+                  placeholder="info@loyaltygroup.nl"
+                  value={notifyEmail}
+                  onChange={(e) => setNotifyEmail(e.target.value)}
+                  disabled={!notifyEnabled}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.
+                </p>
+              </div>
+              <Button size="sm" onClick={saveSettings} disabled={savingSettings}>
+                {savingSettings ? "Opslaan..." : "Instellingen opslaan"}
+              </Button>
+            </div>
+
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Beheerders</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Geef andere gebruikers toegang tot dit admin paneel. De gebruiker moet zich eerst registreren via de inlogpagina, daarna kan je hier hun e-mailadres als beheerder toevoegen.
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="email@voorbeeld.nl"
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
+                />
+                <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
+              </div>
+              <div className="space-y-2">
+                {admins.map((a) => (
+                  <div key={a.user_id} className="flex items-center justify-between border rounded-md p-3">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">{a.email || a.user_id}</span>
+                      {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
+                    </div>
+                    {a.user_id !== currentUserId && (
+                      <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
               </div>
             </div>
           </TabsContent>
