@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
 import { Plus, Trash2 } from "lucide-react";
 import PagePicker from "./PagePicker";
+import KlantcasePicker from "./KlantcasePicker";
 
 interface Props {
   block: Block | null;
@@ -600,6 +601,93 @@ const BlockInspector = ({ block, onChange }: Props) => {
               ))}
               <Button variant="outline" size="sm" onClick={() => addItem("logos", "")}><Plus className="h-3 w-3 mr-1" /> Voeg logo toe</Button>
             </div>
+          </>
+        );
+
+      case "klantcases":
+        return (
+          <>
+            <Field label="Titel boven (optioneel)">
+              <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Bijv. Onze klantcases" />
+            </Field>
+            <Field label="Weergave">
+              <Select value={p.view || "short"} onValueChange={(v) => set("view", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="short">Compact (meerdere naast elkaar)</SelectItem>
+                  <SelectItem value="detailed">Gedetailleerd (met beschrijving)</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Welke cases tonen">
+              <Select value={p.mode || "selected"} onValueChange={(v) => set("mode", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="selected">Handmatig kiezen</SelectItem>
+                  <SelectItem value="latest">Automatisch (nieuwste)</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            {(p.mode || "selected") === "selected" ? (
+              <Field label="Kies klantcases">
+                <KlantcasePicker value={p.selectedIds || []} onChange={(ids) => set("selectedIds", ids)} />
+              </Field>
+            ) : (
+              <Field label="Aantal cases">
+                <Input type="number" min={1} max={12} value={p.limit ?? 3} onChange={(e) => set("limit", Math.max(1, Math.min(12, parseInt(e.target.value) || 3)))} />
+              </Field>
+            )}
+            <Field label="Aantal kolommen">
+              <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 kolom</SelectItem>
+                  <SelectItem value="2">2 kolommen</SelectItem>
+                  <SelectItem value="3">3 kolommen</SelectItem>
+                  <SelectItem value="4">4 kolommen</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Toon categorie">
+              <Select value={p.showCategory !== false ? "yes" : "no"} onValueChange={(v) => set("showCategory", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Ja</SelectItem>
+                  <SelectItem value="no">Nee</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Toon branche">
+              <Select value={p.showBranche !== false ? "yes" : "no"} onValueChange={(v) => set("showBranche", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Ja</SelectItem>
+                  <SelectItem value="no">Nee</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
           </>
         );
 
