@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
+import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
@@ -33,6 +35,8 @@ const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [cases, setCases] = useState<Klantcase[]>([]);
   const [editCase, setEditCase] = useState<Partial<Klantcase> | null>(null);
+  const [socials, setSocials] = useState<SocialLink[]>([]);
+  const [savingSocials, setSavingSocials] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -52,11 +56,45 @@ const Admin = () => {
     setIsAdmin(true);
     setLoading(false);
     fetchCases();
+    fetchSocials();
   };
 
   const fetchCases = async () => {
     const { data } = await supabase.from("klantcases").select("*").order("created_at", { ascending: false });
     if (data) setCases(data);
+  };
+
+  const fetchSocials = async () => {
+    const { data } = await supabase
+      .from("page_content")
+      .select("content")
+      .eq("page", "settings")
+      .eq("key", "socials")
+      .maybeSingle();
+    try {
+      const parsed = data?.content ? JSON.parse(data.content) : [];
+      setSocials(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setSocials([]);
+    }
+  };
+
+  const saveSocials = async () => {
+    setSavingSocials(true);
+    const cleaned = socials.filter((s) => s.url.trim());
+    const { error } = await supabase
+      .from("page_content")
+      .upsert(
+        { page: "settings", key: "socials", content: JSON.stringify(cleaned) },
+        { onConflict: "page,key" }
+      );
+    setSavingSocials(false);
+    if (error) {
+      toast({ title: "Fout bij opslaan", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Social media opgeslagen" });
+      fetchSocials();
+    }
   };
 
   const handleLogout = async () => {
@@ -111,6 +149,7 @@ const Admin = () => {
             <TabsTrigger value="klantcases">Klantcases</TabsTrigger>
             <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
+            <TabsTrigger value="socials">Social media</TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom-pages" className="mt-6">
@@ -240,6 +279,71 @@ const Admin = () => {
                   </Link>
                 </div>
               ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="socials" className="mt-6">
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div>
+                <h2 className="text-xl font-bold mb-1">Social media</h2>
+                <p className="text-muted-foreground text-sm">
+                  Deze links verschijnen in de footer en op de contactpagina.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {socials.map((s, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <Select
+                      value={s.platform}
+                      onValueChange={(v) => {
+                        const next = [...socials];
+                        next[i] = { ...next[i], platform: v as SocialPlatform };
+                        setSocials(next);
+                      }}
+                    >
+                      <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {SOCIAL_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      placeholder="https://..."
+                      value={s.url}
+                      onChange={(e) => {
+                        const next = [...socials];
+                        next[i] = { ...next[i], url: e.target.value };
+                        setSocials(next);
+                      }}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSocials(socials.filter((_, j) => j !== i))}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                {socials.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Nog geen social media links toegevoegd.</p>
+                )}
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSocials([...socials, { platform: "linkedin", url: "" }])}
+                >
+                  <Plus className="h-4 w-4 mr-1" /> Toevoegen
+                </Button>
+                <Button size="sm" onClick={saveSocials} disabled={savingSocials}>
+                  {savingSocials ? "Opslaan..." : "Opslaan"}
+                </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

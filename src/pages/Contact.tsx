@@ -8,6 +8,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
+import SocialIcons from "@/components/SocialIcons";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -89,6 +90,10 @@ const Contact = () => {
                   <EditableText page="contact" contentKey="address_label" defaultValue="Adres" as="h3" className="font-semibold" />
                   <EditableText page="contact" contentKey="address_value" defaultValue="Nederland" as="p" className="text-muted-foreground" />
                 </div>
+              </div>
+              <div className="pt-2">
+                <h3 className="font-semibold mb-3">Volg ons</h3>
+                <SocialIcons />
               </div>
             </div>
           </div>
