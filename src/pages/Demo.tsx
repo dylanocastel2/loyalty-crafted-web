@@ -69,16 +69,16 @@ const Demo = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Naam *</Label>
-                    <Input id="name" required placeholder="Uw naam" />
+                    <Input id="name" name="name" required placeholder="Uw naam" />
                   </div>
                   <div>
                     <Label htmlFor="email">E-mail *</Label>
-                    <Input id="email" type="email" required placeholder="uw@email.nl" />
+                    <Input id="email" name="email" type="email" required placeholder="uw@email.nl" />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="company">Organisatie *</Label>
-                  <Input id="company" required placeholder="Uw organisatie" />
+                  <Input id="company" name="company" required placeholder="Uw organisatie" />
                 </div>
                 <div>
                   <Label htmlFor="type">Type organisatie</Label>
