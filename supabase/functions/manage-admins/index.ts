@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
     if (action === "add") {
       const email = String(body.email || "").trim().toLowerCase();
       if (!email) return new Response(JSON.stringify({ error: "E-mail vereist" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      // Find user by email via paginated listing
+      const redirectTo = String(body.redirectTo || "");
+      // Find existing user by email
       let foundId: string | null = null;
       let page = 1;
       while (page <= 10 && !foundId) {
@@ -57,12 +58,22 @@ Deno.serve(async (req) => {
         if (!data.users.length || data.users.length < 200) break;
         page++;
       }
+      // If user does not exist yet, send an invitation email so they can set a password
       if (!foundId) {
-        return new Response(JSON.stringify({ error: "Geen gebruiker met dit e-mailadres gevonden. De gebruiker moet zich eerst registreren." }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        const { data: invited, error: invErr } = await admin.auth.admin.inviteUserByEmail(email, {
+          redirectTo: redirectTo || undefined,
+        });
+        if (invErr || !invited.user) {
+          return new Response(JSON.stringify({ error: invErr?.message || "Uitnodiging versturen mislukt" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        foundId = invited.user.id;
+      } else {
+        // Existing user — also send a (re)invite/activation link so they have a clear path in
+        await admin.auth.admin.inviteUserByEmail(email, { redirectTo: redirectTo || undefined }).catch(() => {});
       }
       const { error: insErr } = await admin.from("user_roles").upsert({ user_id: foundId, role: "admin" }, { onConflict: "user_id,role" });
       if (insErr) return new Response(JSON.stringify({ error: insErr.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ ok: true, invited: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "remove") {
