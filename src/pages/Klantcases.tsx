@@ -8,7 +8,6 @@ import { Plus, ArrowRight, Pencil } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface KlantcaseItem {
   id: string;
@@ -46,14 +45,22 @@ const Klantcases = () => {
     fetch();
   }, []);
 
-  const branches = Array.from(
-    new Set(cases.map((c) => c.branche).filter((b): b is string => !!b && b.trim() !== ""))
-  ).sort();
+  const sectorOptions = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
+
+  const matchesSector = (c: KlantcaseItem, sector: string) => {
+    const haystack = `${c.branche ?? ""} ${c.category ?? ""}`.toLowerCase();
+    if (sector === "Overig") {
+      return !sectorOptions
+        .filter((s) => s !== "Overig")
+        .some((s) => haystack.includes(s.toLowerCase()));
+    }
+    return haystack.includes(sector.toLowerCase());
+  };
 
   const filteredCases =
     selectedBranche === "all"
       ? cases
-      : cases.filter((c) => c.branche === selectedBranche);
+      : cases.filter((c) => matchesSector(c, selectedBranche));
 
   return (
     <Layout>
@@ -67,23 +74,30 @@ const Klantcases = () => {
 
       <section className="py-16 md:py-24">
         <div className="container">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-muted-foreground">Sorteer op sector:</span>
-              <Select value={selectedBranche} onValueChange={setSelectedBranche}>
-                <SelectTrigger className="w-[220px]">
-                  <SelectValue placeholder="Alle sectoren" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Alle sectoren</SelectItem>
-                  {branches.map((b) => (
-                    <SelectItem key={b} value={b}>{b}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex flex-col gap-4 mb-8">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                variant={selectedBranche === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedBranche("all")}
+                className="rounded-full"
+              >
+                Alle
+              </Button>
+              {sectorOptions.map((s) => (
+                <Button
+                  key={s}
+                  variant={selectedBranche === s ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setSelectedBranche(s)}
+                  className="rounded-full"
+                >
+                  {s}
+                </Button>
+              ))}
             </div>
             {isAdmin && (
-              <Link to="/klantcases/nieuw">
+              <Link to="/klantcases/nieuw" className="self-end">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" /> Maak klantcase
                 </Button>
