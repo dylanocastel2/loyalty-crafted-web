@@ -24,6 +24,7 @@ interface Props {
   showCategory?: boolean;
   title?: string;
   showFilter?: boolean;
+  maxRows?: number;
 }
 
 const SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
@@ -38,10 +39,11 @@ const matchesSector = (c: KlantcaseItem, sector: string) => {
   return haystack.includes(sector.toLowerCase());
 };
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter }: Props) => {
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter, maxRows }: Props) => {
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSector, setActiveSector] = useState<string>("all");
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -77,6 +79,21 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   const cols = Math.max(1, Math.min(4, columns || 3));
   const colsClass = cols === 1 ? "md:grid-cols-1" : cols === 2 ? "md:grid-cols-2" : cols === 4 ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-2 lg:grid-cols-3";
 
+  const detailedCols = cols >= 2 ? 2 : 1;
+  const gridCols = view === "short" ? cols : detailedCols;
+  const rowsCap = Math.max(0, Math.min(4, maxRows || 0));
+  const visibleLimit = rowsCap > 0 ? rowsCap * gridCols : visibleCases.length;
+  const displayedCases = expanded ? visibleCases : visibleCases.slice(0, visibleLimit);
+  const hasMore = visibleCases.length > displayedCases.length;
+
+  const showMoreBar = (rowsCap > 0 && (hasMore || expanded)) ? (
+    <div className="flex justify-center mt-8">
+      <Button variant="outline" onClick={() => setExpanded((v) => !v)} className="rounded-full">
+        {expanded ? "Toon minder" : `Meer cases (${visibleCases.length - displayedCases.length})`}
+      </Button>
+    </div>
+  ) : null;
+
   const filterBar = showFilter ? (
     <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
       <Button
@@ -109,8 +126,9 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
         {visibleCases.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
         ) : (
+        <>
         <div className={`grid grid-cols-1 ${colsClass} gap-6`}>
-          {visibleCases.map((c) => {
+          {displayedCases.map((c) => {
             const img = c.header_image_url || c.image_url;
             return (
               <Link key={c.id} to={`/klantcases/${c.id}`} className="group border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow block">
@@ -134,6 +152,8 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
             );
           })}
         </div>
+        {showMoreBar}
+        </>
         )}
       </div>
     );
@@ -147,8 +167,9 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       {visibleCases.length === 0 ? (
         <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
       ) : (
+      <>
       <div className={`grid grid-cols-1 ${cols >= 2 ? "md:grid-cols-2" : ""} gap-8`}>
-        {visibleCases.map((c) => {
+        {displayedCases.map((c) => {
           const img = c.header_image_url || c.image_url;
           return (
             <Link key={c.id} to={`/klantcases/${c.id}`} className="group border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow block">
@@ -174,6 +195,8 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
           );
         })}
       </div>
+      {showMoreBar}
+      </>
       )}
     </div>
   );
