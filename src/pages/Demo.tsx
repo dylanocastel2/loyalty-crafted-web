@@ -9,19 +9,45 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
+import { supabase } from "@/integrations/supabase/client";
 
 const Demo = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [type, setType] = useState<string>("");
+  const [branche, setBranche] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      toast({ title: "Demo aangevraagd", description: "Wij nemen binnen 24 uur contact met u op." });
-      (e.target as HTMLFormElement).reset();
-    }, 1000);
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const name = String(fd.get("name") || "");
+    const email = String(fd.get("email") || "");
+    const company = String(fd.get("company") || "");
+    const toelichting = String(fd.get("message") || "");
+    const messageParts = [
+      type ? `Type organisatie: ${type}` : null,
+      branche ? `Branche: ${branche}` : null,
+      toelichting ? `\nToelichting:\n${toelichting}` : null,
+    ].filter(Boolean);
+    const message = messageParts.join("\n") || "Geen toelichting";
+    const { error } = await supabase.from("contact_submissions").insert({
+      name,
+      email,
+      company,
+      subject: "Demo aanvraag",
+      message,
+    });
+    setLoading(false);
+    if (error) {
+      toast({ title: "Er ging iets mis", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Demo aangevraagd", description: "Wij nemen binnen 24 uur contact met u op." });
+    form.reset();
+    setType("");
+    setBranche("");
   };
 
   return (
@@ -43,20 +69,20 @@ const Demo = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Naam *</Label>
-                    <Input id="name" required placeholder="Uw naam" />
+                    <Input id="name" name="name" required placeholder="Uw naam" />
                   </div>
                   <div>
                     <Label htmlFor="email">E-mail *</Label>
-                    <Input id="email" type="email" required placeholder="uw@email.nl" />
+                    <Input id="email" name="email" type="email" required placeholder="uw@email.nl" />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="company">Organisatie *</Label>
-                  <Input id="company" required placeholder="Uw organisatie" />
+                  <Input id="company" name="company" required placeholder="Uw organisatie" />
                 </div>
                 <div>
                   <Label htmlFor="type">Type organisatie</Label>
-                  <Select>
+                  <Select value={type} onValueChange={setType}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecteer type" />
                     </SelectTrigger>
@@ -69,7 +95,7 @@ const Demo = () => {
                 </div>
                 <div>
                   <Label htmlFor="branche">Branche</Label>
-                  <Select>
+                  <Select value={branche} onValueChange={setBranche}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecteer branche" />
                     </SelectTrigger>
@@ -86,7 +112,7 @@ const Demo = () => {
                 </div>
                 <div>
                   <Label htmlFor="message">Toelichting</Label>
-                  <Textarea id="message" placeholder="Vertel ons meer over uw wensen..." rows={4} />
+                  <Textarea id="message" name="message" placeholder="Vertel ons meer over uw wensen..." rows={4} />
                 </div>
                 <Button type="submit" disabled={loading} size="lg" className="w-full sm:w-auto">
                   {loading ? "Verzenden..." : "Demo aanvragen"}
