@@ -9,19 +9,37 @@ import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
 import SocialIcons from "@/components/SocialIcons";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    const form = e.target as HTMLFormElement;
+    const fd = new FormData(form);
+    const payload = {
+      name: String(fd.get("name") || "").trim().slice(0, 200),
+      email: String(fd.get("email") || "").trim().slice(0, 255),
+      company: String(fd.get("company") || "").trim().slice(0, 200) || null,
+      subject: String(fd.get("subject") || "").trim().slice(0, 250),
+      message: String(fd.get("message") || "").trim().slice(0, 4000),
+    };
+    if (!payload.name || !payload.email || !payload.subject || !payload.message) {
       setLoading(false);
-      toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
-      (e.target as HTMLFormElement).reset();
-    }, 1000);
+      toast({ title: "Vul alle velden in", variant: "destructive" });
+      return;
+    }
+    const { error } = await supabase.from("contact_submissions").insert(payload);
+    setLoading(false);
+    if (error) {
+      toast({ title: "Versturen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
+    form.reset();
   };
 
   return (
