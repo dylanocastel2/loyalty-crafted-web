@@ -32,18 +32,20 @@ const Demo = () => {
       toelichting ? `\nToelichting:\n${toelichting}` : null,
     ].filter(Boolean);
     const message = messageParts.join("\n") || "Geen toelichting";
-    const { error } = await supabase.from("contact_submissions").insert({
+    const payload = {
       name,
       email,
       company,
       subject: "Demo aanvraag",
       message,
-    });
+    };
+    const { error } = await supabase.from("contact_submissions").insert(payload);
     setLoading(false);
     if (error) {
       toast({ title: "Er ging iets mis", description: error.message, variant: "destructive" });
       return;
     }
+    supabase.functions.invoke("send-contact-notification", { body: payload }).catch(() => {});
     toast({ title: "Demo aangevraagd", description: "Wij nemen binnen 24 uur contact met u op." });
     form.reset();
     setType("");
