@@ -281,6 +281,71 @@ const Admin = () => {
               ))}
             </div>
           </TabsContent>
+
+          <TabsContent value="socials" className="mt-6">
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div>
+                <h2 className="text-xl font-bold mb-1">Social media</h2>
+                <p className="text-muted-foreground text-sm">
+                  Deze links verschijnen in de footer en op de contactpagina.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {socials.map((s, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <Select
+                      value={s.platform}
+                      onValueChange={(v) => {
+                        const next = [...socials];
+                        next[i] = { ...next[i], platform: v as SocialPlatform };
+                        setSocials(next);
+                      }}
+                    >
+                      <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {SOCIAL_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      placeholder="https://..."
+                      value={s.url}
+                      onChange={(e) => {
+                        const next = [...socials];
+                        next[i] = { ...next[i], url: e.target.value };
+                        setSocials(next);
+                      }}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSocials(socials.filter((_, j) => j !== i))}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                {socials.length === 0 && (
+                  <p className="text-sm text-muted-foreground">Nog geen social media links toegevoegd.</p>
+                )}
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSocials([...socials, { platform: "linkedin", url: "" }])}
+                >
+                  <Plus className="h-4 w-4 mr-1" /> Toevoegen
+                </Button>
+                <Button size="sm" onClick={saveSocials} disabled={savingSocials}>
+                  {savingSocials ? "Opslaan..." : "Opslaan"}
+                </Button>
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
