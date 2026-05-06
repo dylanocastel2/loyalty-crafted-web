@@ -493,6 +493,7 @@ const BlockRenderer = ({ block }: Props) => {
             showBranche={p.showBranche !== false}
             showCategory={p.showCategory !== false}
             title={p.title}
+            showFilter={p.showFilter === true}
           />
         </section>
       );
