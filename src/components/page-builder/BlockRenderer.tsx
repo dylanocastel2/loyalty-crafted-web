@@ -494,6 +494,7 @@ const BlockRenderer = ({ block }: Props) => {
             showCategory={p.showCategory !== false}
             title={p.title}
             showFilter={p.showFilter === true}
+            maxRows={p.maxRows || 0}
           />
         </section>
       );
