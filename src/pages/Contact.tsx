@@ -38,6 +38,7 @@ const Contact = () => {
       toast({ title: "Versturen mislukt", description: error.message, variant: "destructive" });
       return;
     }
+    supabase.functions.invoke("send-contact-notification", { body: payload }).catch(() => {});
     toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
     form.reset();
   };
