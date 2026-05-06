@@ -481,6 +481,22 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
+    case "klantcases":
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <KlantcasesBlock
+            view={p.view || "short"}
+            mode={p.mode || "selected"}
+            selectedIds={p.selectedIds || []}
+            limit={p.limit || 3}
+            columns={p.columns || 3}
+            showBranche={p.showBranche !== false}
+            showCategory={p.showCategory !== false}
+            title={p.title}
+          />
+        </section>
+      );
+
     default:
       return null;
   }
