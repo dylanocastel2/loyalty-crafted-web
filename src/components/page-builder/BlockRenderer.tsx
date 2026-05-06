@@ -34,11 +34,24 @@ interface Props {
 
 const BlockRenderer = ({ block }: Props) => {
   const p = block.props;
+  const gradients: Record<string, string> = {
+    "primary-secondary": "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)))",
+    "secondary-primary": "linear-gradient(90deg, hsl(var(--secondary)), hsl(var(--primary)))",
+    "aqua": "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%)",
+    "sunset": "linear-gradient(90deg, hsl(20 90% 55%), hsl(340 80% 55%))",
+    "ocean": "linear-gradient(90deg, hsl(200 90% 45%), hsl(170 80% 45%))",
+    "gold": "linear-gradient(90deg, hsl(40 85% 55%), hsl(25 85% 50%))",
+  };
+  const gradientBg = p.textGradient && gradients[p.textGradient];
   const wrapperStyle: React.CSSProperties = {
     marginTop: p.marginTop != null ? `${p.marginTop}px` : undefined,
     marginBottom: p.marginBottom != null ? `${p.marginBottom}px` : undefined,
     paddingLeft: p.offsetX ? `${p.offsetX}px` : undefined,
-    color: p.textColorToken ? `hsl(var(--${p.textColorToken}))` : undefined,
+    color: gradientBg ? "transparent" : p.textColorToken ? `hsl(var(--${p.textColorToken}))` : undefined,
+    backgroundImage: gradientBg || undefined,
+    WebkitBackgroundClip: gradientBg ? "text" : undefined,
+    backgroundClip: gradientBg ? "text" : undefined,
+    WebkitTextFillColor: gradientBg ? "transparent" : undefined,
   };
   const wrap = (node: React.ReactNode) => (
     <div style={wrapperStyle}>{node}</div>
