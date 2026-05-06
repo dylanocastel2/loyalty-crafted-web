@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
+import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
@@ -33,6 +35,8 @@ const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [cases, setCases] = useState<Klantcase[]>([]);
   const [editCase, setEditCase] = useState<Partial<Klantcase> | null>(null);
+  const [socials, setSocials] = useState<SocialLink[]>([]);
+  const [savingSocials, setSavingSocials] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -52,11 +56,45 @@ const Admin = () => {
     setIsAdmin(true);
     setLoading(false);
     fetchCases();
+    fetchSocials();
   };
 
   const fetchCases = async () => {
     const { data } = await supabase.from("klantcases").select("*").order("created_at", { ascending: false });
     if (data) setCases(data);
+  };
+
+  const fetchSocials = async () => {
+    const { data } = await supabase
+      .from("page_content")
+      .select("content")
+      .eq("page", "settings")
+      .eq("key", "socials")
+      .maybeSingle();
+    try {
+      const parsed = data?.content ? JSON.parse(data.content) : [];
+      setSocials(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setSocials([]);
+    }
+  };
+
+  const saveSocials = async () => {
+    setSavingSocials(true);
+    const cleaned = socials.filter((s) => s.url.trim());
+    const { error } = await supabase
+      .from("page_content")
+      .upsert(
+        { page: "settings", key: "socials", content: JSON.stringify(cleaned) },
+        { onConflict: "page,key" }
+      );
+    setSavingSocials(false);
+    if (error) {
+      toast({ title: "Fout bij opslaan", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Social media opgeslagen" });
+      fetchSocials();
+    }
   };
 
   const handleLogout = async () => {
@@ -111,6 +149,7 @@ const Admin = () => {
             <TabsTrigger value="klantcases">Klantcases</TabsTrigger>
             <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
+            <TabsTrigger value="socials">Social media</TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom-pages" className="mt-6">
