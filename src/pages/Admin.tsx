@@ -15,15 +15,15 @@ import type { Database } from "@/integrations/supabase/types";
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
 const pages = [
-  { label: "Homepage", path: "/" },
-  { label: "Gemeenten", path: "/gemeenten" },
-  { label: "Commercieel", path: "/commercieel" },
-  { label: "Spaarsysteem", path: "/spaarsysteem" },
-  { label: "Klantcases", path: "/klantcases" },
-  { label: "Support", path: "/support" },
-  { label: "Over Ons", path: "/over-ons" },
-  { label: "Contact", path: "/contact" },
-  { label: "Demo", path: "/demo" },
+  { label: "Homepage", path: "/", key: "index" },
+  { label: "Gemeenten", path: "/gemeenten", key: "gemeenten" },
+  { label: "Commercieel", path: "/commercieel", key: "commercieel" },
+  { label: "Spaarsysteem", path: "/spaarsysteem", key: "spaarsysteem" },
+  { label: "Klantcases", path: "/klantcases", key: "klantcases" },
+  { label: "Support", path: "/support", key: "support" },
+  { label: "Over Ons", path: "/over-ons", key: "over-ons" },
+  { label: "Contact", path: "/contact", key: "contact" },
+  { label: "Demo", path: "/demo", key: "demo" },
 ];
 
 const Admin = () => {
@@ -219,17 +219,26 @@ const Admin = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {pages.map((p) => (
-                <Link
+                <div
                   key={p.path}
-                  to={p.path}
-                  className="bg-card border rounded-lg p-5 hover:shadow-md hover:border-primary/30 transition-all group"
+                  className="bg-card border rounded-lg p-5 hover:shadow-md hover:border-primary/30 transition-all group relative"
                 >
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold">{p.label}</h3>
-                    <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">{p.path}</p>
-                </Link>
+                  <Link to={p.path} className="block">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold">{p.label}</h3>
+                      <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{p.path}</p>
+                  </Link>
+                  <Link
+                    to={`/admin/pages/builtin/${p.key}`}
+                    title="Open in paginabouwer"
+                    className="absolute top-2 right-10 inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Link>
+                </div>
               ))}
             </div>
           </TabsContent>
