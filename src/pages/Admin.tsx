@@ -553,7 +553,7 @@ const Admin = () => {
                 <h2 className="text-xl font-bold">Beheerders</h2>
               </div>
               <p className="text-sm text-muted-foreground">
-                Geef andere gebruikers toegang tot dit admin paneel. De gebruiker moet zich eerst registreren via de inlogpagina, daarna kan je hier hun e-mailadres als beheerder toevoegen.
+                Voeg een nieuwe beheerder toe via e-mailadres. De persoon ontvangt automatisch een activatiemail om een wachtwoord in te stellen (min. 10 tekens, 1 cijfer en 1 speciaal teken).
               </p>
               <div className="flex gap-2">
                 <Input
