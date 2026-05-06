@@ -716,6 +716,29 @@ const BlockInspector = ({ block, onChange }: Props) => {
       </div>
       {renderFields()}
 
+      {!["spacer", "divider", "image", "image_carousel", "video_embed", "custom_html"].includes(block.type) && (
+        <div className="pt-4 mt-4 border-t space-y-3">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tekstkleur</h4>
+          <Field label="Kleur (uit thema)">
+            <Select value={p.textColorToken || "default"} onValueChange={(v) => set("textColorToken", v === "default" ? undefined : v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Standaard</SelectItem>
+                <SelectItem value="foreground">Donker (foreground)</SelectItem>
+                <SelectItem value="muted-foreground">Gedempt</SelectItem>
+                <SelectItem value="primary">Primair</SelectItem>
+                <SelectItem value="primary-foreground">Primair contrast (wit)</SelectItem>
+                <SelectItem value="secondary">Secundair</SelectItem>
+                <SelectItem value="secondary-foreground">Secundair contrast</SelectItem>
+                <SelectItem value="accent-foreground">Accent</SelectItem>
+                <SelectItem value="destructive">Waarschuwing</SelectItem>
+              </SelectContent>
+            </Select>
+          </Field>
+          <p className="text-[10px] text-muted-foreground leading-snug">Past de tekstkleur aan binnen de huisstijl. Werkt op alle teksten in dit blok.</p>
+        </div>
+      )}
+
       <div className="pt-4 mt-4 border-t space-y-3">
         <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Positie & marges</h4>
         <Field label="Marge boven (px)">

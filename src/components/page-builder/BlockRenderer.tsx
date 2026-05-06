@@ -38,6 +38,7 @@ const BlockRenderer = ({ block }: Props) => {
     marginTop: p.marginTop != null ? `${p.marginTop}px` : undefined,
     marginBottom: p.marginBottom != null ? `${p.marginBottom}px` : undefined,
     paddingLeft: p.offsetX ? `${p.offsetX}px` : undefined,
+    color: p.textColorToken ? `hsl(var(--${p.textColorToken}))` : undefined,
   };
   const wrap = (node: React.ReactNode) => (
     <div style={wrapperStyle}>{node}</div>
