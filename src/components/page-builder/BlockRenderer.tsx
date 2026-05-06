@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
+import KlantcasesBlock from "./KlantcasesBlock";
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
