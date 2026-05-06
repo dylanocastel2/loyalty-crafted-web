@@ -61,24 +61,24 @@ const Contact = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="name">Naam</Label>
-                    <Input id="name" required placeholder="Uw naam" />
+                    <Input id="name" name="name" required placeholder="Uw naam" />
                   </div>
                   <div>
                     <Label htmlFor="email">E-mail</Label>
-                    <Input id="email" type="email" required placeholder="uw@email.nl" />
+                    <Input id="email" name="email" type="email" required placeholder="uw@email.nl" />
                   </div>
                 </div>
                 <div>
                   <Label htmlFor="company">Organisatie</Label>
-                  <Input id="company" placeholder="Uw organisatie" />
+                  <Input id="company" name="company" placeholder="Uw organisatie" />
                 </div>
                 <div>
                   <Label htmlFor="subject">Onderwerp</Label>
-                  <Input id="subject" required placeholder="Onderwerp" />
+                  <Input id="subject" name="subject" required placeholder="Onderwerp" />
                 </div>
                 <div>
                   <Label htmlFor="message">Bericht</Label>
-                  <Textarea id="message" required placeholder="Uw bericht..." rows={5} />
+                  <Textarea id="message" name="message" required placeholder="Uw bericht..." rows={5} />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full sm:w-auto">
                   {loading ? "Verzenden..." : "Verstuur bericht"}
