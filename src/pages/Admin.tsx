@@ -147,13 +147,17 @@ const Admin = () => {
   const addAdmin = async () => {
     if (!newAdminEmail.trim()) return;
     const { data, error } = await supabase.functions.invoke("manage-admins", {
-      body: { action: "add", email: newAdminEmail.trim() },
+      body: {
+        action: "add",
+        email: newAdminEmail.trim(),
+        redirectTo: `${window.location.origin}/admin/activeren`,
+      },
     });
     if (error || data?.error) {
       toast({ title: "Toevoegen mislukt", description: data?.error || error?.message, variant: "destructive" });
       return;
     }
-    toast({ title: "Beheerder toegevoegd" });
+    toast({ title: "Uitnodiging verstuurd", description: "De beheerder ontvangt een activatiemail." });
     setNewAdminEmail("");
     fetchAdmins();
   };
@@ -549,7 +553,7 @@ const Admin = () => {
                 <h2 className="text-xl font-bold">Beheerders</h2>
               </div>
               <p className="text-sm text-muted-foreground">
-                Geef andere gebruikers toegang tot dit admin paneel. De gebruiker moet zich eerst registreren via de inlogpagina, daarna kan je hier hun e-mailadres als beheerder toevoegen.
+                Voeg een nieuwe beheerder toe via e-mailadres. De persoon ontvangt automatisch een activatiemail om een wachtwoord in te stellen (min. 10 tekens, 1 cijfer en 1 speciaal teken).
               </p>
               <div className="flex gap-2">
                 <Input

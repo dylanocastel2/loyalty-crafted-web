@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import Demo from "./pages/Demo";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
+import AdminActivate from "./pages/AdminActivate";
 import KlantcaseCreator from "./pages/KlantcaseCreator";
 import KlantcaseDetail from "./pages/KlantcaseDetail";
 import PagesAdmin from "./pages/admin/PagesAdmin";
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/activeren" element={<AdminActivate />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/pages" element={<PagesAdmin />} />
             <Route path="/admin/pages/:id/edit" element={<PageEditor />} />
