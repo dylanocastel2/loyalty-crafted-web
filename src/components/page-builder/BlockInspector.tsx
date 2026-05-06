@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
 import { Plus, Trash2 } from "lucide-react";
 import PagePicker from "./PagePicker";
+import KlantcasePicker from "./KlantcasePicker";
 
 interface Props {
   block: Block | null;
