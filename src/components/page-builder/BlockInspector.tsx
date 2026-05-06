@@ -648,6 +648,18 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+            <Field label="Max. rijen zichtbaar (0 = alles tonen)">
+              <Select value={String(p.maxRows ?? 0)} onValueChange={(v) => set("maxRows", parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Alles tonen</SelectItem>
+                  <SelectItem value="1">1 rij</SelectItem>
+                  <SelectItem value="2">2 rijen</SelectItem>
+                  <SelectItem value="3">3 rijen</SelectItem>
+                  <SelectItem value="4">4 rijen</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
             <Field label="Toon categorie">
               <Select value={p.showCategory !== false ? "yes" : "no"} onValueChange={(v) => set("showCategory", v === "yes")}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
