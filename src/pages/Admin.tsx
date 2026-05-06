@@ -451,6 +451,135 @@ const Admin = () => {
               </div>
             </div>
           </TabsContent>
+
+          <TabsContent value="aanvragen" className="mt-6">
+            <div className="bg-card border rounded-lg">
+              <div className="p-5 border-b flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Contactaanvragen</h2>
+                <span className="ml-auto text-sm text-muted-foreground">{submissions.length} totaal · {unreadCount} ongelezen</span>
+              </div>
+              {submissions.length === 0 ? (
+                <p className="p-8 text-center text-muted-foreground">Nog geen formulieren ingevuld.</p>
+              ) : (
+                <ul className="divide-y">
+                  {submissions.map((s) => (
+                    <li key={s.id} className={`p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer ${!s.read ? "bg-primary/5" : ""}`} onClick={() => { setOpenSubmission(s); if (!s.read) markRead(s.id, true); }}>
+                      <div className={`mt-1.5 h-2 w-2 rounded-full ${!s.read ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold truncate">{s.name}</span>
+                          <span className="text-xs text-muted-foreground truncate">&lt;{s.email}&gt;</span>
+                        </div>
+                        <p className="text-sm font-medium truncate">{s.subject}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{s.message}</p>
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {openSubmission && (
+              <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenSubmission(null)}>
+                <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-5 border-b flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-bold text-lg">{openSubmission.subject}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {openSubmission.name} &lt;<a href={`mailto:${openSubmission.email}`} className="text-primary hover:underline">{openSubmission.email}</a>&gt;
+                        {openSubmission.company && <> · {openSubmission.company}</>}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">{new Date(openSubmission.created_at).toLocaleString("nl-NL")}</p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => setOpenSubmission(null)}>Sluiten</Button>
+                  </div>
+                  <div className="p-5 whitespace-pre-wrap text-sm leading-relaxed">{openSubmission.message}</div>
+                  <div className="p-5 border-t flex gap-2 justify-end">
+                    <Button variant="outline" size="sm" onClick={() => markRead(openSubmission.id, !openSubmission.read)}>
+                      Markeer als {openSubmission.read ? "ongelezen" : "gelezen"}
+                    </Button>
+                    <a href={`mailto:${openSubmission.email}?subject=Re: ${encodeURIComponent(openSubmission.subject)}`}>
+                      <Button size="sm">Beantwoorden</Button>
+                    </a>
+                    <Button variant="destructive" size="sm" onClick={() => deleteSubmission(openSubmission.id)}>
+                      <Trash2 className="h-4 w-4 mr-1" /> Verwijderen
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="instellingen" className="mt-6 space-y-6">
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Notificaties</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Ontvang een melding wanneer iemand het contactformulier invult.
+              </p>
+              <div className="flex items-center gap-3">
+                <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
+                <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
+              </div>
+              <div>
+                <Label>Notificatie e-mailadres</Label>
+                <Input
+                  type="email"
+                  placeholder="info@loyaltygroup.nl"
+                  value={notifyEmail}
+                  onChange={(e) => setNotifyEmail(e.target.value)}
+                  disabled={!notifyEnabled}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.
+                </p>
+              </div>
+              <Button size="sm" onClick={saveSettings} disabled={savingSettings}>
+                {savingSettings ? "Opslaan..." : "Instellingen opslaan"}
+              </Button>
+            </div>
+
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Beheerders</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Geef andere gebruikers toegang tot dit admin paneel. De gebruiker moet zich eerst registreren via de inlogpagina, daarna kan je hier hun e-mailadres als beheerder toevoegen.
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="email@voorbeeld.nl"
+                  value={newAdminEmail}
+                  onChange={(e) => setNewAdminEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
+                />
+                <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
+              </div>
+              <div className="space-y-2">
+                {admins.map((a) => (
+                  <div key={a.user_id} className="flex items-center justify-between border rounded-md p-3">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">{a.email || a.user_id}</span>
+                      {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
+                    </div>
+                    {a.user_id !== currentUserId && (
+                      <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
+              </div>
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
