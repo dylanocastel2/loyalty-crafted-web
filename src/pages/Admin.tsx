@@ -8,11 +8,22 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+type Submission = {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  subject: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+};
 
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
@@ -37,6 +48,14 @@ const Admin = () => {
   const [editCase, setEditCase] = useState<Partial<Klantcase> | null>(null);
   const [socials, setSocials] = useState<SocialLink[]>([]);
   const [savingSocials, setSavingSocials] = useState(false);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [openSubmission, setOpenSubmission] = useState<Submission | null>(null);
+  const [admins, setAdmins] = useState<{ user_id: string; email: string | null }[]>([]);
+  const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notifyEnabled, setNotifyEnabled] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -55,8 +74,12 @@ const Admin = () => {
     }
     setIsAdmin(true);
     setLoading(false);
+    setCurrentUserId(session.user.id);
     fetchCases();
     fetchSocials();
+    fetchSubmissions();
+    fetchAdmins();
+    fetchSettings();
   };
 
   const fetchCases = async () => {
@@ -96,6 +119,84 @@ const Admin = () => {
       fetchSocials();
     }
   };
+
+  const fetchSubmissions = async () => {
+    const { data } = await supabase
+      .from("contact_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (data) setSubmissions(data as Submission[]);
+  };
+
+  const markRead = async (id: string, read: boolean) => {
+    await supabase.from("contact_submissions").update({ read }).eq("id", id);
+    fetchSubmissions();
+  };
+
+  const deleteSubmission = async (id: string) => {
+    await supabase.from("contact_submissions").delete().eq("id", id);
+    setOpenSubmission(null);
+    fetchSubmissions();
+  };
+
+  const fetchAdmins = async () => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", { body: { action: "list" } });
+    if (!error && data?.admins) setAdmins(data.admins);
+  };
+
+  const addAdmin = async () => {
+    if (!newAdminEmail.trim()) return;
+    const { data, error } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "add", email: newAdminEmail.trim() },
+    });
+    if (error || data?.error) {
+      toast({ title: "Toevoegen mislukt", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Beheerder toegevoegd" });
+    setNewAdminEmail("");
+    fetchAdmins();
+  };
+
+  const removeAdmin = async (user_id: string) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "remove", user_id },
+    });
+    if (error || data?.error) {
+      toast({ title: "Verwijderen mislukt", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Beheerder verwijderd" });
+    fetchAdmins();
+  };
+
+  const fetchSettings = async () => {
+    const { data } = await supabase
+      .from("page_content")
+      .select("key,content")
+      .eq("page", "settings")
+      .in("key", ["notify_email", "notify_enabled"]);
+    const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
+    setNotifyEmail(map["notify_email"] || "");
+    setNotifyEnabled(map["notify_enabled"] === "true");
+  };
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    const rows = [
+      { page: "settings", key: "notify_email", content: notifyEmail.trim() },
+      { page: "settings", key: "notify_enabled", content: notifyEnabled ? "true" : "false" },
+    ];
+    const { error } = await supabase.from("page_content").upsert(rows, { onConflict: "page,key" });
+    setSavingSettings(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Instellingen opgeslagen" });
+  };
+
+  const unreadCount = submissions.filter((s) => !s.read).length;
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -150,6 +251,10 @@ const Admin = () => {
             <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
             <TabsTrigger value="socials">Social media</TabsTrigger>
+            <TabsTrigger value="aanvragen">
+              Aanvragen{unreadCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">{unreadCount}</span>}
+            </TabsTrigger>
+            <TabsTrigger value="instellingen">Instellingen</TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom-pages" className="mt-6">
