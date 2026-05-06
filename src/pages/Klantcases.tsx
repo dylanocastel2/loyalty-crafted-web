@@ -8,6 +8,7 @@ import { Plus, ArrowRight, Pencil } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface KlantcaseItem {
   id: string;
@@ -30,6 +31,7 @@ const Klantcases = () => {
   const { isAdmin } = useAuth();
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBranche, setSelectedBranche] = useState<string>("all");
 
   useEffect(() => {
     const fetch = async () => {
@@ -44,6 +46,15 @@ const Klantcases = () => {
     fetch();
   }, []);
 
+  const branches = Array.from(
+    new Set(cases.map((c) => c.branche).filter((b): b is string => !!b && b.trim() !== ""))
+  ).sort();
+
+  const filteredCases =
+    selectedBranche === "all"
+      ? cases
+      : cases.filter((c) => c.branche === selectedBranche);
+
   return (
     <Layout>
       <PageContent pageKey="klantcases">
@@ -56,20 +67,36 @@ const Klantcases = () => {
 
       <section className="py-16 md:py-24">
         <div className="container">
-          {isAdmin && (
-            <div className="flex justify-end mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-muted-foreground">Sorteer op sector:</span>
+              <Select value={selectedBranche} onValueChange={setSelectedBranche}>
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder="Alle sectoren" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Alle sectoren</SelectItem>
+                  {branches.map((b) => (
+                    <SelectItem key={b} value={b}>{b}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {isAdmin && (
               <Link to="/klantcases/nieuw">
                 <Button>
                   <Plus className="h-4 w-4 mr-2" /> Maak klantcase
                 </Button>
               </Link>
-            </div>
-          )}
+            )}
+          </div>
           {loading ? (
             <p className="text-center text-muted-foreground">Laden...</p>
+          ) : filteredCases.length === 0 ? (
+            <p className="text-center text-muted-foreground">Geen klantcases gevonden voor deze sector.</p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {cases.map((c) => {
+              {filteredCases.map((c) => {
                 const cardImage = c.header_image_url || c.image_url;
                 const isReal = !placeholderCases.find((p) => p.id === c.id);
                 const CardWrapper = isReal ? Link : "div";
