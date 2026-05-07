@@ -63,8 +63,10 @@ const BlockRenderer = ({ block }: Props) => {
       const Tag = (`h${p.level || 2}`) as keyof JSX.IntrinsicElements;
       const sizeClass = p.level === 1 ? "text-4xl md:text-5xl" : p.level === 2 ? "text-3xl md:text-4xl" : p.level === 3 ? "text-2xl md:text-3xl" : "text-xl md:text-2xl";
       return (
-        <section className="container py-4">
-          <Tag className={`font-bold ${sizeClass} ${alignClass(p.align)}`}>{p.text}</Tag>
+        <section className={`${bgColorClass(p.bgColor)} ${p.bgColor && p.bgColor !== "background" ? paddingClass(p.padding) : "py-4"}`}>
+          <div className="container">
+            <Tag className={`font-bold ${sizeClass} ${alignClass(p.align)}`}>{p.text}</Tag>
+          </div>
         </section>
       );
     }
