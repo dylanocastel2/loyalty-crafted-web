@@ -112,6 +112,8 @@ export type Database = {
           branche: string | null
           category: string
           created_at: string
+          cta_label: string | null
+          cta_url: string | null
           description: string
           header_image_url: string | null
           id: string
@@ -119,11 +121,14 @@ export type Database = {
           published: boolean
           title: string
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           branche?: string | null
           category?: string
           created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
           description?: string
           header_image_url?: string | null
           id?: string
@@ -131,11 +136,14 @@ export type Database = {
           published?: boolean
           title: string
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           branche?: string | null
           category?: string
           created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
           description?: string
           header_image_url?: string | null
           id?: string
@@ -143,6 +151,7 @@ export type Database = {
           published?: boolean
           title?: string
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }

@@ -216,6 +216,9 @@ const Admin = () => {
       branche: (editCase as any).branche || null,
       image_url: editCase.image_url || null,
       header_image_url: (editCase as any).header_image_url || null,
+      video_url: (editCase as any).video_url || null,
+      cta_label: (editCase as any).cta_label || null,
+      cta_url: (editCase as any).cta_url || null,
       published: editCase.published ?? false,
     };
     if (editCase.id) {
@@ -322,6 +325,32 @@ const Admin = () => {
                 <div className="flex items-center gap-2">
                   <Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} />
                   <Label>Gepubliceerd</Label>
+                </div>
+                <div>
+                  <Label>Video URL (YouTube/Vimeo)</Label>
+                  <Input
+                    value={(editCase as any).video_url || ""}
+                    onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Knoptekst (CTA)</Label>
+                    <Input
+                      value={(editCase as any).cta_label || ""}
+                      onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)}
+                      placeholder="Bijv. Bezoek website"
+                    />
+                  </div>
+                  <div>
+                    <Label>Knop-URL</Label>
+                    <Input
+                      value={(editCase as any).cta_url || ""}
+                      onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)}
+                      placeholder="https://..."
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={saveCase}>Opslaan</Button>

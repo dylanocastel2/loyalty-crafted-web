@@ -24,6 +24,9 @@ const KlantcaseCreator = () => {
   const [branche, setBranche] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [headerImageUrl, setHeaderImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [ctaLabel, setCtaLabel] = useState("");
+  const [ctaUrl, setCtaUrl] = useState("");
   const [published, setPublished] = useState(false);
 
   useEffect(() => {
@@ -44,6 +47,9 @@ const KlantcaseCreator = () => {
       branche: branche.trim() || null,
       image_url: imageUrl.trim() || null,
       header_image_url: headerImageUrl.trim() || null,
+      video_url: videoUrl.trim() || null,
+      cta_label: ctaLabel.trim() || null,
+      cta_url: ctaUrl.trim() || null,
       published,
     } as any);
 
@@ -144,6 +150,41 @@ const KlantcaseCreator = () => {
                 required
                 className="mt-1"
               />
+            </div>
+
+            <div>
+              <Label htmlFor="video_url" className="text-base font-semibold">Video (YouTube of Vimeo URL)</Label>
+              <Input
+                id="video_url"
+                value={videoUrl}
+                onChange={(e) => setVideoUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Plak een YouTube- of Vimeo-link. De video wordt ingesloten op de detailpagina.</p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="cta_label" className="text-base font-semibold">Knoptekst</Label>
+                <Input
+                  id="cta_label"
+                  value={ctaLabel}
+                  onChange={(e) => setCtaLabel(e.target.value)}
+                  placeholder="Bijv. Bezoek website"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="cta_url" className="text-base font-semibold">Knop-URL</Label>
+                <Input
+                  id="cta_url"
+                  value={ctaUrl}
+                  onChange={(e) => setCtaUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="mt-1"
+                />
+              </div>
             </div>
 
             <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">

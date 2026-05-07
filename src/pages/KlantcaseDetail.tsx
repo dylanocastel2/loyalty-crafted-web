@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface KlantcaseData {
@@ -13,8 +13,37 @@ interface KlantcaseData {
   image_url: string | null;
   header_image_url: string | null;
   branche: string | null;
+  video_url: string | null;
+  cta_label: string | null;
+  cta_url: string | null;
   created_at: string;
 }
+
+const getEmbedUrl = (url: string): string | null => {
+  try {
+    const u = new URL(url);
+    // YouTube
+    if (u.hostname.includes("youtube.com")) {
+      const v = u.searchParams.get("v");
+      if (v) return `https://www.youtube.com/embed/${v}`;
+      const parts = u.pathname.split("/");
+      const idx = parts.indexOf("embed");
+      if (idx >= 0 && parts[idx + 1]) return url;
+    }
+    if (u.hostname === "youtu.be") {
+      const id = u.pathname.replace("/", "");
+      if (id) return `https://www.youtube.com/embed/${id}`;
+    }
+    // Vimeo
+    if (u.hostname.includes("vimeo.com")) {
+      const id = u.pathname.split("/").filter(Boolean)[0];
+      if (id && /^\d+$/.test(id)) return `https://player.vimeo.com/video/${id}`;
+    }
+    return url;
+  } catch {
+    return null;
+  }
+};
 
 const KlantcaseDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -118,6 +147,32 @@ const KlantcaseDetail = () => {
               </p>
             ))}
           </div>
+
+          {kcase.video_url && getEmbedUrl(kcase.video_url) && (
+            <div className="mt-10">
+              <div className="relative w-full overflow-hidden rounded-lg border bg-muted" style={{ paddingTop: "56.25%" }}>
+                <iframe
+                  src={getEmbedUrl(kcase.video_url)!}
+                  title={kcase.title}
+                  className="absolute inset-0 w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          )}
+
+          {kcase.cta_url && (
+            <div className="mt-10 flex justify-center">
+              <a href={kcase.cta_url} target="_blank" rel="noopener noreferrer">
+                <Button size="lg" className="rounded-full">
+                  {kcase.cta_label?.trim() || "Bekijk meer"}
+                  <ExternalLink className="h-4 w-4 ml-2" />
+                </Button>
+              </a>
+            </div>
+          )}
         </div>
       </section>
     </Layout>
