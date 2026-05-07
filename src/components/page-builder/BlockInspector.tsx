@@ -799,6 +799,65 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </>
         );
 
+      case "image_cards":
+        return (
+          <>
+            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
+            <Field label="Ondertitel"><Textarea value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} rows={3} /></Field>
+            <Field label="Aantal kolommen">
+              <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <div className="pt-3 border-t space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kaarten</Label>
+              {(p.items || []).map((it: any, i: number) => (
+                <div key={i} className="border rounded p-3 space-y-2 bg-muted/20">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-semibold">Kaart {i + 1}</span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("items", i)}><Trash2 className="h-3 w-3" /></Button>
+                  </div>
+                  <Field label="Afbeelding">
+                    <FileUpload currentUrl={it.image} folder="page-media" onUpload={(url) => setItem("items", i, "image", url || "")} />
+                  </Field>
+                  <Field label="Titel"><Input value={it.title || ""} onChange={(e) => setItem("items", i, "title", e.target.value)} /></Field>
+                  <Field label="Beschrijving"><Textarea value={it.description || ""} onChange={(e) => setItem("items", i, "description", e.target.value)} rows={3} /></Field>
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => addItem("items", { image: "", title: "Nieuwe kaart", description: "" })}><Plus className="h-3 w-3 mr-1" /> Kaart toevoegen</Button>
+            </div>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </>
+        );
+
       default:
         return null;
     }
