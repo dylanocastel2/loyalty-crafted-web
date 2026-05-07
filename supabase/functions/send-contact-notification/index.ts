@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { name, email, company, subject, message } = await req.json();
+    const { name, email, company, subject, message, attachments } = await req.json();
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -65,15 +65,66 @@ Deno.serve(async (req) => {
       <pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(message || "")}</pre>
     `;
 
-    const rfc = [
+    // Fetch attachments (each: { url, name })
+    const fetched: { name: string; mime: string; b64: string }[] = [];
+    if (Array.isArray(attachments)) {
+      for (const a of attachments.slice(0, 5)) {
+        if (!a?.url) continue;
+        try {
+          const r = await fetch(a.url);
+          if (!r.ok) continue;
+          const buf = new Uint8Array(await r.arrayBuffer());
+          if (buf.byteLength > 15 * 1024 * 1024) continue;
+          let bin = "";
+          for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
+          fetched.push({
+            name: (a.name || "bijlage").replace(/[\r\n"]/g, "_"),
+            mime: r.headers.get("content-type") || "application/octet-stream",
+            b64: btoa(bin),
+          });
+        } catch (_) { /* skip */ }
+      }
+    }
+
+    const headerLines = [
       `To: ${to}`,
       `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(mailSubject)))}?=`,
       email ? `Reply-To: ${email}` : "",
       "MIME-Version: 1.0",
-      'Content-Type: text/html; charset="UTF-8"',
-      "",
-      html,
-    ].filter(Boolean).join("\r\n");
+    ].filter(Boolean);
+
+    let rfc: string;
+    if (fetched.length === 0) {
+      rfc = [
+        ...headerLines,
+        'Content-Type: text/html; charset="UTF-8"',
+        "",
+        html,
+      ].join("\r\n");
+    } else {
+      const boundary = `=_lg_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+      const parts: string[] = [];
+      parts.push(`--${boundary}`);
+      parts.push('Content-Type: text/html; charset="UTF-8"');
+      parts.push("Content-Transfer-Encoding: 7bit");
+      parts.push("");
+      parts.push(html);
+      for (const f of fetched) {
+        parts.push(`--${boundary}`);
+        parts.push(`Content-Type: ${f.mime}; name="${f.name}"`);
+        parts.push("Content-Transfer-Encoding: base64");
+        parts.push(`Content-Disposition: attachment; filename="${f.name}"`);
+        parts.push("");
+        parts.push(f.b64.replace(/(.{76})/g, "$1\r\n"));
+      }
+      parts.push(`--${boundary}--`);
+      rfc = [
+        ...headerLines,
+        `Content-Type: multipart/mixed; boundary="${boundary}"`,
+        "",
+        ...parts,
+      ].join("\r\n");
+    }
 
     const raw = b64url(rfc);
 

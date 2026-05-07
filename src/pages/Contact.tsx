@@ -9,11 +9,13 @@ import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
 import SocialIcons from "@/components/SocialIcons";
+import FormAttachments, { type FormAttachment } from "@/components/FormAttachments";
 import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [attachments, setAttachments] = useState<FormAttachment[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -38,9 +40,12 @@ const Contact = () => {
       toast({ title: "Versturen mislukt", description: error.message, variant: "destructive" });
       return;
     }
-    supabase.functions.invoke("send-contact-notification", { body: payload }).catch(() => {});
+    supabase.functions.invoke("send-contact-notification", {
+      body: { ...payload, attachments: attachments.map((a) => ({ url: a.url, name: a.name })) },
+    }).catch(() => {});
     toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
     form.reset();
+    setAttachments([]);
   };
 
   return (
@@ -80,6 +85,10 @@ const Contact = () => {
                 <div>
                   <Label htmlFor="message">Bericht</Label>
                   <Textarea id="message" name="message" required placeholder="Uw bericht..." rows={5} />
+                </div>
+                <div>
+                  <Label>Bijlagen (optioneel)</Label>
+                  <FormAttachments value={attachments} onChange={setAttachments} />
                 </div>
                 <Button type="submit" disabled={loading} className="w-full sm:w-auto">
                   {loading ? "Verzenden..." : "Verstuur bericht"}
