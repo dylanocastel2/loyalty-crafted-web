@@ -602,42 +602,76 @@ const Admin = () => {
               </Button>
             </div>
 
-            <div className="bg-card border rounded-lg p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold">Beheerders</h2>
+            {myRole === "admin" && (
+              <div className="bg-card border rounded-lg p-6 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-primary" />
+                  <h2 className="text-xl font-bold">Beheerders</h2>
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>Voeg een nieuwe beheerder toe en kies een rang. De persoon ontvangt automatisch een activatiemail.</p>
+                  <ul className="list-disc list-inside text-xs space-y-0.5 pt-1">
+                    <li><strong>Hoofdbeheerder</strong> — volledige toegang incl. beheerders beheren.</li>
+                    <li><strong>Redacteur</strong> — pagina's, klantcases, footer en social media bewerken.</li>
+                    <li><strong>Bekijker</strong> — alleen contactaanvragen lezen.</li>
+                  </ul>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Input
+                    type="email"
+                    placeholder="email@voorbeeld.nl"
+                    value={newAdminEmail}
+                    onChange={(e) => setNewAdminEmail(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
+                  />
+                  <Select value={newAdminRole} onValueChange={(v) => setNewAdminRole(v as any)}>
+                    <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="admin">Hoofdbeheerder</SelectItem>
+                      <SelectItem value="editor">Redacteur</SelectItem>
+                      <SelectItem value="viewer">Bekijker</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
+                </div>
+                <div className="space-y-2">
+                  {admins.map((a) => {
+                    const currentRole: "admin" | "editor" | "viewer" =
+                      a.roles.includes("admin") ? "admin" :
+                      a.roles.includes("editor") ? "editor" : "viewer";
+                    return (
+                      <div key={a.user_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border rounded-md p-3">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Check className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-sm truncate">{a.email || a.user_id}</span>
+                          {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={currentRole}
+                            onValueChange={(v) => updateAdminRole(a.user_id, v)}
+                            disabled={a.user_id === currentUserId}
+                          >
+                            <SelectTrigger className="w-40 h-8 text-sm"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="admin">Hoofdbeheerder</SelectItem>
+                              <SelectItem value="editor">Redacteur</SelectItem>
+                              <SelectItem value="viewer">Bekijker</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {a.user_id !== currentUserId && (
+                            <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Voeg een nieuwe beheerder toe via e-mailadres. De persoon ontvangt automatisch een activatiemail om een wachtwoord in te stellen (min. 10 tekens, 1 cijfer en 1 speciaal teken).
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="email@voorbeeld.nl"
-                  value={newAdminEmail}
-                  onChange={(e) => setNewAdminEmail(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
-                />
-                <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
-              </div>
-              <div className="space-y-2">
-                {admins.map((a) => (
-                  <div key={a.user_id} className="flex items-center justify-between border rounded-md p-3">
-                    <div className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary" />
-                      <span className="text-sm">{a.email || a.user_id}</span>
-                      {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
-                    </div>
-                    {a.user_id !== currentUserId && (
-                      <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
-              </div>
-            </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
