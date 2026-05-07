@@ -488,6 +488,13 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="aanvragen" className="mt-6">
+          </TabsContent>
+
+          <TabsContent value="footer" className="mt-6">
+            <FooterEditor />
+          </TabsContent>
+
+          <TabsContent value="aanvragen-real" className="mt-6">
             <div className="bg-card border rounded-lg">
               <div className="p-5 border-b flex items-center gap-2">
                 <Mail className="h-5 w-5 text-primary" />
