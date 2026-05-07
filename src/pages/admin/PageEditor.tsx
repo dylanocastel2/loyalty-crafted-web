@@ -109,7 +109,7 @@ const PageEditor = () => {
     const idx = blocks.findIndex((b) => b.id === bid);
     if (idx < 0) return;
     const orig = blocks[idx];
-    const copy: Block = { ...orig, id: crypto.randomUUID(), props: JSON.parse(JSON.stringify(orig.props)) };
+    const copy: Block = { ...orig, id: safeUUID(), props: JSON.parse(JSON.stringify(orig.props)) };
     const next = [...blocks];
     next.splice(idx + 1, 0, copy);
     setBlocks(next);
