@@ -24,7 +24,8 @@ export type BlockType =
   | "logo_marquee"
   | "image_text"
   | "custom_html"
-  | "klantcases";
+  | "klantcases"
+  | "download_files";
 
 export interface Block {
   id: string;
@@ -76,6 +77,7 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "stat", label: "Statistiek", category: "Content", icon: "BarChart3", defaultProps: { value: "100+", label: "Klanten" } },
   { type: "custom_html", label: "Custom HTML", category: "Geavanceerd", icon: "Code", defaultProps: { html: "<p>Custom HTML</p>" } },
   { type: "klantcases", label: "Klantcases", category: "Content", icon: "Briefcase", defaultProps: { view: "short", mode: "selected", selectedIds: [], limit: 3, columns: 3, showBranche: true, showCategory: true, title: "", bgColor: "background", padding: "medium" } },
+  { type: "download_files", label: "Download bestanden", category: "Content", icon: "Download", defaultProps: { title: "Downloads", subtitle: "", files: [], columns: 3, bgColor: "background", padding: "medium" } },
 ];
 
 export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>
