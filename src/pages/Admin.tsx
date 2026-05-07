@@ -51,8 +51,10 @@ const Admin = () => {
   const [savingSocials, setSavingSocials] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [openSubmission, setOpenSubmission] = useState<Submission | null>(null);
-  const [admins, setAdmins] = useState<{ user_id: string; email: string | null }[]>([]);
+  const [admins, setAdmins] = useState<{ user_id: string; email: string | null; roles: string[] }[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState("");
+  const [newAdminRole, setNewAdminRole] = useState<"admin" | "editor" | "viewer">("editor");
+  const [myRole, setMyRole] = useState<"admin" | "editor" | "viewer" | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [notifyEmail, setNotifyEmail] = useState("");
   const [notifyEnabled, setNotifyEnabled] = useState(false);
@@ -66,20 +68,25 @@ const Admin = () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { navigate("/admin/login"); return; }
     const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", session.user.id);
-    const admin = roles?.some((r) => r.role === "admin") ?? false;
-    if (!admin) {
+    const userRoles = (roles || []).map((r) => r.role as string);
+    const allowed = userRoles.some((r) => ["admin", "editor", "viewer"].includes(r));
+    if (!allowed) {
       toast({ title: "Geen toegang", description: "U heeft geen beheerdersrechten.", variant: "destructive" });
       await supabase.auth.signOut();
       navigate("/admin/login");
       return;
     }
+    const role: "admin" | "editor" | "viewer" =
+      userRoles.includes("admin") ? "admin" :
+      userRoles.includes("editor") ? "editor" : "viewer";
+    setMyRole(role);
     setIsAdmin(true);
     setLoading(false);
     setCurrentUserId(session.user.id);
     fetchCases();
     fetchSocials();
     fetchSubmissions();
-    fetchAdmins();
+    if (role === "admin") fetchAdmins();
     fetchSettings();
   };
 
@@ -151,6 +158,7 @@ const Admin = () => {
       body: {
         action: "add",
         email: newAdminEmail.trim(),
+        role: newAdminRole,
         redirectTo: `${window.location.origin}/admin/activeren`,
       },
     });
@@ -160,6 +168,18 @@ const Admin = () => {
     }
     toast({ title: "Uitnodiging verstuurd", description: "De beheerder ontvangt een activatiemail." });
     setNewAdminEmail("");
+    fetchAdmins();
+  };
+
+  const updateAdminRole = async (user_id: string, role: string) => {
+    const { data, error } = await supabase.functions.invoke("manage-admins", {
+      body: { action: "update_role", user_id, role },
+    });
+    if (error || data?.error) {
+      toast({ title: "Wijzigen mislukt", description: data?.error || error?.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Rang bijgewerkt" });
     fetchAdmins();
   };
 
