@@ -25,7 +25,8 @@ export type BlockType =
   | "image_text"
   | "custom_html"
   | "klantcases"
-  | "download_files";
+  | "download_files"
+  | "image_cards";
 
 export interface Block {
   id: string;
