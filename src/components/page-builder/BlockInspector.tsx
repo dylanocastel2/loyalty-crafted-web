@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
+import AnyFileUpload from "@/components/AnyFileUpload";
 import { Plus, Trash2 } from "lucide-react";
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
