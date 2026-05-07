@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, ExternalLink, Save, Loader2, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Undo2, Redo2, Monitor, Smartphone } from "lucide-react";
-import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
+import { Block, BlockType, createBlock, safeUUID } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
@@ -137,7 +137,7 @@ const BuiltinPageEditor = () => {
     const idx = blocks.findIndex((b) => b.id === bid);
     if (idx < 0) return;
     const orig = blocks[idx];
-    const copy: Block = { ...orig, id: crypto.randomUUID(), props: JSON.parse(JSON.stringify(orig.props)) };
+    const copy: Block = { ...orig, id: safeUUID(), props: JSON.parse(JSON.stringify(orig.props)) };
     const next = [...blocks];
     next.splice(idx + 1, 0, copy);
     setBlocks(next);
