@@ -49,6 +49,8 @@ const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
   if (hasBg) style.backgroundColor = config.bgColor;
   if (hasText) style.color = config.textColor;
   const linkStyle: React.CSSProperties | undefined = hasLink ? { color: config.linkColor } : undefined;
+  const hasTitle = !!config.titleColor;
+  const titleStyle: React.CSSProperties | undefined = hasTitle ? { color: config.titleColor } : undefined;
 
   return (
     <footer
@@ -66,7 +68,12 @@ const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
         </div>
         {config.columns.map((col, i) => (
           <div key={i}>
-            <h4 className="text-foreground font-display font-semibold mb-4 text-xs tracking-[0.18em] uppercase">{col.title}</h4>
+            <h4
+              className={`${hasTitle ? "" : "text-foreground"} font-display font-semibold mb-4 text-xs tracking-[0.18em] uppercase`}
+              style={titleStyle}
+            >
+              {col.title}
+            </h4>
             <ul className="space-y-2.5 text-sm">
               {(col.items || []).map((it, idx) => renderItem(it, idx, linkStyle))}
             </ul>
