@@ -28,17 +28,25 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Geen toegang" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const ALLOWED_ROLES = ["admin", "editor", "viewer"] as const;
+    type AppRole = typeof ALLOWED_ROLES[number];
+
     const admin = createClient(supabaseUrl, serviceKey);
     const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const action = body.action || "list";
 
     if (action === "list") {
-      const { data: roles } = await admin.from("user_roles").select("user_id").eq("role", "admin");
-      const ids: string[] = (roles || []).map((r: any) => r.user_id);
-      const result: { user_id: string; email: string | null }[] = [];
-      for (const id of ids) {
+      const { data: roles } = await admin.from("user_roles").select("user_id, role").in("role", ALLOWED_ROLES as unknown as string[]);
+      const byUser = new Map<string, AppRole[]>();
+      for (const r of (roles || []) as { user_id: string; role: AppRole }[]) {
+        const arr = byUser.get(r.user_id) || [];
+        arr.push(r.role);
+        byUser.set(r.user_id, arr);
+      }
+      const result: { user_id: string; email: string | null; roles: AppRole[] }[] = [];
+      for (const [id, userRoles] of byUser) {
         const { data } = await admin.auth.admin.getUserById(id);
-        result.push({ user_id: id, email: data.user?.email ?? null });
+        result.push({ user_id: id, email: data.user?.email ?? null, roles: userRoles });
       }
       return new Response(JSON.stringify({ admins: result }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
@@ -46,6 +54,10 @@ Deno.serve(async (req) => {
     if (action === "add") {
       const email = String(body.email || "").trim().toLowerCase();
       if (!email) return new Response(JSON.stringify({ error: "E-mail vereist" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      const role = String(body.role || "admin") as AppRole;
+      if (!ALLOWED_ROLES.includes(role)) {
+        return new Response(JSON.stringify({ error: "Ongeldige rang" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       const redirectTo = String(body.redirectTo || "");
       // Find existing user by email
       let foundId: string | null = null;
@@ -71,9 +83,27 @@ Deno.serve(async (req) => {
         // Existing user — also send a (re)invite/activation link so they have a clear path in
         await admin.auth.admin.inviteUserByEmail(email, { redirectTo: redirectTo || undefined }).catch(() => {});
       }
-      const { error: insErr } = await admin.from("user_roles").upsert({ user_id: foundId, role: "admin" }, { onConflict: "user_id,role" });
+      // Replace existing staff roles for this user with the chosen one
+      await admin.from("user_roles").delete().eq("user_id", foundId).in("role", ALLOWED_ROLES as unknown as string[]);
+      const { error: insErr } = await admin.from("user_roles").insert({ user_id: foundId, role });
       if (insErr) return new Response(JSON.stringify({ error: insErr.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       return new Response(JSON.stringify({ ok: true, invited: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
+    if (action === "update_role") {
+      const userId = String(body.user_id || "");
+      const role = String(body.role || "") as AppRole;
+      if (!userId) return new Response(JSON.stringify({ error: "user_id vereist" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      if (!ALLOWED_ROLES.includes(role)) {
+        return new Response(JSON.stringify({ error: "Ongeldige rang" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      if (userId === userData.user.id && role !== "admin") {
+        return new Response(JSON.stringify({ error: "Je kunt jezelf niet degraderen" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+      await admin.from("user_roles").delete().eq("user_id", userId).in("role", ALLOWED_ROLES as unknown as string[]);
+      const { error } = await admin.from("user_roles").insert({ user_id: userId, role });
+      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     if (action === "remove") {
@@ -82,7 +112,7 @@ Deno.serve(async (req) => {
       if (userId === userData.user.id) {
         return new Response(JSON.stringify({ error: "Je kunt jezelf niet verwijderen" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-      const { error } = await admin.from("user_roles").delete().eq("user_id", userId).eq("role", "admin");
+      const { error } = await admin.from("user_roles").delete().eq("user_id", userId).in("role", ALLOWED_ROLES as unknown as string[]);
       if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
       return new Response(JSON.stringify({ ok: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
