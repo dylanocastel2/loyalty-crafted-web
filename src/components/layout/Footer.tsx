@@ -4,7 +4,7 @@ import { useFooterConfig, FooterItem } from "@/hooks/useFooterConfig";
 
 const isExternal = (url: string) => /^https?:\/\//i.test(url) || url.startsWith("mailto:") || url.startsWith("tel:");
 
-const renderItem = (item: FooterItem, idx: number) => {
+const renderItem = (item: FooterItem, idx: number, linkStyle?: React.CSSProperties) => {
   if (item.type === "text") {
     return <li key={idx}>{item.text}</li>;
   }
@@ -28,9 +28,9 @@ const renderItem = (item: FooterItem, idx: number) => {
   return (
     <li key={idx}>
       {isExternal(item.url) ? (
-        <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">{item.label}</a>
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" style={linkStyle}>{item.label}</a>
       ) : (
-        <Link to={item.url} className="hover:text-primary transition-colors">{item.label}</Link>
+        <Link to={item.url} className="hover:text-primary transition-colors" style={linkStyle}>{item.label}</Link>
       )}
     </li>
   );
@@ -43,9 +43,11 @@ const Footer = () => {
   const copyright = (config.copyright || "").replace("{year}", String(new Date().getFullYear()));
   const hasBg = !!config.bgColor;
   const hasText = !!config.textColor;
+  const hasLink = !!config.linkColor;
   const style: React.CSSProperties = {};
   if (hasBg) style.backgroundColor = config.bgColor;
   if (hasText) style.color = config.textColor;
+  const linkStyle: React.CSSProperties | undefined = hasLink ? { color: config.linkColor } : undefined;
 
   return (
     <footer
@@ -65,7 +67,7 @@ const Footer = () => {
           <div key={i}>
             <h4 className="text-foreground font-display font-semibold mb-4 text-xs tracking-[0.18em] uppercase">{col.title}</h4>
             <ul className="space-y-2.5 text-sm">
-              {(col.items || []).map(renderItem)}
+              {(col.items || []).map((it, idx) => renderItem(it, idx, linkStyle))}
             </ul>
           </div>
         ))}

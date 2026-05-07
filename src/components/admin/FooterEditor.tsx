@@ -16,6 +16,110 @@ import {
   fetchFooterConfig,
 } from "@/hooks/useFooterConfig";
 
+const THEME_COLORS: { label: string; value: string }[] = [
+  { label: "Wit", value: "#ffffff" },
+  { label: "Achtergrond", value: "hsl(210 33% 99%)" },
+  { label: "Surface (lichtblauw)", value: "hsl(198 60% 96%)" },
+  { label: "Surface 2", value: "hsl(198 50% 92%)" },
+  { label: "Muted", value: "hsl(198 45% 96%)" },
+  { label: "Accent", value: "hsl(198 60% 93%)" },
+  { label: "Primair (#0784b6)", value: "hsl(196 91% 37%)" },
+  { label: "Secundair (#08abd8)", value: "hsl(193 91% 44%)" },
+  { label: "Donker (foreground)", value: "hsl(210 20% 15%)" },
+  { label: "Zwart", value: "#000000" },
+];
+
+type ColorMode = "default" | "theme" | "custom";
+
+const detectMode = (val: string | undefined): ColorMode => {
+  if (!val) return "default";
+  if (THEME_COLORS.some((c) => c.value === val)) return "theme";
+  return "custom";
+};
+
+const ColorChooser = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string | undefined;
+  onChange: (v: string) => void;
+}) => {
+  const mode = detectMode(value);
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button"
+          size="sm"
+          variant={mode === "default" ? "default" : "outline"}
+          onClick={() => onChange("")}
+        >
+          Standaard
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={mode === "theme" ? "default" : "outline"}
+          onClick={() => onChange(THEME_COLORS[0].value)}
+        >
+          Themakleur
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={mode === "custom" ? "default" : "outline"}
+          onClick={() => onChange("#0784b6")}
+        >
+          Eigen kleur
+        </Button>
+      </div>
+
+      {mode === "theme" && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1">
+          {THEME_COLORS.map((c) => {
+            const active = value === c.value;
+            return (
+              <button
+                key={c.value}
+                type="button"
+                onClick={() => onChange(c.value)}
+                className={`flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs text-left hover:border-primary transition-colors ${
+                  active ? "border-primary ring-2 ring-primary/30" : "border-border"
+                }`}
+              >
+                <span
+                  className="h-5 w-5 rounded border border-border shrink-0"
+                  style={{ background: c.value }}
+                />
+                <span className="truncate">{c.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {mode === "custom" && (
+        <div className="flex gap-2 items-center pt-1">
+          <input
+            type="color"
+            value={value && value.startsWith("#") ? value : "#0784b6"}
+            onChange={(e) => onChange(e.target.value)}
+            className="h-10 w-14 rounded border cursor-pointer bg-transparent"
+          />
+          <Input
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="#0784b6 of hsl(...) of rgb(...)"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
 const newItem = (type: FooterItem["type"]): FooterItem => {
   if (type === "text") return { type: "text", text: "Nieuwe tekst" };
   if (type === "button") return { type: "button", label: "Knop", url: "/" };
@@ -145,49 +249,22 @@ const FooterEditor = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
-          <div>
-            <Label>Achtergrondkleur</Label>
-            <div className="flex gap-2 items-center mt-1">
-              <input
-                type="color"
-                value={config.bgColor || "#ffffff"}
-                onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
-                className="h-10 w-14 rounded border cursor-pointer bg-transparent"
-              />
-              <Input
-                value={config.bgColor || ""}
-                onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
-                placeholder="bv. #0784b6 of leeg voor standaard"
-              />
-              {config.bgColor && (
-                <Button variant="ghost" size="sm" onClick={() => setConfig({ ...config, bgColor: "" })}>
-                  Reset
-                </Button>
-              )}
-            </div>
-          </div>
-          <div>
-            <Label>Tekstkleur</Label>
-            <div className="flex gap-2 items-center mt-1">
-              <input
-                type="color"
-                value={config.textColor || "#000000"}
-                onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                className="h-10 w-14 rounded border cursor-pointer bg-transparent"
-              />
-              <Input
-                value={config.textColor || ""}
-                onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
-                placeholder="bv. #ffffff of leeg voor standaard"
-              />
-              {config.textColor && (
-                <Button variant="ghost" size="sm" onClick={() => setConfig({ ...config, textColor: "" })}>
-                  Reset
-                </Button>
-              )}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t">
+          <ColorChooser
+            label="Achtergrondkleur"
+            value={config.bgColor}
+            onChange={(v) => setConfig({ ...config, bgColor: v })}
+          />
+          <ColorChooser
+            label="Tekstkleur"
+            value={config.textColor}
+            onChange={(v) => setConfig({ ...config, textColor: v })}
+          />
+          <ColorChooser
+            label="Linkkleur"
+            value={config.linkColor}
+            onChange={(v) => setConfig({ ...config, linkColor: v })}
+          />
         </div>
       </div>
 
