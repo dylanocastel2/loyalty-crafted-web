@@ -1,7 +1,7 @@
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent, useDroppable } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Block, BlockType, createBlock, getBlockMeta } from "./blockSchema";
+import { Block, BlockType, createBlock, getBlockMeta, safeUUID } from "./blockSchema";
 import BlockRenderer from "./BlockRenderer";
 import { GripVertical, Trash2, Copy, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ const removeBlockById = (blocks: Block[], id: string): Block[] => {
 const duplicateBlockById = (blocks: Block[], id: string): Block[] => {
   const next = cloneBlocks(blocks);
   const reassignIds = (b: Block) => {
-    b.id = crypto.randomUUID();
+    b.id = safeUUID();
     if (b.children) b.children.forEach((col) => col.forEach(reassignIds));
   };
   const helper = (arr: Block[]): boolean => {
