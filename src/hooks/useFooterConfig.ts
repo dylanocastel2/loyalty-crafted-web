@@ -19,6 +19,7 @@ export interface FooterConfig {
   bgColor?: string;
   textColor?: string;
   linkColor?: string;
+  titleColor?: string;
 }
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
@@ -29,6 +30,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   bgColor: "",
   textColor: "",
   linkColor: "",
+  titleColor: "",
   columns: [
     {
       title: "Oplossingen",
@@ -70,6 +72,7 @@ const parseConfig = (raw: string | null | undefined): FooterConfig => {
       bgColor: parsed.bgColor ?? "",
       textColor: parsed.textColor ?? "",
       linkColor: parsed.linkColor ?? "",
+      titleColor: parsed.titleColor ?? "",
     };
   } catch {
     return DEFAULT_FOOTER_CONFIG;

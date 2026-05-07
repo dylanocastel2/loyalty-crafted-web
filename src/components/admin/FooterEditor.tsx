@@ -250,7 +250,7 @@ const FooterEditor = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t">
           <ColorChooser
             label="Achtergrondkleur"
             value={config.bgColor}
@@ -265,6 +265,11 @@ const FooterEditor = () => {
             label="Linkkleur"
             value={config.linkColor}
             onChange={(v) => setConfig({ ...config, linkColor: v })}
+          />
+          <ColorChooser
+            label="Kolomtitel-kleur"
+            value={config.titleColor}
+            onChange={(v) => setConfig({ ...config, titleColor: v })}
           />
         </div>
       </div>
