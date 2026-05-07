@@ -83,15 +83,15 @@ const KlantcaseDetail = () => {
           </div>
         </div>
       ) : (
-        <section className="bg-gradient-to-br from-primary to-secondary py-16 md:py-24">
+        <section className="bg-muted py-16 md:py-24">
           <div className="container text-center">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-primary-foreground/80 uppercase tracking-wider">{kcase.category}</span>
+            <span className="text-xs font-medium text-primary uppercase tracking-wider">{kcase.category}</span>
             {kcase.branche && (
-              <span className="text-xs bg-primary-foreground/20 text-primary-foreground px-2 py-0.5 rounded">{kcase.branche}</span>
+              <span className="text-xs bg-background px-2 py-0.5 rounded text-muted-foreground">{kcase.branche}</span>
             )}
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mt-2">{kcase.title}</h1>
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground mt-2">{kcase.title}</h1>
           </div>
         </section>
       )}

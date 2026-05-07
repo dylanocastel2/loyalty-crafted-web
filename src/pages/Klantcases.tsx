@@ -160,10 +160,10 @@ const Klantcases = () => {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-br from-primary to-secondary">
+      <section className="py-16 bg-muted">
         <div className="container text-center">
-          <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4 text-primary-foreground" />
-          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
+          <EditableText page="klantcases" contentKey="cta_title" defaultValue="Wilt u de volgende succescase zijn?" as="h2" className="text-2xl font-bold mb-4 text-foreground" />
+          <EditableButton page="klantcases" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="default" />
         </div>
       </section>
       </PageContent>
