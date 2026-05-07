@@ -109,7 +109,7 @@ const Klantcases = () => {
           ) : filteredCases.length === 0 ? (
             <p className="text-center text-muted-foreground">Geen klantcases gevonden voor deze sector.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-2 gap-4 md:gap-8">
               {filteredCases.map((c) => {
                 const cardImage = c.header_image_url || c.image_url;
                 const isReal = !placeholderCases.find((p) => p.id === c.id);
@@ -120,26 +120,26 @@ const Klantcases = () => {
                   <div key={c.id} className="relative">
                     <CardWrapper
                       {...(wrapperProps as any)}
-                      className="border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow group block"
+                      className="border rounded-lg overflow-hidden bg-card hover:shadow-lg transition-shadow group block h-full"
                     >
-                      <div className="bg-muted h-48 flex items-center justify-center overflow-hidden">
+                      <div className="bg-muted h-32 md:h-48 flex items-center justify-center overflow-hidden">
                         {cardImage ? (
                           <img src={cardImage} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                         ) : (
                           <span className="text-muted-foreground text-sm">{c.category}</span>
                         )}
                       </div>
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
+                      <div className="p-3 md:p-6">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="text-[10px] md:text-xs font-medium text-primary uppercase tracking-wider">{c.category}</span>
                           {c.branche && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{c.branche}</span>
+                            <span className="text-[10px] md:text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">{c.branche}</span>
                           )}
                         </div>
-                        <h3 className="text-lg font-semibold mt-1 mb-2">{c.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{c.description}</p>
+                        <h3 className="text-sm md:text-lg font-semibold mt-1 mb-2">{c.title}</h3>
+                        <p className="text-xs md:text-sm text-muted-foreground line-clamp-2">{c.description}</p>
                         {isReal && (
-                          <span className="inline-flex items-center gap-1 text-sm text-primary font-medium mt-3 group-hover:gap-2 transition-all">
+                          <span className="inline-flex items-center gap-1 text-xs md:text-sm text-primary font-medium mt-3 group-hover:gap-2 transition-all">
                             Lees meer <ArrowRight className="h-4 w-4" />
                           </span>
                         )}
