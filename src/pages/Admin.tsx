@@ -216,6 +216,9 @@ const Admin = () => {
       branche: (editCase as any).branche || null,
       image_url: editCase.image_url || null,
       header_image_url: (editCase as any).header_image_url || null,
+      video_url: (editCase as any).video_url || null,
+      cta_label: (editCase as any).cta_label || null,
+      cta_url: (editCase as any).cta_url || null,
       published: editCase.published ?? false,
     };
     if (editCase.id) {
