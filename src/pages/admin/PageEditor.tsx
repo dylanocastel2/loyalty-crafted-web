@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Eye, Save, Loader2 } from "lucide-react";
 import { Undo2, Redo2 } from "lucide-react";
-import { Block, BlockType, createBlock } from "@/components/page-builder/blockSchema";
+import { Block, BlockType, createBlock, safeUUID } from "@/components/page-builder/blockSchema";
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
