@@ -61,12 +61,12 @@ const Header = () => {
           </div>
         </div>
       )}
-      <header className="sticky top-0 z-50 glass">
+      <header className="sticky top-0 z-50 glass-primary">
         <div className="container relative flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group" aria-label="Naar homepage">
             <img src={logoLg} alt="Loyaltygroup logo" className="h-9 w-9 rounded-lg object-contain" />
-            <span className="text-foreground font-display font-bold tracking-tight text-base hidden sm:inline">
-              Loyalty<span className="text-primary">group</span>
+            <span className="text-white font-display font-bold tracking-tight text-base hidden sm:inline">
+              Loyalty<span className="text-white/80">group</span>
             </span>
           </Link>
 
@@ -78,15 +78,15 @@ const Header = () => {
                 to={item.path}
                 className={`nav-underline px-3 py-5 text-[11px] font-semibold tracking-wider whitespace-nowrap transition-colors ${
                   location.pathname === item.path
-                    ? "text-primary is-active"
-                    : "text-foreground/70 hover:text-foreground"
+                    ? "text-white is-active"
+                    : "text-white/80 hover:text-white"
                 }`}
               >
                 {item.label}
               </Link>
             ))}
             <Link to="/demo">
-              <Button size="sm" className="ml-3 text-[11px] font-semibold tracking-wider rounded-full bg-gradient-aqua text-white hover:opacity-90 shadow-soft">
+              <Button size="sm" className="ml-3 text-[11px] font-semibold tracking-wider rounded-full bg-white text-primary hover:bg-white/90 shadow-soft">
                 DEMO →
               </Button>
             </Link>
@@ -98,28 +98,28 @@ const Header = () => {
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Menu openen"
           >
-            {mobileOpen ? <X className="h-6 w-6 text-foreground" /> : <Menu className="h-6 w-6 text-foreground" />}
+            {mobileOpen ? <X className="h-6 w-6 text-white" /> : <Menu className="h-6 w-6 text-white" />}
           </button>
         </div>
 
         {/* Mobile nav */}
         {mobileOpen && (
-          <nav className="md:hidden border-t bg-background pb-4">
+          <nav className="md:hidden border-t border-white/20 glass-primary pb-4">
             <div className="container flex flex-col gap-1 pt-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileOpen(false)}
-                  className={`px-3 py-2.5 text-sm font-semibold tracking-wider rounded-md transition-colors hover:bg-accent ${
-                    location.pathname === item.path ? "text-primary bg-accent" : "text-foreground/70"
+                  className={`px-3 py-2.5 text-sm font-semibold tracking-wider rounded-md transition-colors hover:bg-white/10 ${
+                    location.pathname === item.path ? "text-white bg-white/15" : "text-white/80"
                   }`}
                 >
                   {item.label}
                 </Link>
               ))}
               <Link to="/demo" onClick={() => setMobileOpen(false)}>
-                <Button className="w-full mt-2 text-sm font-semibold tracking-wider">DEMO</Button>
+                <Button className="w-full mt-2 text-sm font-semibold tracking-wider bg-white text-primary hover:bg-white/90">DEMO</Button>
               </Link>
             </div>
           </nav>
