@@ -326,6 +326,32 @@ const Admin = () => {
                   <Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} />
                   <Label>Gepubliceerd</Label>
                 </div>
+                <div>
+                  <Label>Video URL (YouTube/Vimeo)</Label>
+                  <Input
+                    value={(editCase as any).video_url || ""}
+                    onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)}
+                    placeholder="https://www.youtube.com/watch?v=..."
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Knoptekst (CTA)</Label>
+                    <Input
+                      value={(editCase as any).cta_label || ""}
+                      onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)}
+                      placeholder="Bijv. Bezoek website"
+                    />
+                  </div>
+                  <div>
+                    <Label>Knop-URL</Label>
+                    <Input
+                      value={(editCase as any).cta_url || ""}
+                      onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)}
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
                 <div className="flex gap-2">
                   <Button onClick={saveCase}>Opslaan</Button>
                   <Button variant="outline" onClick={() => setEditCase(null)}>Annuleren</Button>
