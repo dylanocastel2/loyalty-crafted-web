@@ -727,6 +727,78 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </>
         );
 
+      case "download_files":
+        return (
+          <>
+            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Bijv. Downloads" /></Field>
+            <Field label="Ondertitel"><Textarea value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} rows={2} /></Field>
+            <Field label="Aantal kolommen">
+              <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <div className="pt-3 border-t space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Bestanden</Label>
+              {(p.files || []).map((f: any, i: number) => (
+                <div key={i} className="border rounded p-3 space-y-2 bg-muted/20">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-semibold">Bestand {i + 1}</span>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => removeItem("files", i)}>
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <Field label="Label">
+                    <Input value={f.label || ""} onChange={(e) => setItem("files", i, "label", e.target.value)} placeholder="Bijv. Driver X" />
+                  </Field>
+                  <Field label="Beschrijving (optioneel)">
+                    <Input value={f.description || ""} onChange={(e) => setItem("files", i, "description", e.target.value)} />
+                  </Field>
+                  <Field label="Bestand">
+                    <AnyFileUpload
+                      currentUrl={f.url}
+                      currentName={f.label}
+                      folder="page-downloads"
+                      onUpload={(url, name, size) => {
+                        const items = [...(p.files || [])];
+                        items[i] = { ...items[i], url, sizeBytes: size, label: items[i].label || name };
+                        set("files", items);
+                      }}
+                    />
+                  </Field>
+                  <Field label="Icoonafbeelding (optioneel)">
+                    <FileUpload
+                      currentUrl={f.iconUrl}
+                      folder="page-downloads/icons"
+                      onUpload={(url) => setItem("files", i, "iconUrl", url || "")}
+                    />
+                  </Field>
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={() => addItem("files", { url: "", label: "Nieuw bestand", description: "", sizeBytes: 0, iconUrl: "" })}>
+                <Plus className="h-3 w-3 mr-1" /> Bestand toevoegen
+              </Button>
+            </div>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+          </>
+        );
+
       default:
         return null;
     }
