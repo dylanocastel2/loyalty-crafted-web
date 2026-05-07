@@ -41,9 +41,17 @@ const Footer = () => {
   const cols = config.columns?.length || 0;
   const gridColsClass = cols >= 4 ? "md:grid-cols-5" : cols === 3 ? "md:grid-cols-4" : cols === 2 ? "md:grid-cols-3" : cols === 1 ? "md:grid-cols-2" : "md:grid-cols-1";
   const copyright = (config.copyright || "").replace("{year}", String(new Date().getFullYear()));
+  const hasBg = !!config.bgColor;
+  const hasText = !!config.textColor;
+  const style: React.CSSProperties = {};
+  if (hasBg) style.backgroundColor = config.bgColor;
+  if (hasText) style.color = config.textColor;
 
   return (
-    <footer className="relative bg-surface text-muted-foreground mt-auto border-t border-border">
+    <footer
+      className={`relative ${hasBg ? "" : "bg-surface"} ${hasText ? "" : "text-muted-foreground"} mt-auto border-t border-border`}
+      style={style}
+    >
       <div className={`container relative py-16 grid grid-cols-1 ${gridColsClass} gap-10`}>
         <div>
           <div className="flex items-center gap-2 mb-4">

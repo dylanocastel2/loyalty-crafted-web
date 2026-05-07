@@ -144,6 +144,51 @@ const FooterEditor = () => {
             Gebruik {"{year}"} voor het huidige jaar.
           </p>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
+          <div>
+            <Label>Achtergrondkleur</Label>
+            <div className="flex gap-2 items-center mt-1">
+              <input
+                type="color"
+                value={config.bgColor || "#ffffff"}
+                onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
+                className="h-10 w-14 rounded border cursor-pointer bg-transparent"
+              />
+              <Input
+                value={config.bgColor || ""}
+                onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
+                placeholder="bv. #0784b6 of leeg voor standaard"
+              />
+              {config.bgColor && (
+                <Button variant="ghost" size="sm" onClick={() => setConfig({ ...config, bgColor: "" })}>
+                  Reset
+                </Button>
+              )}
+            </div>
+          </div>
+          <div>
+            <Label>Tekstkleur</Label>
+            <div className="flex gap-2 items-center mt-1">
+              <input
+                type="color"
+                value={config.textColor || "#000000"}
+                onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                className="h-10 w-14 rounded border cursor-pointer bg-transparent"
+              />
+              <Input
+                value={config.textColor || ""}
+                onChange={(e) => setConfig({ ...config, textColor: e.target.value })}
+                placeholder="bv. #ffffff of leeg voor standaard"
+              />
+              {config.textColor && (
+                <Button variant="ghost" size="sm" onClick={() => setConfig({ ...config, textColor: "" })}>
+                  Reset
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4">
