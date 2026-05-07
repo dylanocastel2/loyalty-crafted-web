@@ -16,7 +16,6 @@ import {
   fetchFooterConfig,
 } from "@/hooks/useFooterConfig";
 import Footer from "@/components/layout/Footer";
-import { MemoryRouter } from "react-router-dom";
 
 const THEME_COLORS: { label: string; value: string }[] = [
   { label: "Wit", value: "#ffffff" },
@@ -382,9 +381,7 @@ const FooterEditor = () => {
           Zo ziet de footer er met de huidige instellingen uit. Klik op "Footer opslaan" om publiekelijk door te voeren.
         </p>
         <div className="border rounded-lg overflow-hidden bg-background">
-          <MemoryRouter>
-            <Footer configOverride={config} />
-          </MemoryRouter>
+          <Footer configOverride={config} />
         </div>
       </div>
     </div>
