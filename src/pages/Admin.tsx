@@ -13,6 +13,7 @@ import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import FooterEditor from "@/components/admin/FooterEditor";
 
 type Submission = {
   id: string;
@@ -258,6 +259,7 @@ const Admin = () => {
             <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
             <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
             <TabsTrigger value="socials">Social media</TabsTrigger>
+            <TabsTrigger value="footer">Footer</TabsTrigger>
             <TabsTrigger value="aanvragen">
               Aanvragen{unreadCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">{unreadCount}</span>}
             </TabsTrigger>
