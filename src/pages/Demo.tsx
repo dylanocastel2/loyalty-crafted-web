@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
+import FormAttachments, { type FormAttachment } from "@/components/FormAttachments";
 import { supabase } from "@/integrations/supabase/client";
 
 const Demo = () => {
@@ -16,6 +17,7 @@ const Demo = () => {
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState<string>("");
   const [branche, setBranche] = useState<string>("");
+  const [attachments, setAttachments] = useState<FormAttachment[]>([]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,11 +47,14 @@ const Demo = () => {
       toast({ title: "Er ging iets mis", description: error.message, variant: "destructive" });
       return;
     }
-    supabase.functions.invoke("send-contact-notification", { body: payload }).catch(() => {});
+    supabase.functions.invoke("send-contact-notification", {
+      body: { ...payload, attachments: attachments.map((a) => ({ url: a.url, name: a.name })) },
+    }).catch(() => {});
     toast({ title: "Demo aangevraagd", description: "Wij nemen binnen 24 uur contact met u op." });
     form.reset();
     setType("");
     setBranche("");
+    setAttachments([]);
   };
 
   return (
@@ -115,6 +120,10 @@ const Demo = () => {
                 <div>
                   <Label htmlFor="message">Toelichting</Label>
                   <Textarea id="message" name="message" placeholder="Vertel ons meer over uw wensen..." rows={4} />
+                </div>
+                <div>
+                  <Label>Bijlagen (optioneel)</Label>
+                  <FormAttachments value={attachments} onChange={setAttachments} />
                 </div>
                 <Button type="submit" disabled={loading} size="lg" className="w-full sm:w-auto">
                   {loading ? "Verzenden..." : "Demo aanvragen"}
