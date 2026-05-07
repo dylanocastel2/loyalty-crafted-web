@@ -18,6 +18,7 @@ export interface FooterConfig {
   copyright: string;
   bgColor?: string;
   textColor?: string;
+  linkColor?: string;
 }
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
@@ -27,6 +28,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   copyright: "© {year} Loyaltygroup B.V. Alle rechten voorbehouden.",
   bgColor: "",
   textColor: "",
+  linkColor: "",
   columns: [
     {
       title: "Oplossingen",
@@ -67,6 +69,7 @@ const parseConfig = (raw: string | null | undefined): FooterConfig => {
       columns: Array.isArray(parsed.columns) ? parsed.columns : DEFAULT_FOOTER_CONFIG.columns,
       bgColor: parsed.bgColor ?? "",
       textColor: parsed.textColor ?? "",
+      linkColor: parsed.linkColor ?? "",
     };
   } catch {
     return DEFAULT_FOOTER_CONFIG;
