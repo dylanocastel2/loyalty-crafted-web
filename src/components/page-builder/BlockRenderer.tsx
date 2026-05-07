@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
+import { Download, FileIcon } from "lucide-react";
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
@@ -514,6 +515,52 @@ const BlockRenderer = ({ block }: Props) => {
           />
         </section>
       );
+
+    case "download_files": {
+      const files: Array<{ url: string; label: string; description?: string; sizeBytes?: number; iconUrl?: string }> = p.files || [];
+      if (!files.length && !p.title) return null;
+      const cols = p.columns || 3;
+      const colClass = cols === 1 ? "grid-cols-1" : cols === 2 ? "grid-cols-1 sm:grid-cols-2" : cols === 4 ? "grid-cols-2 md:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3";
+      const fmt = (b?: number) => {
+        if (!b) return "";
+        if (b < 1024) return `${b} B`;
+        if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
+        return `${(b / 1024 / 1024).toFixed(1)} MB`;
+      };
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            {p.title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">{p.title}</h2>}
+            {p.subtitle && <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">{p.subtitle}</p>}
+            <div className={`grid ${colClass} gap-6 mt-6`}>
+              {files.map((f, i) => (
+                <a
+                  key={i}
+                  href={f.url}
+                  download
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:border-primary hover:shadow-md transition-all"
+                >
+                  {f.iconUrl ? (
+                    <img src={f.iconUrl} alt="" className="h-16 w-16 object-contain mb-3" loading="lazy" />
+                  ) : (
+                    <div className="h-16 w-16 rounded-xl bg-accent grid place-items-center mb-3 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <FileIcon className="h-7 w-7" />
+                    </div>
+                  )}
+                  <h3 className="font-semibold text-base mb-1">{f.label || "Download"}</h3>
+                  {f.description && <p className="text-xs text-muted-foreground mb-3">{f.description}</p>}
+                  <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-semibold text-primary group-hover:underline">
+                    <Download className="h-3.5 w-3.5" /> Download {f.sizeBytes ? `(${fmt(f.sizeBytes)})` : ""}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
 
     default:
       return null;
