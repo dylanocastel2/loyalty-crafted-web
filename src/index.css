@@ -158,6 +158,13 @@
     border-bottom: 1px solid hsl(var(--border));
   }
 
+  .glass-primary {
+    background: hsl(var(--primary) / 0.75);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid hsl(var(--primary) / 0.3);
+  }
+
   .card-hover {
     transition: var(--transition-smooth);
   }
