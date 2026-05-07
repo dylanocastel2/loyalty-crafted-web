@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import SocialIcons from "@/components/SocialIcons";
-import { useFooterConfig, FooterItem } from "@/hooks/useFooterConfig";
+import { useFooterConfig, FooterItem, FooterConfig } from "@/hooks/useFooterConfig";
 
 const isExternal = (url: string) => /^https?:\/\//i.test(url) || url.startsWith("mailto:") || url.startsWith("tel:");
 
@@ -36,8 +36,9 @@ const renderItem = (item: FooterItem, idx: number, linkStyle?: React.CSSProperti
   );
 };
 
-const Footer = () => {
-  const { config } = useFooterConfig();
+const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
+  const { config: fetched } = useFooterConfig();
+  const config = configOverride ?? fetched;
   const cols = config.columns?.length || 0;
   const gridColsClass = cols >= 4 ? "md:grid-cols-5" : cols === 3 ? "md:grid-cols-4" : cols === 2 ? "md:grid-cols-3" : cols === 1 ? "md:grid-cols-2" : "md:grid-cols-1";
   const copyright = (config.copyright || "").replace("{year}", String(new Date().getFullYear()));
