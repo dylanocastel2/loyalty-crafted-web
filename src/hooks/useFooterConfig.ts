@@ -16,6 +16,8 @@ export interface FooterConfig {
   showSocials: boolean;
   columns: FooterColumn[];
   copyright: string;
+  bgColor?: string;
+  textColor?: string;
 }
 
 export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
@@ -23,6 +25,8 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
     "Loyaltygroup B.V. ontwikkelt volledig op maat gemaakte spaarsystemen voor gemeenten en commerciële bedrijven.",
   showSocials: true,
   copyright: "© {year} Loyaltygroup B.V. Alle rechten voorbehouden.",
+  bgColor: "",
+  textColor: "",
   columns: [
     {
       title: "Oplossingen",
@@ -61,6 +65,8 @@ const parseConfig = (raw: string | null | undefined): FooterConfig => {
       showSocials: parsed.showSocials ?? true,
       copyright: parsed.copyright ?? DEFAULT_FOOTER_CONFIG.copyright,
       columns: Array.isArray(parsed.columns) ? parsed.columns : DEFAULT_FOOTER_CONFIG.columns,
+      bgColor: parsed.bgColor ?? "",
+      textColor: parsed.textColor ?? "",
     };
   } catch {
     return DEFAULT_FOOTER_CONFIG;
