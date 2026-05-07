@@ -188,6 +188,18 @@ export const getDefaultPageBlocks = (pageKey: string): Block[] => {
             { title: "Uitgebreide rapportages", description: "" },
           ],
         }),
+        b("image_cards", {
+          title: "Service",
+          subtitle: "Loyaltygroup probeert iedereen zo persoonlijk mogelijk te helpen en onze klanten zijn doorgaans uitermate content met de diensten die wij verlenen.",
+          columns: 3,
+          bgColor: "background",
+          padding: "medium",
+          items: [
+            { image: "https://www.loyaltygroup.nl/images/overstappen.jpg", title: "Overstappen", description: "Heeft u al een klantenbestand? Wij kunnen deze overzetten naar het Loyalty Spaarsysteem." },
+            { image: "https://www.loyaltygroup.nl/images/onderhoud_installatie.jpg", title: "Installatie & Onderhoud", description: "Wij zorgen dat u in de winkel aan de slag kunt en op de achtergrond houden we het systeem up-to-date." },
+            { image: "https://www.loyaltygroup.nl/images/sales.jpg", title: "Sales & Marketing", description: "Met onze jarenlange ervaring in CRM en loyalty kunnen wij u helpen uw doelstellingen te realiseren." },
+          ],
+        }),
         b("cta_banner", {
           title: "Wilt u weten wat Loyaltygroup voor u kan betekenen?",
           subtitle: "Wij komen graag geheel vrijblijvend bij u langs om de vele mogelijkheden van het Loyalty Spaarsysteem te demonstreren.",
