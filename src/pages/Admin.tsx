@@ -487,9 +487,6 @@ const Admin = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="aanvragen" className="mt-6">
-          </TabsContent>
-
           <TabsContent value="footer" className="mt-6">
             <FooterEditor />
           </TabsContent>
