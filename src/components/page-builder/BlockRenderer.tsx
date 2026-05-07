@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
+import { Download, FileIcon } from "lucide-react";
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
