@@ -25,7 +25,8 @@ export type BlockType =
   | "image_text"
   | "custom_html"
   | "klantcases"
-  | "download_files";
+  | "download_files"
+  | "image_cards";
 
 export interface Block {
   id: string;
@@ -78,6 +79,11 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "custom_html", label: "Custom HTML", category: "Geavanceerd", icon: "Code", defaultProps: { html: "<p>Custom HTML</p>" } },
   { type: "klantcases", label: "Klantcases", category: "Content", icon: "Briefcase", defaultProps: { view: "short", mode: "selected", selectedIds: [], limit: 3, columns: 3, showBranche: true, showCategory: true, title: "", bgColor: "background", padding: "medium" } },
   { type: "download_files", label: "Download bestanden", category: "Content", icon: "Download", defaultProps: { title: "Downloads", subtitle: "", files: [], columns: 3, bgColor: "background", padding: "medium" } },
+  { type: "image_cards", label: "Afbeelding-kaarten", category: "Content", icon: "LayoutGrid", defaultProps: { title: "Service", subtitle: "Loyaltygroup probeert iedereen zo persoonlijk mogelijk te helpen en onze klanten zijn doorgaans uitermate content met de diensten die wij verlenen.", columns: 3, bgColor: "background", padding: "medium", items: [
+    { image: "", title: "Overstappen", description: "Heeft u al een klantenbestand? Wij kunnen deze overzetten naar het Loyalty Spaarsysteem." },
+    { image: "", title: "Installatie & Onderhoud", description: "Wij zorgen dat u in de winkel aan de slag kunt en op de achtergrond houden we het systeem up-to-date." },
+    { image: "", title: "Sales & Marketing", description: "Met onze jarenlange ervaring in CRM en loyalty kunnen wij u helpen uw doelstellingen te realiseren." },
+  ] } },
 ];
 
 export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>

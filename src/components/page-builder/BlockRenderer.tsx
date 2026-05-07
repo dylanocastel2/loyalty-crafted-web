@@ -562,6 +562,35 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
+    case "image_cards": {
+      const items: Array<{ image?: string; title?: string; description?: string }> = p.items || [];
+      const cols = p.columns || 3;
+      const colClass = cols === 1 ? "grid-cols-1" : cols === 2 ? "grid-cols-1 sm:grid-cols-2" : cols === 4 ? "grid-cols-2 md:grid-cols-4" : "grid-cols-1 md:grid-cols-3";
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            {p.title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">{p.title}</h2>}
+            {p.subtitle && <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-12 whitespace-pre-wrap">{p.subtitle}</p>}
+            <div className={`grid ${colClass} gap-8`}>
+              {items.map((it, i) => (
+                <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
+                  {it.image ? (
+                    <img src={it.image} alt={it.title || ""} className="w-full h-48 object-cover" loading="lazy" />
+                  ) : (
+                    <div className="w-full h-48 bg-muted flex items-center justify-center text-sm text-muted-foreground">Voeg een afbeelding toe</div>
+                  )}
+                  <div className="p-6">
+                    {it.title && <h3 className="font-bold text-lg mb-2 uppercase tracking-wider">{it.title}</h3>}
+                    {it.description && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{it.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
     default:
       return null;
   }
