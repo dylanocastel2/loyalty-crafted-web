@@ -34,12 +34,14 @@ export function usePageTracking() {
     let cancelled = false;
     supabase
       .from("page_views")
-      .insert({
-        path,
-        session_id: sessionId,
-        referrer: document.referrer || null,
-        duration_ms: 0,
-      })
+      .insert([
+        {
+          path,
+          session_id: sessionId,
+          referrer: document.referrer || null,
+          duration_ms: 0,
+        },
+      ])
       .select("id")
       .single()
       .then(({ data }) => {
