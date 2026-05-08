@@ -8,12 +8,14 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check, MessageSquare, BarChart3 } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import FooterEditor from "@/components/admin/FooterEditor";
+import PopupEditor from "@/components/admin/PopupEditor";
+import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
 
 type Submission = {
   id: string;
@@ -283,6 +285,8 @@ const Admin = () => {
             <TabsTrigger value="aanvragen">
               Aanvragen{unreadCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">{unreadCount}</span>}
             </TabsTrigger>
+            <TabsTrigger value="popup"><MessageSquare className="h-4 w-4 mr-1" /> Pop-up</TabsTrigger>
+            <TabsTrigger value="analytics"><BarChart3 className="h-4 w-4 mr-1" /> Analytics</TabsTrigger>
             <TabsTrigger value="instellingen">Instellingen</TabsTrigger>
           </TabsList>
 
@@ -569,6 +573,14 @@ const Admin = () => {
                 </div>
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="popup" className="mt-6">
+            <PopupEditor />
+          </TabsContent>
+
+          <TabsContent value="analytics" className="mt-6">
+            <AnalyticsPanel />
           </TabsContent>
 
           <TabsContent value="instellingen" className="mt-6 space-y-6">
