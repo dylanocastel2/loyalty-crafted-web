@@ -107,6 +107,48 @@ export type Database = {
         }
         Relationships: []
       }
+      heatmap_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          page_h: number
+          page_w: number
+          path: string
+          session_id: string
+          viewport_h: number
+          viewport_w: number
+          x: number
+          y: number
+        }
+        Insert: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          page_h?: number
+          page_w?: number
+          path: string
+          session_id: string
+          viewport_h: number
+          viewport_w: number
+          x: number
+          y: number
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          page_h?: number
+          page_w?: number
+          path?: string
+          session_id?: string
+          viewport_h?: number
+          viewport_w?: number
+          x?: number
+          y?: number
+        }
+        Relationships: []
+      }
       klantcases: {
         Row: {
           branche: string | null
