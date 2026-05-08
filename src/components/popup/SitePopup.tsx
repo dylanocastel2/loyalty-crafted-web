@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { X } from "lucide-react";
 
 type Option = { label: string; next?: string | null };
 type Question = {
@@ -133,26 +133,43 @@ export default function SitePopup() {
 
   if (!config) return null;
 
+  if (!open) return null;
+
+  const dismiss = () => {
+    setOpen(false);
+    if (config.frequency === "once") localStorage.setItem(storageKeyFor(config.id), "1");
+    else if (config.frequency === "session") sessionStorage.setItem(storageKeyFor(config.id), "1");
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{config.title || "Hallo"}</DialogTitle>
-        </DialogHeader>
+    <div
+      role="dialog"
+      aria-label={config.title || "Feedback"}
+      className="fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-lg border bg-background shadow-lg animate-in slide-in-from-bottom-4 fade-in duration-300"
+    >
+      <button
+        onClick={dismiss}
+        aria-label="Sluiten"
+        className="absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+      >
+        <X className="h-4 w-4" />
+      </button>
+      <div className="p-4 pr-8">
+        <h3 className="text-sm font-semibold mb-3">{config.title || "Hallo"}</h3>
         {submitted ? (
-          <div className="space-y-4 py-2">
-            <p className="text-sm">Bedankt voor uw feedback!</p>
-            <div className="flex justify-end">
-              <Button onClick={() => setOpen(false)}>Sluiten</Button>
-            </div>
-          </div>
+          <p className="text-sm text-muted-foreground">Bedankt voor uw feedback!</p>
         ) : currentQuestion ? (
-          <div className="space-y-4 py-2">
-            <p className="font-medium">{currentQuestion.label}</p>
+          <div className="space-y-3">
+            <p className="text-sm">{currentQuestion.label}</p>
             {currentQuestion.type === "choice" ? (
               <div className="flex flex-wrap gap-2">
                 {(currentQuestion.options || []).map((opt, i) => (
-                  <Button key={i} onClick={() => onChoice(opt)} variant={i === 0 ? "default" : "outline"}>
+                  <Button
+                    key={i}
+                    size="sm"
+                    onClick={() => onChoice(opt)}
+                    variant={i === 0 ? "default" : "outline"}
+                  >
                     {opt.label}
                   </Button>
                 ))}
@@ -160,16 +177,17 @@ export default function SitePopup() {
             ) : (
               <div className="space-y-2">
                 <Textarea
-                  rows={3}
+                  rows={2}
                   placeholder={currentQuestion.placeholder || "Uw antwoord..."}
                   value={textValue}
                   onChange={(e) => setTextValue(e.target.value)}
+                  className="text-sm"
                 />
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" onClick={() => setOpen(false)}>
+                  <Button size="sm" variant="ghost" onClick={dismiss}>
                     Overslaan
                   </Button>
-                  <Button onClick={onTextSubmit} disabled={!textValue.trim()}>
+                  <Button size="sm" onClick={onTextSubmit} disabled={!textValue.trim()}>
                     Versturen
                   </Button>
                 </div>
@@ -177,7 +195,7 @@ export default function SitePopup() {
             )}
           </div>
         ) : null}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
