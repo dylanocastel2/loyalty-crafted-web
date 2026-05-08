@@ -206,6 +206,107 @@ export type Database = {
         }
         Relationships: []
       }
+      page_views: {
+        Row: {
+          created_at: string
+          duration_ms: number
+          id: string
+          path: string
+          referrer: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number
+          id?: string
+          path: string
+          referrer?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number
+          id?: string
+          path?: string
+          referrer?: string | null
+          session_id?: string
+        }
+        Relationships: []
+      }
+      popup_configs: {
+        Row: {
+          created_at: string
+          delay_seconds: number
+          enabled: boolean
+          frequency: string
+          id: string
+          is_active: boolean
+          name: string
+          questions: Json
+          show_on_pages: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delay_seconds?: number
+          enabled?: boolean
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          questions?: Json
+          show_on_pages?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delay_seconds?: number
+          enabled?: boolean
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          questions?: Json
+          show_on_pages?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      popup_responses: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          page_path: string | null
+          popup_id: string | null
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          popup_id?: string | null
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          page_path?: string | null
+          popup_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "popup_responses_popup_id_fkey"
+            columns: ["popup_id"]
+            isOneToOne: false
+            referencedRelation: "popup_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
