@@ -15,45 +15,31 @@ function getSessionId(): string {
 
 /**
  * Tracks a page view + time spent on each route change.
- * Inserts a row immediately and updates duration_ms when leaving the page.
+ * Inserts ONE row when the user leaves the page (route change / tab close)
+ * with the final duration. This avoids needing an UPDATE policy.
  */
 export function usePageTracking() {
   const location = useLocation();
-  const rowIdRef = useRef<string | null>(null);
   const startRef = useRef<number>(Date.now());
+  const flushedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    // Don't track admin pages
     if (location.pathname.startsWith("/admin")) return;
 
     const sessionId = getSessionId();
     const path = location.pathname;
+    const referrer = document.referrer || null;
     startRef.current = Date.now();
-    rowIdRef.current = null;
-
-    let cancelled = false;
-    supabase
-      .from("page_views")
-      .insert([
-        {
-          path,
-          session_id: sessionId,
-          referrer: document.referrer || null,
-          duration_ms: 0,
-        },
-      ])
-      .select("id")
-      .single()
-      .then(({ data }) => {
-        if (!cancelled && data) rowIdRef.current = data.id;
-      });
+    flushedRef.current = false;
 
     const flush = () => {
-      const id = rowIdRef.current;
-      if (!id) return;
-      const duration = Date.now() - startRef.current;
-      // Use keepalive-friendly path: regular update; best-effort
-      supabase.from("page_views").update({ duration_ms: duration }).eq("id", id).then(() => {});
+      if (flushedRef.current) return;
+      flushedRef.current = true;
+      const duration = Math.min(86400000, Math.max(0, Date.now() - startRef.current));
+      supabase
+        .from("page_views")
+        .insert([{ path, session_id: sessionId, referrer, duration_ms: duration }])
+        .then(() => {});
     };
 
     const onHide = () => {
@@ -64,7 +50,6 @@ export function usePageTracking() {
     document.addEventListener("visibilitychange", onHide);
 
     return () => {
-      cancelled = true;
       flush();
       window.removeEventListener("pagehide", flush);
       window.removeEventListener("beforeunload", flush);
