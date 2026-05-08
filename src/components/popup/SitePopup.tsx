@@ -91,11 +91,13 @@ export default function SitePopup() {
 
   const submit = async (finalAnswers: Answer[]) => {
     if (!config) return;
-    await supabase.from("popup_responses").insert({
-      popup_id: config.id,
-      page_path: location.pathname,
-      answers: finalAnswers as unknown as object,
-    });
+    await supabase.from("popup_responses").insert([
+      {
+        popup_id: config.id,
+        page_path: location.pathname,
+        answers: finalAnswers as unknown as any,
+      },
+    ]);
     const key = storageKeyFor(config.id);
     if (config.frequency === "once") localStorage.setItem(key, "1");
     else if (config.frequency === "session") sessionStorage.setItem(key, "1");
