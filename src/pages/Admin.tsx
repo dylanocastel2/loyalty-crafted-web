@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check, MessageSquare, BarChart3 } from "lucide-react";
+import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check, MessageSquare, BarChart3, Flame } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import FooterEditor from "@/components/admin/FooterEditor";
 import PopupEditor from "@/components/admin/PopupEditor";
 import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
+import HeatmapPanel from "@/components/admin/HeatmapPanel";
 
 type Submission = {
   id: string;
@@ -287,6 +288,7 @@ const Admin = () => {
             </TabsTrigger>
             <TabsTrigger value="popup"><MessageSquare className="h-4 w-4 mr-1" /> Pop-up</TabsTrigger>
             <TabsTrigger value="analytics"><BarChart3 className="h-4 w-4 mr-1" /> Analytics</TabsTrigger>
+            <TabsTrigger value="heatmap"><Flame className="h-4 w-4 mr-1" /> Heatmap</TabsTrigger>
             <TabsTrigger value="instellingen">Instellingen</TabsTrigger>
           </TabsList>
 
@@ -581,6 +583,10 @@ const Admin = () => {
 
           <TabsContent value="analytics" className="mt-6">
             <AnalyticsPanel />
+          </TabsContent>
+
+          <TabsContent value="heatmap" className="mt-6">
+            <HeatmapPanel />
           </TabsContent>
 
           <TabsContent value="instellingen" className="mt-6 space-y-6">
