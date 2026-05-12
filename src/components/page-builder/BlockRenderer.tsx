@@ -11,6 +11,7 @@ import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
 import { Download, FileIcon } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
@@ -35,6 +36,10 @@ interface Props {
 
 const BlockRenderer = ({ block }: Props) => {
   const p = block.props;
+  const isMobile = useIsMobile();
+  const mTop = isMobile && p.marginTopMobile != null ? p.marginTopMobile : p.marginTop;
+  const mBottom = isMobile && p.marginBottomMobile != null ? p.marginBottomMobile : p.marginBottom;
+  const mOffsetX = isMobile && p.offsetXMobile != null ? p.offsetXMobile : p.offsetX;
   const gradients: Record<string, string> = {
     "primary-secondary": "linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)))",
     "secondary-primary": "linear-gradient(90deg, hsl(var(--secondary)), hsl(var(--primary)))",
@@ -45,9 +50,9 @@ const BlockRenderer = ({ block }: Props) => {
   };
   const gradientBg = p.textGradient && gradients[p.textGradient];
   const wrapperStyle: React.CSSProperties = {
-    marginTop: p.marginTop != null ? `${p.marginTop}px` : undefined,
-    marginBottom: p.marginBottom != null ? `${p.marginBottom}px` : undefined,
-    paddingLeft: p.offsetX ? `${p.offsetX}px` : undefined,
+    marginTop: mTop != null ? `${mTop}px` : undefined,
+    marginBottom: mBottom != null ? `${mBottom}px` : undefined,
+    paddingLeft: mOffsetX ? `${mOffsetX}px` : undefined,
     color: gradientBg ? "transparent" : p.textColorToken ? `hsl(var(--${p.textColorToken}))` : undefined,
     backgroundImage: gradientBg || undefined,
     WebkitBackgroundClip: gradientBg ? "text" : undefined,
