@@ -921,6 +921,20 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <Input type="number" value={p.offsetX ?? ""} onChange={(e) => set("offsetX", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
         </Field>
         <p className="text-[10px] text-muted-foreground leading-snug">Tip: gebruik 'Uitlijning' bovenaan en deze velden om je tekst of afbeelding precies op de juiste plek te zetten.</p>
+
+        <div className="pt-3 mt-3 border-t space-y-3">
+          <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Mobiel (overschrijft desktop)</h5>
+          <Field label="Marge boven mobiel (px)">
+            <Input type="number" value={p.marginTopMobile ?? ""} onChange={(e) => set("marginTopMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+          </Field>
+          <Field label="Marge onder mobiel (px)">
+            <Input type="number" value={p.marginBottomMobile ?? ""} onChange={(e) => set("marginBottomMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+          </Field>
+          <Field label="Horizontale offset mobiel (px)">
+            <Input type="number" value={p.offsetXMobile ?? ""} onChange={(e) => set("offsetXMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+          </Field>
+          <p className="text-[10px] text-muted-foreground leading-snug">Laat leeg om de desktopwaarde te gebruiken. Mobiel = breedte onder 768px.</p>
+        </div>
       </div>
     </div>
   );
