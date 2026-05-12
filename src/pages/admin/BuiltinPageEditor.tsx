@@ -11,6 +11,7 @@ import { Block, BlockType, createBlock, safeUUID } from "@/components/page-build
 import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
+import SeoFields, { SeoData } from "@/components/page-builder/SeoFields";
 import { getBuiltinPage } from "@/lib/builtinPages";
 import { getDefaultPageBlocks, hasPagePreset } from "@/lib/pagePresets";
 import { useBlockHistory } from "@/hooks/useBlockHistory";
@@ -28,6 +29,12 @@ import {
 import { Download } from "lucide-react";
 
 type Position = "before" | "after" | "full";
+type Tab = Position | "seo";
+
+const emptySeo: SeoData = {
+  meta_title: "", meta_description: "", meta_keywords: "",
+  og_title: "", og_description: "", og_image_url: "", canonical_url: "",
+};
 
 const BuiltinPageEditor = () => {
   const { pageKey } = useParams<{ pageKey: string }>();
@@ -39,10 +46,12 @@ const BuiltinPageEditor = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [active, setActive] = useState<Position>("full");
+  const [tab, setTab] = useState<Tab>("full");
   const [beforeBlocks, setBeforeBlocks] = useState<Block[]>([]);
   const [afterBlocks, setAfterBlocks] = useState<Block[]>([]);
   const [fullBlocks, setFullBlocks] = useState<Block[]>([]);
   const [fullIsSaved, setFullIsSaved] = useState(false);
+  const [seo, setSeo] = useState<SeoData>(emptySeo);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
   const [previewKey, setPreviewKey] = useState(0);
@@ -82,6 +91,22 @@ const BuiltinPageEditor = () => {
           setFullBlocks(getDefaultPageBlocks(builtin.key));
           setFullIsSaved(false);
         }
+      }
+      const { data: seoRow } = await supabase
+        .from("page_seo")
+        .select("meta_title,meta_description,meta_keywords,og_title,og_description,og_image_url,canonical_url")
+        .eq("page_key", builtin.key)
+        .maybeSingle();
+      if (seoRow) {
+        setSeo({
+          meta_title: seoRow.meta_title || "",
+          meta_description: seoRow.meta_description || "",
+          meta_keywords: seoRow.meta_keywords || "",
+          og_title: seoRow.og_title || "",
+          og_description: seoRow.og_description || "",
+          og_image_url: seoRow.og_image_url || "",
+          canonical_url: seoRow.canonical_url || "",
+        });
       }
       setLoading(false);
     };
@@ -154,14 +179,18 @@ const BuiltinPageEditor = () => {
 
   const save = async () => {
     setSaving(true);
-    const [r1, r2, r3] = await Promise.all([
+    const [r1, r2, r3, r4] = await Promise.all([
       saveSlot("before", beforeBlocks),
       saveSlot("after", afterBlocks),
       saveSlot("full", fullBlocks),
+      supabase.from("page_seo").upsert(
+        { page_key: builtin.key, ...seo },
+        { onConflict: "page_key" }
+      ),
     ]);
     setSaving(false);
-    if (r1.error || r2.error || r3.error) {
-      toast({ title: "Fout bij opslaan", description: (r1.error || r2.error || r3.error)?.message, variant: "destructive" });
+    if (r1.error || r2.error || r3.error || r4.error) {
+      toast({ title: "Fout bij opslaan", description: (r1.error || r2.error || r3.error || r4.error)?.message, variant: "destructive" });
       return;
     }
     setFullIsSaved(fullBlocks.length > 0);
@@ -202,14 +231,19 @@ const BuiltinPageEditor = () => {
       </header>
 
       <div className="flex-1 flex flex-col">
-        <Tabs value={active} onValueChange={(v) => { setActive(v as Position); setSelectedId(null); }} className="flex-1 flex flex-col">
+        <Tabs value={tab} onValueChange={(v) => {
+          setTab(v as Tab);
+          setSelectedId(null);
+          if (v !== "seo") setActive(v as Position);
+        }} className="flex-1 flex flex-col">
           <div className="bg-card border-b px-4">
             <TabsList>
               <TabsTrigger value="full">Volledige pagina {fullBlocks.length > 0 && `(${fullBlocks.length})`}</TabsTrigger>
               <TabsTrigger value="before">Extra boven ({beforeBlocks.length})</TabsTrigger>
               <TabsTrigger value="after">Extra onder ({afterBlocks.length})</TabsTrigger>
+              <TabsTrigger value="seo">SEO</TabsTrigger>
             </TabsList>
-            {active === "full" && (
+            {tab === "full" && (
               <div className="flex items-center justify-between gap-3 py-1.5 flex-wrap">
                 <p className="text-[11px] text-muted-foreground max-w-2xl">
                   {fullIsSaved
@@ -246,7 +280,11 @@ const BuiltinPageEditor = () => {
             )}
           </div>
 
-          <TabsContent value={active} className="flex-1 mt-0">
+          <TabsContent value="seo" className="flex-1 mt-0 p-6 overflow-y-auto">
+            <SeoFields data={seo} onChange={setSeo} />
+          </TabsContent>
+
+          <TabsContent value={active} className="flex-1 mt-0" forceMount hidden={tab === "seo"}>
             <div className="grid grid-cols-12 gap-4 p-4 h-[calc(100vh-7.5rem)]">
               <aside className="col-span-12 lg:col-span-2 bg-card border rounded-lg p-4 overflow-y-auto">
                 <BlockLibrary onAdd={addBlock} />
