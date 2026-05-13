@@ -252,435 +252,243 @@ const Admin = () => {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-muted">
-      <header className="bg-card border-b sticky top-0 z-50">
-        <div className="container flex items-center justify-between h-14">
-          <h1 className="font-bold text-lg">Admin Panel</h1>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" /> Uitloggen
-          </Button>
-        </div>
-      </header>
+    <CmsShell active={section} onSelect={setSection} unreadCount={unreadCount}>
+      {section === "dashboard" && (
+        <DashboardPanel onNavigate={(s) => setSection(s as CmsSection)} />
+      )}
 
-      <div className="container py-8">
-        <Tabs defaultValue="klantcases">
-          <TabsList>
-            <TabsTrigger value="klantcases">Klantcases</TabsTrigger>
-            <TabsTrigger value="custom-pages">Pagina's beheren</TabsTrigger>
-            <TabsTrigger value="paginas">Pagina's bewerken</TabsTrigger>
-            <TabsTrigger value="socials">Social media</TabsTrigger>
-            <TabsTrigger value="footer">Footer</TabsTrigger>
-            <TabsTrigger value="aanvragen">
-              Aanvragen{unreadCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[10px] font-semibold">{unreadCount}</span>}
-            </TabsTrigger>
-            <TabsTrigger value="popup"><MessageSquare className="h-4 w-4 mr-1" /> Pop-up</TabsTrigger>
-            <TabsTrigger value="analytics"><BarChart3 className="h-4 w-4 mr-1" /> Analytics</TabsTrigger>
-            <TabsTrigger value="heatmap"><Flame className="h-4 w-4 mr-1" /> Heatmap</TabsTrigger>
-            <TabsTrigger value="instellingen">Instellingen</TabsTrigger>
-          </TabsList>
+      {section === "pages" && <PagesPanel />}
 
-          <TabsContent value="custom-pages" className="mt-6">
-            <div className="bg-card border rounded-lg p-8 text-center">
-              <FileText className="h-12 w-12 mx-auto text-primary mb-3" />
-              <h2 className="text-xl font-bold mb-2">Pagina bouwer</h2>
-              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                Maak nieuwe pagina's met de drag & drop bouwer. Voeg blokken toe, stel SEO in en beheer welke pagina's in het hoofdmenu verschijnen.
-              </p>
-              <div className="flex gap-2 justify-center">
-                <Link to="/admin/pages"><Button variant="outline">Bekijk alle pagina's</Button></Link>
-                <Link to="/admin/pages/nieuw/edit"><Button><Plus className="h-4 w-4 mr-1" /> Nieuwe pagina</Button></Link>
-              </div>
-            </div>
-          </TabsContent>
+      {section === "media" && <MediaLibrary />}
 
-          <TabsContent value="klantcases" className="mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Klantcases</h2>
+      {section === "klantcases" && (
+        <>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">Klantcases</h2>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setEditCase({ title: "", description: "", category: "Gemeenten", published: false })}>
+                <Plus className="h-4 w-4 mr-1" /> Snel toevoegen
+              </Button>
               <Link to="/klantcases/nieuw">
                 <Button size="sm"><Plus className="h-4 w-4 mr-1" /> Nieuwe klantcase</Button>
               </Link>
             </div>
+          </div>
 
-            {editCase && (
-              <div className="bg-card border rounded-lg p-6 mb-6 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {editCase && (
+            <div className="bg-card border rounded-lg p-6 mb-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><Label>Titel</Label><Input value={editCase.title || ""} onChange={(e) => setEditCase({ ...editCase, title: e.target.value })} /></div>
+                <div><Label>Categorie</Label><Input value={editCase.category || ""} onChange={(e) => setEditCase({ ...editCase, category: e.target.value })} /></div>
+                <div><Label>Branche</Label><Input value={(editCase as any).branche || ""} onChange={(e) => setEditCase({ ...editCase, branche: e.target.value } as any)} placeholder="Bijv. Horeca, Retail, Overheid" /></div>
+              </div>
+              <div><Label>Beschrijving</Label><Textarea value={editCase.description || ""} onChange={(e) => setEditCase({ ...editCase, description: e.target.value })} rows={3} /></div>
+              <div><Label>Afbeelding (in detail pagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, image_url: url || null })} currentUrl={editCase.image_url || undefined} folder="klantcases" /></div>
+              <div><Label>Headerfoto (overzichtspagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, header_image_url: url } as any)} currentUrl={(editCase as any).header_image_url || undefined} folder="klantcases/headers" /></div>
+              <div className="flex items-center gap-2"><Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} /><Label>Gepubliceerd</Label></div>
+              <div><Label>Video URL (YouTube/Vimeo)</Label><Input value={(editCase as any).video_url || ""} onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)} placeholder="https://www.youtube.com/watch?v=..." /></div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><Label>Knoptekst (CTA)</Label><Input value={(editCase as any).cta_label || ""} onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)} placeholder="Bijv. Bezoek website" /></div>
+                <div><Label>Knop-URL</Label><Input value={(editCase as any).cta_url || ""} onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)} placeholder="https://..." /></div>
+              </div>
+              <div className="flex gap-2"><Button onClick={saveCase}>Opslaan</Button><Button variant="outline" onClick={() => setEditCase(null)}>Annuleren</Button></div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {cases.map((c) => (
+              <div key={c.id} className="bg-card border rounded-lg p-4 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  {c.image_url && <img src={c.image_url} alt={c.title} className="h-12 w-16 rounded object-cover" />}
                   <div>
-                    <Label>Titel</Label>
-                    <Input value={editCase.title || ""} onChange={(e) => setEditCase({ ...editCase, title: e.target.value })} />
-                  </div>
-                  <div>
-                    <Label>Categorie</Label>
-                    <Input value={editCase.category || ""} onChange={(e) => setEditCase({ ...editCase, category: e.target.value })} />
-                  </div>
-                  <div>
-                    <Label>Branche</Label>
-                    <Input value={(editCase as any).branche || ""} onChange={(e) => setEditCase({ ...editCase, branche: e.target.value } as any)} placeholder="Bijv. Horeca, Retail, Overheid" />
-                  </div>
-                </div>
-                <div>
-                  <Label>Beschrijving</Label>
-                  <Textarea value={editCase.description || ""} onChange={(e) => setEditCase({ ...editCase, description: e.target.value })} rows={3} />
-                </div>
-                <div>
-                  <Label>Afbeelding (in detail pagina)</Label>
-                  <FileUpload
-                    onUpload={(url) => setEditCase({ ...editCase, image_url: url || null })}
-                    currentUrl={editCase.image_url || undefined}
-                    folder="klantcases"
-                  />
-                </div>
-                <div>
-                  <Label>Headerfoto (overzichtspagina)</Label>
-                  <FileUpload
-                    onUpload={(url) => setEditCase({ ...editCase, header_image_url: url } as any)}
-                    currentUrl={(editCase as any).header_image_url || undefined}
-                    folder="klantcases/headers"
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} />
-                  <Label>Gepubliceerd</Label>
-                </div>
-                <div>
-                  <Label>Video URL (YouTube/Vimeo)</Label>
-                  <Input
-                    value={(editCase as any).video_url || ""}
-                    onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)}
-                    placeholder="https://www.youtube.com/watch?v=..."
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <Label>Knoptekst (CTA)</Label>
-                    <Input
-                      value={(editCase as any).cta_label || ""}
-                      onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)}
-                      placeholder="Bijv. Bezoek website"
-                    />
-                  </div>
-                  <div>
-                    <Label>Knop-URL</Label>
-                    <Input
-                      value={(editCase as any).cta_url || ""}
-                      onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)}
-                      placeholder="https://..."
-                    />
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">{c.title}</span>
+                      <span className="text-xs bg-muted px-2 py-0.5 rounded">{c.category}</span>
+                      {c.published && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">Live</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{c.description}</p>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button onClick={saveCase}>Opslaan</Button>
-                  <Button variant="outline" onClick={() => setEditCase(null)}>Annuleren</Button>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="icon" onClick={() => setEditCase(c)}><Pencil className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" onClick={() => deleteCase(c.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
-            )}
+            ))}
+            {cases.length === 0 && <p className="text-muted-foreground text-center py-8">Geen klantcases gevonden.</p>}
+          </div>
+        </>
+      )}
 
-            <div className="space-y-3">
-              {cases.map((c) => (
-                <div key={c.id} className="bg-card border rounded-lg p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    {c.image_url && (
-                      <img src={c.image_url} alt={c.title} className="h-12 w-16 rounded object-cover" />
-                    )}
-                    <div>
+      {section === "socials" && (
+        <div className="bg-card border rounded-lg p-6 space-y-4">
+          <div>
+            <h2 className="text-xl font-bold mb-1">Social media</h2>
+            <p className="text-muted-foreground text-sm">Deze links verschijnen in de footer en op de contactpagina.</p>
+          </div>
+          <div className="space-y-3">
+            {socials.map((s, i) => (
+              <div key={i} className="flex gap-2 items-center">
+                <Select value={s.platform} onValueChange={(v) => { const next = [...socials]; next[i] = { ...next[i], platform: v as SocialPlatform }; setSocials(next); }}>
+                  <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+                  <SelectContent>{SOCIAL_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}</SelectContent>
+                </Select>
+                <Input placeholder="https://..." value={s.url} onChange={(e) => { const next = [...socials]; next[i] = { ...next[i], url: e.target.value }; setSocials(next); }} />
+                <Button variant="ghost" size="icon" onClick={() => setSocials(socials.filter((_, j) => j !== i))}><Trash2 className="h-4 w-4" /></Button>
+              </div>
+            ))}
+            {socials.length === 0 && <p className="text-sm text-muted-foreground">Nog geen social media links toegevoegd.</p>}
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setSocials([...socials, { platform: "linkedin", url: "" }])}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
+            <Button size="sm" onClick={saveSocials} disabled={savingSocials}>{savingSocials ? "Opslaan..." : "Opslaan"}</Button>
+          </div>
+        </div>
+      )}
+
+      {section === "footer" && <FooterEditor />}
+
+      {section === "aanvragen" && (
+        <>
+          <div className="bg-card border rounded-lg">
+            <div className="p-5 border-b flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Contactaanvragen</h2>
+              <span className="ml-auto text-sm text-muted-foreground">{submissions.length} totaal · {unreadCount} ongelezen</span>
+            </div>
+            {submissions.length === 0 ? (
+              <p className="p-8 text-center text-muted-foreground">Nog geen formulieren ingevuld.</p>
+            ) : (
+              <ul className="divide-y">
+                {submissions.map((s) => (
+                  <li key={s.id} className={`p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer ${!s.read ? "bg-primary/5" : ""}`} onClick={() => { setOpenSubmission(s); if (!s.read) markRead(s.id, true); }}>
+                    <div className={`mt-1.5 h-2 w-2 rounded-full ${!s.read ? "bg-primary" : "bg-muted-foreground/30"}`} />
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold">{c.title}</span>
-                        <span className="text-xs bg-muted px-2 py-0.5 rounded">{c.category}</span>
-                        {c.published && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">Live</span>}
+                        <span className="font-semibold truncate">{s.name}</span>
+                        <span className="text-xs text-muted-foreground truncate">&lt;{s.email}&gt;</span>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{c.description}</p>
+                      <p className="text-sm font-medium truncate">{s.subject}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-1">{s.message}</p>
                     </div>
-                  </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => setEditCase(c)}><Pencil className="h-4 w-4" /></Button>
-                    <Button variant="ghost" size="icon" onClick={() => deleteCase(c.id)}><Trash2 className="h-4 w-4" /></Button>
-                  </div>
-                </div>
-              ))}
-              {cases.length === 0 && <p className="text-muted-foreground text-center py-8">Geen klantcases gevonden.</p>}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="paginas" className="mt-6">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold mb-2">Pagina's bewerken</h2>
-              <p className="text-muted-foreground">
-                Klik op een pagina om deze te openen. Als administrator ziet u bij elk bewerkbaar tekstveld een
-                <Pencil className="h-3.5 w-3.5 inline mx-1 text-primary" />
-                icoon. Klik erop om de tekst direct aan te passen.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {pages.map((p) => (
-                <div
-                  key={p.path}
-                  className="bg-card border rounded-lg p-5 hover:shadow-md hover:border-primary/30 transition-all group relative"
-                >
-                  <Link to={p.path} className="block">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">{p.label}</h3>
-                      <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">{p.path}</p>
-                  </Link>
-                  <Link
-                    to={`/admin/pages/builtin/${p.key}`}
-                    title="Open in paginabouwer"
-                    className="absolute top-2 right-10 inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-muted text-muted-foreground hover:text-primary"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="socials" className="mt-6">
-            <div className="bg-card border rounded-lg p-6 space-y-4">
-              <div>
-                <h2 className="text-xl font-bold mb-1">Social media</h2>
-                <p className="text-muted-foreground text-sm">
-                  Deze links verschijnen in de footer en op de contactpagina.
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                {socials.map((s, i) => (
-                  <div key={i} className="flex gap-2 items-center">
-                    <Select
-                      value={s.platform}
-                      onValueChange={(v) => {
-                        const next = [...socials];
-                        next[i] = { ...next[i], platform: v as SocialPlatform };
-                        setSocials(next);
-                      }}
-                    >
-                      <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        {SOCIAL_OPTIONS.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      placeholder="https://..."
-                      value={s.url}
-                      onChange={(e) => {
-                        const next = [...socials];
-                        next[i] = { ...next[i], url: e.target.value };
-                        setSocials(next);
-                      }}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setSocials(socials.filter((_, j) => j !== i))}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                  </li>
                 ))}
-                {socials.length === 0 && (
-                  <p className="text-sm text-muted-foreground">Nog geen social media links toegevoegd.</p>
-                )}
-              </div>
+              </ul>
+            )}
+          </div>
 
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSocials([...socials, { platform: "linkedin", url: "" }])}
-                >
-                  <Plus className="h-4 w-4 mr-1" /> Toevoegen
-                </Button>
-                <Button size="sm" onClick={saveSocials} disabled={savingSocials}>
-                  {savingSocials ? "Opslaan..." : "Opslaan"}
-                </Button>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="footer" className="mt-6">
-            <FooterEditor />
-          </TabsContent>
-
-          <TabsContent value="aanvragen" className="mt-6">
-            <div className="bg-card border rounded-lg">
-              <div className="p-5 border-b flex items-center gap-2">
-                <Mail className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold">Contactaanvragen</h2>
-                <span className="ml-auto text-sm text-muted-foreground">{submissions.length} totaal · {unreadCount} ongelezen</span>
-              </div>
-              {submissions.length === 0 ? (
-                <p className="p-8 text-center text-muted-foreground">Nog geen formulieren ingevuld.</p>
-              ) : (
-                <ul className="divide-y">
-                  {submissions.map((s) => (
-                    <li key={s.id} className={`p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer ${!s.read ? "bg-primary/5" : ""}`} onClick={() => { setOpenSubmission(s); if (!s.read) markRead(s.id, true); }}>
-                      <div className={`mt-1.5 h-2 w-2 rounded-full ${!s.read ? "bg-primary" : "bg-muted-foreground/30"}`} />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold truncate">{s.name}</span>
-                          <span className="text-xs text-muted-foreground truncate">&lt;{s.email}&gt;</span>
-                        </div>
-                        <p className="text-sm font-medium truncate">{s.subject}</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{s.message}</p>
-                      </div>
-                      <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            {openSubmission && (
-              <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenSubmission(null)}>
-                <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
-                  <div className="p-5 border-b flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="font-bold text-lg">{openSubmission.subject}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {openSubmission.name} &lt;<a href={`mailto:${openSubmission.email}`} className="text-primary hover:underline">{openSubmission.email}</a>&gt;
-                        {openSubmission.company && <> · {openSubmission.company}</>}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">{new Date(openSubmission.created_at).toLocaleString("nl-NL")}</p>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={() => setOpenSubmission(null)}>Sluiten</Button>
+          {openSubmission && (
+            <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenSubmission(null)}>
+              <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="p-5 border-b flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-lg">{openSubmission.subject}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {openSubmission.name} &lt;<a href={`mailto:${openSubmission.email}`} className="text-primary hover:underline">{openSubmission.email}</a>&gt;
+                      {openSubmission.company && <> · {openSubmission.company}</>}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{new Date(openSubmission.created_at).toLocaleString("nl-NL")}</p>
                   </div>
-                  <div className="p-5 whitespace-pre-wrap text-sm leading-relaxed">{openSubmission.message}</div>
-                  <div className="p-5 border-t flex gap-2 justify-end">
-                    <Button variant="outline" size="sm" onClick={() => markRead(openSubmission.id, !openSubmission.read)}>
-                      Markeer als {openSubmission.read ? "ongelezen" : "gelezen"}
-                    </Button>
-                    <a href={`mailto:${openSubmission.email}?subject=Re: ${encodeURIComponent(openSubmission.subject)}`}>
-                      <Button size="sm">Beantwoorden</Button>
-                    </a>
-                    <Button variant="destructive" size="sm" onClick={() => deleteSubmission(openSubmission.id)}>
-                      <Trash2 className="h-4 w-4 mr-1" /> Verwijderen
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => setOpenSubmission(null)}>Sluiten</Button>
+                </div>
+                <div className="p-5 whitespace-pre-wrap text-sm leading-relaxed">{openSubmission.message}</div>
+                <div className="p-5 border-t flex gap-2 justify-end">
+                  <Button variant="outline" size="sm" onClick={() => markRead(openSubmission.id, !openSubmission.read)}>Markeer als {openSubmission.read ? "ongelezen" : "gelezen"}</Button>
+                  <a href={`mailto:${openSubmission.email}?subject=Re: ${encodeURIComponent(openSubmission.subject)}`}><Button size="sm">Beantwoorden</Button></a>
+                  <Button variant="destructive" size="sm" onClick={() => deleteSubmission(openSubmission.id)}><Trash2 className="h-4 w-4 mr-1" /> Verwijderen</Button>
                 </div>
               </div>
-            )}
-          </TabsContent>
+            </div>
+          )}
+        </>
+      )}
 
-          <TabsContent value="popup" className="mt-6">
-            <PopupEditor />
-          </TabsContent>
+      {section === "popup" && <PopupEditor />}
+      {section === "analytics" && <AnalyticsPanel />}
+      {section === "heatmap" && <HeatmapPanel />}
 
-          <TabsContent value="analytics" className="mt-6">
-            <AnalyticsPanel />
-          </TabsContent>
+      {section === "instellingen" && (
+        <div className="space-y-6">
+          <div className="bg-card border rounded-lg p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Notificaties</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">Ontvang een melding wanneer iemand het contactformulier invult.</p>
+            <div className="flex items-center gap-3">
+              <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
+              <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
+            </div>
+            <div>
+              <Label>Notificatie e-mailadres</Label>
+              <Input type="email" placeholder="info@loyaltygroup.nl" value={notifyEmail} onChange={(e) => setNotifyEmail(e.target.value)} disabled={!notifyEnabled} />
+              <p className="text-[11px] text-muted-foreground mt-1">Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.</p>
+            </div>
+            <Button size="sm" onClick={saveSettings} disabled={savingSettings}>{savingSettings ? "Opslaan..." : "Instellingen opslaan"}</Button>
+          </div>
 
-          <TabsContent value="heatmap" className="mt-6">
-            <HeatmapPanel />
-          </TabsContent>
-
-          <TabsContent value="instellingen" className="mt-6 space-y-6">
+          {myRole === "admin" && (
             <div className="bg-card border rounded-lg p-6 space-y-4">
               <div className="flex items-center gap-2">
-                <Mail className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold">Notificaties</h2>
+                <Shield className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Beheerders</h2>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Ontvang een melding wanneer iemand het contactformulier invult.
-              </p>
-              <div className="flex items-center gap-3">
-                <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
-                <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>Voeg een nieuwe beheerder toe en kies een rang. De persoon ontvangt automatisch een activatiemail.</p>
+                <ul className="list-disc list-inside text-xs space-y-0.5 pt-1">
+                  <li><strong>Hoofdbeheerder</strong> — volledige toegang incl. beheerders beheren.</li>
+                  <li><strong>Redacteur</strong> — pagina's, klantcases, footer en social media bewerken.</li>
+                  <li><strong>Bekijker</strong> — alleen contactaanvragen lezen.</li>
+                </ul>
               </div>
-              <div>
-                <Label>Notificatie e-mailadres</Label>
-                <Input
-                  type="email"
-                  placeholder="info@loyaltygroup.nl"
-                  value={notifyEmail}
-                  onChange={(e) => setNotifyEmail(e.target.value)}
-                  disabled={!notifyEnabled}
-                />
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.
-                </p>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input type="email" placeholder="email@voorbeeld.nl" value={newAdminEmail} onChange={(e) => setNewAdminEmail(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }} />
+                <Select value={newAdminRole} onValueChange={(v) => setNewAdminRole(v as any)}>
+                  <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="admin">Hoofdbeheerder</SelectItem>
+                    <SelectItem value="editor">Redacteur</SelectItem>
+                    <SelectItem value="viewer">Bekijker</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
               </div>
-              <Button size="sm" onClick={saveSettings} disabled={savingSettings}>
-                {savingSettings ? "Opslaan..." : "Instellingen opslaan"}
-              </Button>
-            </div>
-
-            {myRole === "admin" && (
-              <div className="bg-card border rounded-lg p-6 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Shield className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-bold">Beheerders</h2>
-                </div>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Voeg een nieuwe beheerder toe en kies een rang. De persoon ontvangt automatisch een activatiemail.</p>
-                  <ul className="list-disc list-inside text-xs space-y-0.5 pt-1">
-                    <li><strong>Hoofdbeheerder</strong> — volledige toegang incl. beheerders beheren.</li>
-                    <li><strong>Redacteur</strong> — pagina's, klantcases, footer en social media bewerken.</li>
-                    <li><strong>Bekijker</strong> — alleen contactaanvragen lezen.</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Input
-                    type="email"
-                    placeholder="email@voorbeeld.nl"
-                    value={newAdminEmail}
-                    onChange={(e) => setNewAdminEmail(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") addAdmin(); }}
-                  />
-                  <Select value={newAdminRole} onValueChange={(v) => setNewAdminRole(v as any)}>
-                    <SelectTrigger className="w-full sm:w-48"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin">Hoofdbeheerder</SelectItem>
-                      <SelectItem value="editor">Redacteur</SelectItem>
-                      <SelectItem value="viewer">Bekijker</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={addAdmin}><Plus className="h-4 w-4 mr-1" /> Toevoegen</Button>
-                </div>
-                <div className="space-y-2">
-                  {admins.map((a) => {
-                    const currentRole: "admin" | "editor" | "viewer" =
-                      a.roles.includes("admin") ? "admin" :
-                      a.roles.includes("editor") ? "editor" : "viewer";
-                    return (
-                      <div key={a.user_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border rounded-md p-3">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Check className="h-4 w-4 text-primary shrink-0" />
-                          <span className="text-sm truncate">{a.email || a.user_id}</span>
-                          {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Select
-                            value={currentRole}
-                            onValueChange={(v) => updateAdminRole(a.user_id, v)}
-                            disabled={a.user_id === currentUserId}
-                          >
-                            <SelectTrigger className="w-40 h-8 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="admin">Hoofdbeheerder</SelectItem>
-                              <SelectItem value="editor">Redacteur</SelectItem>
-                              <SelectItem value="viewer">Bekijker</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {a.user_id !== currentUserId && (
-                            <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
+              <div className="space-y-2">
+                {admins.map((a) => {
+                  const currentRole: "admin" | "editor" | "viewer" =
+                    a.roles.includes("admin") ? "admin" :
+                    a.roles.includes("editor") ? "editor" : "viewer";
+                  return (
+                    <div key={a.user_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border rounded-md p-3">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <Check className="h-4 w-4 text-primary shrink-0" />
+                        <span className="text-sm truncate">{a.email || a.user_id}</span>
+                        {a.user_id === currentUserId && <span className="text-[10px] uppercase tracking-wider bg-muted px-1.5 py-0.5 rounded">jij</span>}
                       </div>
-                    );
-                  })}
-                  {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
-                </div>
+                      <div className="flex items-center gap-2">
+                        <Select value={currentRole} onValueChange={(v) => updateAdminRole(a.user_id, v)} disabled={a.user_id === currentUserId}>
+                          <SelectTrigger className="w-40 h-8 text-sm"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Hoofdbeheerder</SelectItem>
+                            <SelectItem value="editor">Redacteur</SelectItem>
+                            <SelectItem value="viewer">Bekijker</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {a.user_id !== currentUserId && (
+                          <Button variant="ghost" size="sm" onClick={() => removeAdmin(a.user_id)}><Trash2 className="h-4 w-4" /></Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                {admins.length === 0 && <p className="text-sm text-muted-foreground">Nog geen beheerders.</p>}
               </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      </div>
-    </div>
+            </div>
+          )}
+        </div>
+      )}
+    </CmsShell>
   );
 };
 
