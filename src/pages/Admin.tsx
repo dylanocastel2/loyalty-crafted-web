@@ -6,9 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { LogOut, Plus, Pencil, Trash2, ExternalLink, FileText, Mail, Settings as SettingsIcon, Shield, Check, MessageSquare, BarChart3, Flame } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
@@ -17,6 +16,10 @@ import FooterEditor from "@/components/admin/FooterEditor";
 import PopupEditor from "@/components/admin/PopupEditor";
 import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
 import HeatmapPanel from "@/components/admin/HeatmapPanel";
+import CmsShell, { CmsSection } from "@/components/admin/CmsShell";
+import DashboardPanel from "@/components/admin/DashboardPanel";
+import MediaLibrary from "@/components/admin/MediaLibrary";
+import PagesPanel from "@/components/admin/PagesPanel";
 
 type Submission = {
   id: string;
@@ -31,23 +34,12 @@ type Submission = {
 
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
-const pages = [
-  { label: "Homepage", path: "/", key: "index" },
-  { label: "Gemeenten", path: "/gemeenten", key: "gemeenten" },
-  { label: "Commercieel", path: "/commercieel", key: "commercieel" },
-  { label: "Spaarsysteem", path: "/spaarsysteem", key: "spaarsysteem" },
-  { label: "Klantcases", path: "/klantcases", key: "klantcases" },
-  { label: "Support", path: "/support", key: "support" },
-  { label: "Over Ons", path: "/over-ons", key: "over-ons" },
-  { label: "Contact", path: "/contact", key: "contact" },
-  { label: "Demo", path: "/demo", key: "demo" },
-];
-
 const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [section, setSection] = useState<CmsSection>("dashboard");
   const [cases, setCases] = useState<Klantcase[]>([]);
   const [editCase, setEditCase] = useState<Partial<Klantcase> | null>(null);
   const [socials, setSocials] = useState<SocialLink[]>([]);
@@ -225,11 +217,6 @@ const Admin = () => {
   };
 
   const unreadCount = submissions.filter((s) => !s.read).length;
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/admin/login");
-  };
 
   const saveCase = async () => {
     if (!editCase?.title) return;
