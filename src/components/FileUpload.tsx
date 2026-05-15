@@ -1,7 +1,9 @@
 import { useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, Image as ImageIcon, Loader2, Library } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import MediaPicker from "@/components/MediaPicker";
+import { Button } from "@/components/ui/button";
 
 interface FileUploadProps {
   onUpload: (url: string) => void;
@@ -13,6 +15,7 @@ const FileUpload = ({ onUpload, currentUrl, folder = "uploads" }: FileUploadProp
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentUrl || null);
   const [dragOver, setDragOver] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -83,6 +86,7 @@ const FileUpload = ({ onUpload, currentUrl, folder = "uploads" }: FileUploadProp
           </button>
         </div>
       ) : (
+        <div className="space-y-2">
         <div
           onClick={() => inputRef.current?.click()}
           onDrop={handleDrop}
@@ -109,6 +113,10 @@ const FileUpload = ({ onUpload, currentUrl, folder = "uploads" }: FileUploadProp
             </div>
           )}
         </div>
+        <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => setPickerOpen(true)}>
+          <Library className="h-4 w-4 mr-2" /> Kies uit mediabibliotheek
+        </Button>
+        </div>
       )}
       <input
         ref={inputRef}
@@ -116,6 +124,15 @@ const FileUpload = ({ onUpload, currentUrl, folder = "uploads" }: FileUploadProp
         accept="image/*,application/pdf"
         onChange={handleFileSelect}
         className="hidden"
+      />
+      <MediaPicker
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        onSelect={(url) => {
+          setPreview(url);
+          onUpload(url);
+          toast({ title: "Afbeelding geselecteerd" });
+        }}
       />
     </div>
   );
