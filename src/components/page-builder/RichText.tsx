@@ -27,7 +27,10 @@ const PRESET_COLORS: { label: string; value: string }[] = [
 
 export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br"];
 
-/** Sanitize HTML voor opslag/weergave — staat alleen veilige inline opmaak toe. */
+const BLOCK_TAGS = ["div", "p", "section", "article", "header", "footer", "li"];
+
+/** Sanitize HTML voor opslag/weergave — staat alleen veilige inline opmaak toe.
+ *  Block-tags (div/p) worden omgezet naar hun inhoud + <br/> zodat Enter regelafbrekingen bewaard blijven. */
 export function sanitizeRichText(html: string): string {
   if (!html) return "";
   if (typeof window === "undefined") return html;
@@ -37,12 +40,15 @@ export function sanitizeRichText(html: string): string {
     [...node.children].forEach((el) => walk(el));
     const tag = node.tagName.toLowerCase();
     if (!SANITIZED_TAGS.includes(tag)) {
-      // Vervang door tekst-inhoud
-      const text = document.createTextNode(node.textContent || "");
-      node.replaceWith(text);
+      const parent = node.parentNode;
+      if (!parent) return;
+      const isBlock = BLOCK_TAGS.includes(tag);
+      // Verplaats kinderen naar parent op deze positie
+      while (node.firstChild) parent.insertBefore(node.firstChild, node);
+      if (isBlock) parent.insertBefore(document.createElement("br"), node);
+      parent.removeChild(node);
       return;
     }
-    // Strip alle attributen behalve style=color op span
     [...node.attributes].forEach((attr) => {
       if (tag === "span" && attr.name === "style") {
         const m = attr.value.match(/color\s*:\s*([^;]+)/i);
@@ -54,7 +60,10 @@ export function sanitizeRichText(html: string): string {
     });
   };
   [...tpl.content.children].forEach((el) => walk(el as Element));
-  return tpl.innerHTML;
+  // Verwijder dubbele <br/> aan einde
+  let out = tpl.innerHTML;
+  out = out.replace(/(<br\s*\/?>\s*)+$/i, "");
+  return out;
 }
 
 /** Render-helper: zet platte tekst (zonder tags) om naar HTML met <br/>; sanitize anders. */

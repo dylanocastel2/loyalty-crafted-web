@@ -104,9 +104,73 @@ const BlockInspector = ({ block, onChange }: Props) => {
         return (
           <>
             <Field label="Tekst (selecteer woorden om in te kleuren)">
-              <RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={6} />
+              <RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={10} />
+              <p className="text-[11px] text-muted-foreground mt-1">Gebruik Enter voor een nieuwe regel. Selecteer tekst voor opmaak of kleur.</p>
             </Field>
             <Field label="Uitlijning">{alignSelect}</Field>
+            <Field label="Tekstgrootte">
+              <Select value={p.size || "base"} onValueChange={(v) => set("size", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="xs">Extra klein</SelectItem>
+                  <SelectItem value="sm">Klein</SelectItem>
+                  <SelectItem value="base">Normaal</SelectItem>
+                  <SelectItem value="lg">Groot</SelectItem>
+                  <SelectItem value="xl">Extra groot</SelectItem>
+                  <SelectItem value="2xl">2× groot</SelectItem>
+                  <SelectItem value="3xl">3× groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Regelhoogte">
+              <Select value={p.lineHeight || "relaxed"} onValueChange={(v) => set("lineHeight", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tight">Compact</SelectItem>
+                  <SelectItem value="snug">Krap</SelectItem>
+                  <SelectItem value="normal">Normaal</SelectItem>
+                  <SelectItem value="relaxed">Ruim</SelectItem>
+                  <SelectItem value="loose">Zeer ruim</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Maximale breedte">
+              <Select value={p.maxWidth || "none"} onValueChange={(v) => set("maxWidth", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Volledig</SelectItem>
+                  <SelectItem value="prose">Leesbreedte (65ch)</SelectItem>
+                  <SelectItem value="sm">Smal</SelectItem>
+                  <SelectItem value="md">Gemiddeld</SelectItem>
+                  <SelectItem value="lg">Breed</SelectItem>
+                  <SelectItem value="xl">Extra breed</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "small"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Geen</SelectItem>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
           </>
         );
 
