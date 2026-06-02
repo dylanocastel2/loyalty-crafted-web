@@ -47,7 +47,7 @@ export interface BlockMeta {
 export const BLOCK_META: BlockMeta[] = [
   // Basis
   { type: "heading", label: "Koptekst", category: "Basis", icon: "Heading", defaultProps: { text: "Nieuwe koptekst", level: 2, align: "left", bgColor: "background", padding: "medium" } },
-  { type: "paragraph", label: "Paragraaf", category: "Basis", icon: "Type", defaultProps: { text: "Schrijf hier je tekst...", align: "left" } },
+  { type: "paragraph", label: "Paragraaf", category: "Basis", icon: "Type", defaultProps: { text: "Schrijf hier je tekst...", align: "left", size: "base", lineHeight: "relaxed", maxWidth: "none", bgColor: "background", padding: "small" } },
   { type: "image", label: "Afbeelding", category: "Basis", icon: "Image", defaultProps: { url: "", alt: "", width: "100%", align: "center" } },
   { type: "button", label: "Knop", category: "Basis", icon: "MousePointerClick", defaultProps: { label: "Klik hier", link: "/", variant: "default", align: "left" } },
   { type: "spacer", label: "Tussenruimte", category: "Basis", icon: "MoveVertical", defaultProps: { height: 40 } },

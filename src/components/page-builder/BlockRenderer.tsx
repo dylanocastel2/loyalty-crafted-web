@@ -82,12 +82,61 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
-    case "paragraph":
+    case "paragraph": {
+      const sizeMap: Record<string, string> = {
+        xs: "text-xs",
+        sm: "text-sm",
+        base: "text-base",
+        lg: "text-lg md:text-xl",
+        xl: "text-xl md:text-2xl",
+        "2xl": "text-2xl md:text-3xl",
+        "3xl": "text-3xl md:text-4xl",
+      };
+      const lhMap: Record<string, string> = {
+        tight: "leading-tight",
+        snug: "leading-snug",
+        normal: "leading-normal",
+        relaxed: "leading-relaxed",
+        loose: "leading-loose",
+      };
+      const mwMap: Record<string, string> = {
+        none: "",
+        prose: "max-w-prose",
+        sm: "max-w-sm",
+        md: "max-w-md",
+        lg: "max-w-2xl",
+        xl: "max-w-4xl",
+      };
+      const padMap: Record<string, string> = {
+        none: "py-0",
+        small: "py-3",
+        medium: "py-8",
+        large: "py-12 md:py-16",
+      };
+      const sizeCls = sizeMap[p.size || "base"] || sizeMap.base;
+      const lhCls = lhMap[p.lineHeight || "relaxed"] || lhMap.relaxed;
+      const mwCls = mwMap[p.maxWidth || "none"] || "";
+      const padCls = padMap[p.padding || "small"] || padMap.small;
+      const hasBg = p.bgColor && p.bgColor !== "background";
+      const mwWrap = mwCls
+        ? p.align === "center"
+          ? `${mwCls} mx-auto`
+          : p.align === "right"
+          ? `${mwCls} ml-auto`
+          : mwCls
+        : "";
       return (
-        <section className="container py-3">
-          <RT as="p" className={`text-base text-foreground/80 leading-relaxed ${alignClass(p.align)}`} html={p.text} />
+        <section className={`${hasBg ? bgColorClass(p.bgColor) : ""} ${padCls}`}>
+          <div className="container">
+            <RT
+              as="p"
+              className={`${sizeCls} ${lhCls} ${alignClass(p.align)} ${mwWrap} ${hasBg ? "" : "text-foreground/80"} whitespace-pre-wrap`}
+              html={p.text}
+            />
+          </div>
         </section>
       );
+    }
 
     case "image":
       if (!p.url) return null;
