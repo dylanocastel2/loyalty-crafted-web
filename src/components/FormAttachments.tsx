@@ -4,7 +4,7 @@ import { Upload, X, Paperclip, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export interface FormAttachment {
-  url: string;
+  path: string;
   name: string;
   size: number;
 }
@@ -50,8 +50,7 @@ const FormAttachments = ({ value, onChange, maxFiles = 3, maxMb = 10 }: Props) =
         toast({ title: "Upload mislukt", description: error.message, variant: "destructive" });
         continue;
       }
-      const { data } = supabase.storage.from("form-uploads").getPublicUrl(path);
-      next.push({ url: data.publicUrl, name: file.name, size: file.size });
+      next.push({ path, name: file.name, size: file.size });
     }
     onChange(next);
     setUploading(false);

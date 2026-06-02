@@ -69,17 +69,20 @@ Deno.serve(async (req) => {
     const fetched: { name: string; mime: string; b64: string }[] = [];
     if (Array.isArray(attachments)) {
       for (const a of attachments.slice(0, 5)) {
-        if (!a?.url) continue;
+        const path = a?.path || (typeof a?.url === "string" ? a.url.split("/form-uploads/")[1] : null);
+        if (!path) continue;
         try {
-          const r = await fetch(a.url);
-          if (!r.ok) continue;
-          const buf = new Uint8Array(await r.arrayBuffer());
+          const { data: blob, error: dlErr } = await supabase.storage
+            .from("form-uploads")
+            .download(path);
+          if (dlErr || !blob) continue;
+          const buf = new Uint8Array(await blob.arrayBuffer());
           if (buf.byteLength > 15 * 1024 * 1024) continue;
           let bin = "";
           for (let i = 0; i < buf.length; i++) bin += String.fromCharCode(buf[i]);
           fetched.push({
             name: (a.name || "bijlage").replace(/[\r\n"]/g, "_"),
-            mime: r.headers.get("content-type") || "application/octet-stream",
+            mime: blob.type || "application/octet-stream",
             b64: btoa(bin),
           });
         } catch (_) { /* skip */ }

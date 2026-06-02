@@ -41,7 +41,7 @@ const Contact = () => {
       return;
     }
     supabase.functions.invoke("send-contact-notification", {
-      body: { ...payload, attachments: attachments.map((a) => ({ url: a.url, name: a.name })) },
+      body: { ...payload, attachments: attachments.map((a) => ({ path: a.path, name: a.name })) },
     }).catch(() => {});
     toast({ title: "Bericht verzonden", description: "Wij nemen zo snel mogelijk contact met u op." });
     form.reset();
