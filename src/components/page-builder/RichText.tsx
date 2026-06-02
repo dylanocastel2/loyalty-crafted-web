@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Bold, Italic, Underline, Palette, Eraser, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Unlink } from "lucide-react";
+import { Bold, Italic, Underline, Palette, Eraser, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Unlink, CaseSensitive } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -23,6 +23,18 @@ const PRESET_COLORS: { label: string; value: string }[] = [
   { label: "Diep blauw", value: "#084261" },
   { label: "Middel blauw", value: "#4db8db" },
   { label: "Destructive", value: "hsl(var(--destructive))" },
+];
+
+const FONT_SIZES: { label: string; value: string }[] = [
+  { label: "XS", value: "0.75rem" },
+  { label: "S", value: "0.875rem" },
+  { label: "M", value: "1rem" },
+  { label: "L", value: "1.125rem" },
+  { label: "XL", value: "1.25rem" },
+  { label: "2XL", value: "1.5rem" },
+  { label: "3XL", value: "1.875rem" },
+  { label: "4XL", value: "2.25rem" },
+  { label: "5XL", value: "3rem" },
 ];
 
 export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br", "a", "div", "p"];
@@ -63,6 +75,12 @@ export function sanitizeRichText(html: string): string {
         const color = attr.value.match(/(?:^|;)\s*color\s*:\s*([^;]+)/i);
         if (color && (tag === "span" || tag === "a" || tag === "div" || tag === "p")) {
           parts.push(`color:${color[1].trim()}`);
+        }
+        const fsize = attr.value.match(/(?:^|;)\s*font-size\s*:\s*([^;]+)/i);
+        if (fsize && (tag === "span" || tag === "a" || tag === "div" || tag === "p")) {
+          const v = fsize[1].trim();
+          // Sta alleen veilige eenheden toe
+          if (/^[0-9.]+(px|rem|em|%)$/i.test(v)) parts.push(`font-size:${v}`);
         }
         const align = attr.value.match(/text-align\s*:\s*([^;]+)/i);
         if (align && (tag === "div" || tag === "p")) {
