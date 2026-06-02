@@ -39,6 +39,8 @@ const matchesSector = (c: KlantcaseItem, sector: string) => {
   return haystack.includes(sector.toLowerCase());
 };
 
+import { toRenderHtml } from "./RichText";
+
 const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter, maxRows }: Props) => {
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,7 +123,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   if (view === "short") {
     return (
       <div className="container">
-        {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{title}</h2>}
+        {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
         {filterBar}
         {visibleCases.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
@@ -162,7 +164,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   // Detailed view
   return (
     <div className="container">
-      {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">{title}</h2>}
+      {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
       {filterBar}
       {visibleCases.length === 0 ? (
         <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>

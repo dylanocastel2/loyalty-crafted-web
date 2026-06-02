@@ -25,17 +25,8 @@ const PRESET_COLORS: { label: string; value: string }[] = [
   { label: "Destructive", value: "hsl(var(--destructive))" },
 ];
 
-const FONT_SIZES: { label: string; value: string }[] = [
-  { label: "XS", value: "0.75rem" },
-  { label: "S", value: "0.875rem" },
-  { label: "M", value: "1rem" },
-  { label: "L", value: "1.125rem" },
-  { label: "XL", value: "1.25rem" },
-  { label: "2XL", value: "1.5rem" },
-  { label: "3XL", value: "1.875rem" },
-  { label: "4XL", value: "2.25rem" },
-  { label: "5XL", value: "3rem" },
-];
+// Numerieke lettergroottes in pixels — zelfde schaal als gangbare editors (Word/Docs).
+const FONT_SIZES: number[] = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72];
 
 export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br", "a", "div", "p"];
 
@@ -310,19 +301,19 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
               <CaseSensitive className="h-3.5 w-3.5" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-44 p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
-            <p className="text-[11px] text-muted-foreground mb-2 px-1">Selecteer tekst, kies grootte</p>
-            <div className="grid grid-cols-3 gap-1">
-              {FONT_SIZES.map((s) => (
+          <PopoverContent className="w-56 p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <p className="text-[11px] text-muted-foreground mb-2 px-1">Selecteer tekst, kies grootte (px)</p>
+            <div className="grid grid-cols-6 gap-1 max-h-56 overflow-auto">
+              {FONT_SIZES.map((n) => (
                 <button
-                  key={s.value}
+                  key={n}
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => applyFontSize(s.value)}
-                  className="h-8 rounded border border-border hover:bg-muted text-xs"
-                  title={s.value}
+                  onClick={() => applyFontSize(`${n}px`)}
+                  className="h-8 rounded border border-border hover:bg-muted text-xs tabular-nums"
+                  title={`${n}px`}
                 >
-                  {s.label}
+                  {n}
                 </button>
               ))}
             </div>

@@ -280,8 +280,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "hero":
         return (
           <>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Subtitel"><Textarea value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} rows={2} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
+            <Field label="Subtitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={3} /></Field>
             <Field label="Achtergrondafbeelding (optioneel)">
               <FileUpload onUpload={(url) => set("bgImage", url || "")} currentUrl={p.bgImage} folder="page-media" />
             </Field>
@@ -415,8 +415,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Icoon (Lucide naam, bv. Star, Heart, Code)">
               <Input value={p.icon || ""} onChange={(e) => set("icon", e.target.value)} />
             </Field>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Beschrijving"><Textarea value={p.description || ""} onChange={(e) => set("description", e.target.value)} rows={4} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
+            <Field label="Beschrijving"><RichText value={p.description || ""} onChange={(v) => set("description", v)} rows={5} /></Field>
             <Field label="Icoonkleur">
               <Select value={p.iconColor || "primary"} onValueChange={(v) => set("iconColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -432,8 +432,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "stat":
         return (
           <>
-            <Field label="Waarde (bv. 100+)"><Input value={p.value || ""} onChange={(e) => set("value", e.target.value)} /></Field>
-            <Field label="Label"><Input value={p.label || ""} onChange={(e) => set("label", e.target.value)} /></Field>
+            <Field label="Waarde (bv. 100+)"><RichText value={p.value || ""} onChange={(v) => set("value", v)} singleLine /></Field>
+            <Field label="Label"><RichText value={p.label || ""} onChange={(v) => set("label", v)} singleLine /></Field>
           </>
         );
 
@@ -447,7 +447,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("items", i)}><Trash2 className="h-3 w-3" /></Button>
                 </div>
                 <Input value={item.title} onChange={(e) => setItem("items", i, "title", e.target.value)} placeholder="Titel" />
-                <Textarea value={item.description} onChange={(e) => setItem("items", i, "description", e.target.value)} rows={2} placeholder="Beschrijving" />
+                <RichText value={item.description || ""} onChange={(v) => setItem("items", i, "description", v)} rows={3} placeholder="Beschrijving" />
               </div>
             ))}
             <Button variant="outline" size="sm" onClick={() => addItem("items", { title: "Nieuwe feature", description: "" })}><Plus className="h-3 w-3 mr-1" /> Voeg toe</Button>
@@ -464,7 +464,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("items", i)}><Trash2 className="h-3 w-3" /></Button>
                 </div>
                 <Input value={item.question} onChange={(e) => setItem("items", i, "question", e.target.value)} placeholder="Vraag" />
-                <Textarea value={item.answer} onChange={(e) => setItem("items", i, "answer", e.target.value)} rows={2} placeholder="Antwoord" />
+                <RichText value={item.answer || ""} onChange={(v) => setItem("items", i, "answer", v)} rows={3} placeholder="Antwoord" />
               </div>
             ))}
             <Button variant="outline" size="sm" onClick={() => addItem("items", { question: "Nieuwe vraag?", answer: "" })}><Plus className="h-3 w-3 mr-1" /> Voeg toe</Button>
@@ -474,9 +474,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "testimonial":
         return (
           <>
-            <Field label="Quote"><Textarea value={p.quote || ""} onChange={(e) => set("quote", e.target.value)} rows={3} /></Field>
-            <Field label="Naam"><Input value={p.name || ""} onChange={(e) => set("name", e.target.value)} /></Field>
-            <Field label="Functie / bedrijf"><Input value={p.role || ""} onChange={(e) => set("role", e.target.value)} /></Field>
+            <Field label="Quote"><RichText value={p.quote || ""} onChange={(v) => set("quote", v)} rows={4} /></Field>
+            <Field label="Naam"><RichText value={p.name || ""} onChange={(v) => set("name", v)} singleLine /></Field>
+            <Field label="Functie / bedrijf"><RichText value={p.role || ""} onChange={(v) => set("role", v)} singleLine /></Field>
             <Field label="Foto">
               <FileUpload onUpload={(url) => set("photo", url || "")} currentUrl={p.photo} folder="page-media" />
             </Field>
@@ -486,8 +486,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "cta_banner":
         return (
           <>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Subtitel"><Input value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
+            <Field label="Subtitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={2} /></Field>
             <Field label="Knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
           </>
@@ -513,7 +513,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("items", i)}><Trash2 className="h-3 w-3" /></Button>
                 </div>
                 <Input value={item.title} onChange={(e) => setItem("items", i, "title", e.target.value)} placeholder="Titel" />
-                <Textarea value={item.content} onChange={(e) => setItem("items", i, "content", e.target.value)} rows={2} placeholder="Inhoud" />
+                <RichText value={item.content || ""} onChange={(v) => setItem("items", i, "content", v)} rows={3} placeholder="Inhoud" />
               </div>
             ))}
             <Button variant="outline" size="sm" onClick={() => addItem("items", { title: "Nieuw item", content: "" })}><Plus className="h-3 w-3 mr-1" /> Voeg toe</Button>
@@ -530,7 +530,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("items", i)}><Trash2 className="h-3 w-3" /></Button>
                 </div>
                 <Input value={item.label} onChange={(e) => setItem("items", i, "label", e.target.value)} placeholder="Label" />
-                <Textarea value={item.content} onChange={(e) => setItem("items", i, "content", e.target.value)} rows={3} placeholder="Inhoud" />
+                <RichText value={item.content || ""} onChange={(v) => setItem("items", i, "content", v)} rows={4} placeholder="Inhoud" />
               </div>
             ))}
             <Button variant="outline" size="sm" onClick={() => addItem("items", { label: "Nieuwe tab", content: "" })}><Plus className="h-3 w-3 mr-1" /> Voeg toe</Button>
@@ -599,8 +599,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Breedte afbeelding (% — 20–80)">
               <Input type="number" min={20} max={80} value={p.imageWidth ?? 50} onChange={(e) => set("imageWidth", Math.max(20, Math.min(80, parseInt(e.target.value) || 50)))} />
             </Field>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Tekst"><Textarea value={p.text || ""} onChange={(e) => set("text", e.target.value)} rows={6} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
+            <Field label="Tekst"><RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={8} /></Field>
             <Field label="Knoptekst (optioneel)"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link (kies pagina)">
               <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
@@ -645,7 +645,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
         return (
           <>
             <Field label="Titel boven (optioneel)">
-              <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} />
+              <RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine />
             </Field>
             <Field label="Achtergrond">
               <Select value={p.bgColor || "muted"} onValueChange={(v) => set("bgColor", v)}>
@@ -701,7 +701,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
         return (
           <>
             <Field label="Titel boven (optioneel)">
-              <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Bijv. Onze klantcases" />
+              <RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine placeholder="Bijv. Onze klantcases" />
             </Field>
             <Field label="Weergave">
               <Select value={p.view || "short"} onValueChange={(v) => set("view", v)}>
@@ -799,8 +799,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "download_files":
         return (
           <>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} placeholder="Bijv. Downloads" /></Field>
-            <Field label="Ondertitel"><Textarea value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} rows={2} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine placeholder="Bijv. Downloads" /></Field>
+            <Field label="Ondertitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={3} /></Field>
             <Field label="Aantal kolommen">
               <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -823,10 +823,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     </Button>
                   </div>
                   <Field label="Label">
-                    <Input value={f.label || ""} onChange={(e) => setItem("files", i, "label", e.target.value)} placeholder="Bijv. Driver X" />
+                    <RichText value={f.label || ""} onChange={(v) => setItem("files", i, "label", v)} singleLine placeholder="Bijv. Driver X" />
                   </Field>
                   <Field label="Beschrijving (optioneel)">
-                    <Input value={f.description || ""} onChange={(e) => setItem("files", i, "description", e.target.value)} />
+                    <RichText value={f.description || ""} onChange={(v) => setItem("files", i, "description", v)} singleLine />
                   </Field>
                   <Field label="Bestand">
                     <AnyFileUpload
@@ -871,8 +871,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "image_cards":
         return (
           <>
-            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
-            <Field label="Ondertitel"><Textarea value={p.subtitle || ""} onChange={(e) => set("subtitle", e.target.value)} rows={3} /></Field>
+            <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
+            <Field label="Ondertitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={4} /></Field>
             <Field label="Aantal kolommen">
               <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -895,8 +895,8 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <Field label="Afbeelding">
                     <FileUpload currentUrl={it.image} folder="page-media" onUpload={(url) => setItem("items", i, "image", url || "")} />
                   </Field>
-                  <Field label="Titel"><Input value={it.title || ""} onChange={(e) => setItem("items", i, "title", e.target.value)} /></Field>
-                  <Field label="Beschrijving"><Textarea value={it.description || ""} onChange={(e) => setItem("items", i, "description", e.target.value)} rows={3} /></Field>
+                  <Field label="Titel"><RichText value={it.title || ""} onChange={(v) => setItem("items", i, "title", v)} singleLine /></Field>
+                  <Field label="Beschrijving"><RichText value={it.description || ""} onChange={(v) => setItem("items", i, "description", v)} rows={4} /></Field>
                 </div>
               ))}
               <Button variant="outline" size="sm" onClick={() => addItem("items", { image: "", title: "Nieuwe kaart", description: "" })}><Plus className="h-3 w-3 mr-1" /> Kaart toevoegen</Button>
