@@ -213,8 +213,8 @@ const BlockRenderer = ({ block }: Props) => {
         >
           {p.bgImage && <div className="absolute inset-0 bg-black/50" />}
           <div className={`container relative text-center ${isLight ? "text-primary-foreground" : "text-foreground"}`}>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{p.title}</h1>
-            {p.subtitle && <p className="text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto">{p.subtitle}</p>}
+            <RT as="h1" className="text-4xl md:text-6xl font-bold mb-4" html={p.title} />
+            {p.subtitle && <RT as="p" className="text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto whitespace-pre-wrap" html={p.subtitle} />}
             {p.ctaLabel && (
               <Link to={p.ctaLink || "/"}>
                 <Button size="lg" variant={isLight ? "secondary" : "default"}>{p.ctaLabel}</Button>
@@ -282,8 +282,8 @@ const BlockRenderer = ({ block }: Props) => {
           <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary mb-4 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
             <Icon className="h-5 w-5" />
           </div>
-          <h3 className="font-display font-semibold text-lg mb-2">{p.title}</h3>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">{p.description}</p>
+          <RT as="h3" className="font-display font-semibold text-lg mb-2" html={p.title} />
+          <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={p.description} />
         </div>
       );
     }
@@ -291,8 +291,8 @@ const BlockRenderer = ({ block }: Props) => {
     case "stat":
       return (
         <div className="text-center py-4">
-          <div className="text-4xl md:text-5xl font-display font-bold text-gradient-aqua mb-2">{p.value}</div>
-          <div className="text-xs md:text-sm text-muted-foreground uppercase tracking-[0.2em] font-medium">{p.label}</div>
+          <RT as="div" className="text-4xl md:text-5xl font-display font-bold text-gradient-aqua mb-2" html={p.value} />
+          <RT as="div" className="text-xs md:text-sm text-muted-foreground uppercase tracking-[0.2em] font-medium" html={p.label} />
         </div>
       );
 
@@ -303,7 +303,7 @@ const BlockRenderer = ({ block }: Props) => {
             {(p.items || []).map((item: any, i: number) => (
               <div key={i} className="border rounded-lg p-6 bg-card">
                 <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
+                <RT as="p" className="text-muted-foreground text-sm whitespace-pre-wrap" html={item.description} />
               </div>
             ))}
           </div>
@@ -317,7 +317,7 @@ const BlockRenderer = ({ block }: Props) => {
             {(p.items || []).map((item: any, i: number) => (
               <AccordionItem key={i} value={`item-${i}`}>
                 <AccordionTrigger>{item.question}</AccordionTrigger>
-                <AccordionContent>{item.answer}</AccordionContent>
+                <AccordionContent><RT as="div" className="whitespace-pre-wrap" html={item.answer} /></AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
@@ -329,12 +329,12 @@ const BlockRenderer = ({ block }: Props) => {
         <section className="container py-12">
           <div className="max-w-2xl mx-auto text-center">
             <Quote className="h-10 w-10 text-primary mx-auto mb-4" />
-            <p className="text-xl italic mb-6">"{p.quote}"</p>
+            <RT as="p" className="text-xl italic mb-6 whitespace-pre-wrap" html={p.quote} />
             <div className="flex items-center justify-center gap-3">
               {p.photo && <img src={p.photo} alt={p.name} className="h-12 w-12 rounded-full object-cover" />}
               <div className="text-left">
-                <p className="font-semibold">{p.name}</p>
-                {p.role && <p className="text-sm text-muted-foreground">{p.role}</p>}
+                <RT as="p" className="font-semibold" html={p.name} />
+                {p.role && <RT as="p" className="text-sm text-muted-foreground" html={p.role} />}
               </div>
             </div>
           </div>
@@ -345,8 +345,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className="bg-gradient-to-br from-primary to-secondary py-16">
           <div className="container text-center text-primary-foreground">
-            <h2 className="text-3xl font-bold mb-3">{p.title}</h2>
-            {p.subtitle && <p className="mb-6 opacity-90">{p.subtitle}</p>}
+            <RT as="h2" className="text-3xl font-bold mb-3" html={p.title} />
+            {p.subtitle && <RT as="p" className="mb-6 opacity-90 whitespace-pre-wrap" html={p.subtitle} />}
             {p.ctaLabel && (
               <Link to={p.ctaLink || "/contact"}>
                 <Button size="lg" variant="secondary">{p.ctaLabel}</Button>
@@ -403,7 +403,7 @@ const BlockRenderer = ({ block }: Props) => {
             {(p.items || []).map((item: any, i: number) => (
               <AccordionItem key={i} value={`acc-${i}`}>
                 <AccordionTrigger>{item.title}</AccordionTrigger>
-                <AccordionContent>{item.content}</AccordionContent>
+                <AccordionContent><RT as="div" className="whitespace-pre-wrap" html={item.content} /></AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
@@ -420,8 +420,8 @@ const BlockRenderer = ({ block }: Props) => {
               ))}
             </TabsList>
             {(p.items || []).map((item: any, i: number) => (
-              <TabsContent key={i} value={`tab-${i}`} className="mt-4 whitespace-pre-wrap">
-                {item.content}
+              <TabsContent key={i} value={`tab-${i}`} className="mt-4">
+                <RT as="div" className="whitespace-pre-wrap" html={item.content} />
               </TabsContent>
             ))}
           </Tabs>
@@ -472,8 +472,8 @@ const BlockRenderer = ({ block }: Props) => {
       );
       const textEl = (
         <div className="w-full">
-          {p.title && <h2 className="font-display font-bold text-2xl md:text-3xl mb-3">{p.title}</h2>}
-          {p.text && <p className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap">{p.text}</p>}
+          {p.title && <RT as="h2" className="font-display font-bold text-2xl md:text-3xl mb-3" html={p.title} />}
+          {p.text && <RT as="div" className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap" html={p.text} />}
           {p.ctaLabel && (
             <div className="mt-5">
               {p.ctaLink?.startsWith("http") ? (
@@ -531,9 +531,7 @@ const BlockRenderer = ({ block }: Props) => {
         <section className={`${bgColorClass(p.bgColor || "muted")} py-12`}>
           <div className="container">
             {p.title && (
-              <h3 className="text-center text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8">
-                {p.title}
-              </h3>
+              <RT as="h3" className="text-center text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8" html={p.title} />
             )}
             <div className="marquee-mask overflow-hidden">
               <div
@@ -589,8 +587,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">{p.title}</h2>}
-            {p.subtitle && <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">{p.subtitle}</p>}
+            {p.title && <RT as="h2" className="text-2xl md:text-3xl font-bold text-center mb-2" html={p.title} />}
+            {p.subtitle && <RT as="p" className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto whitespace-pre-wrap" html={p.subtitle} />}
             <div className={`grid ${colClass} gap-6 mt-6`}>
               {files.map((f, i) => (
                 <a
@@ -608,8 +606,8 @@ const BlockRenderer = ({ block }: Props) => {
                       <FileIcon className="h-7 w-7" />
                     </div>
                   )}
-                  <h3 className="font-semibold text-base mb-1">{f.label || "Download"}</h3>
-                  {f.description && <p className="text-xs text-muted-foreground mb-3">{f.description}</p>}
+                  <RT as="h3" className="font-semibold text-base mb-1" html={f.label || "Download"} />
+                  {f.description && <RT as="p" className="text-xs text-muted-foreground mb-3" html={f.description} />}
                   <span className="mt-auto inline-flex items-center gap-1.5 text-xs font-semibold text-primary group-hover:underline">
                     <Download className="h-3.5 w-3.5" /> Download {f.sizeBytes ? `(${fmt(f.sizeBytes)})` : ""}
                   </span>
@@ -628,8 +626,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-4">{p.title}</h2>}
-            {p.subtitle && <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-12 whitespace-pre-wrap">{p.subtitle}</p>}
+            {p.title && <RT as="h2" className="text-2xl md:text-3xl font-bold text-center mb-4" html={p.title} />}
+            {p.subtitle && <RT as="p" className="text-muted-foreground text-center max-w-2xl mx-auto mb-12 whitespace-pre-wrap" html={p.subtitle} />}
             <div className={`grid ${colClass} gap-8`}>
               {items.map((it, i) => (
                 <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
@@ -639,8 +637,8 @@ const BlockRenderer = ({ block }: Props) => {
                     <div className="w-full h-48 bg-muted flex items-center justify-center text-sm text-muted-foreground">Voeg een afbeelding toe</div>
                   )}
                   <div className="p-6">
-                    {it.title && <h3 className="font-bold text-lg mb-2 uppercase tracking-wider">{it.title}</h3>}
-                    {it.description && <p className="text-sm text-muted-foreground whitespace-pre-wrap">{it.description}</p>}
+                    {it.title && <RT as="h3" className="font-bold text-lg mb-2 uppercase tracking-wider" html={it.title} />}
+                    {it.description && <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap" html={it.description} />}
                   </div>
                 </div>
               ))}
