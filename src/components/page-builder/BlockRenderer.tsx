@@ -12,6 +12,11 @@ import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
 import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toRenderHtml } from "./RichText";
+
+const RT = ({ html, as: Tag = "span", className, ...rest }: { html?: string; as?: any; className?: string } & React.HTMLAttributes<HTMLElement>) => (
+  <Tag className={className} {...rest} dangerouslySetInnerHTML={{ __html: toRenderHtml(html) }} />
+);
 
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
@@ -71,7 +76,7 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${p.bgColor && p.bgColor !== "background" ? paddingClass(p.padding) : "py-4"}`}>
           <div className="container">
-            <Tag className={`font-bold ${sizeClass} ${alignClass(p.align)}`}>{p.text}</Tag>
+            <RT as={Tag} className={`font-bold ${sizeClass} ${alignClass(p.align)}`} html={p.text} />
           </div>
         </section>
       );
@@ -80,7 +85,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "paragraph":
       return (
         <section className="container py-3">
-          <p className={`text-base text-foreground/80 leading-relaxed whitespace-pre-wrap ${alignClass(p.align)}`}>{p.text}</p>
+          <RT as="p" className={`text-base text-foreground/80 leading-relaxed ${alignClass(p.align)}`} html={p.text} />
         </section>
       );
 
@@ -175,8 +180,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className="container py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="prose max-w-none whitespace-pre-wrap">{p.left}</div>
-            <div className="prose max-w-none whitespace-pre-wrap">{p.right}</div>
+            <RT as="div" className="prose max-w-none" html={p.left} />
+            <RT as="div" className="prose max-w-none" html={p.right} />
           </div>
         </section>
       );
@@ -185,9 +190,9 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className="container py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="prose max-w-none whitespace-pre-wrap">{p.col1}</div>
-            <div className="prose max-w-none whitespace-pre-wrap">{p.col2}</div>
-            <div className="prose max-w-none whitespace-pre-wrap">{p.col3}</div>
+            <RT as="div" className="prose max-w-none" html={p.col1} />
+            <RT as="div" className="prose max-w-none" html={p.col2} />
+            <RT as="div" className="prose max-w-none" html={p.col3} />
           </div>
         </section>
       );
@@ -195,7 +200,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "container":
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
-          <div className="container whitespace-pre-wrap">{p.content}</div>
+          <RT as="div" className="container" html={p.content} />
         </section>
       );
 

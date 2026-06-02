@@ -9,6 +9,7 @@ import AnyFileUpload from "@/components/AnyFileUpload";
 import { Plus, Trash2 } from "lucide-react";
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
+import RichText from "./RichText";
 
 interface Props {
   block: Block | null;
@@ -58,7 +59,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "heading":
         return (
           <>
-            <Field label="Tekst"><Input value={p.text || ""} onChange={(e) => set("text", e.target.value)} /></Field>
+            <Field label="Tekst (selecteer woorden om in te kleuren)">
+              <RichText value={p.text || ""} onChange={(v) => set("text", v)} singleLine />
+            </Field>
             <Field label="Niveau">
               <Select value={String(p.level || 2)} onValueChange={(v) => set("level", parseInt(v))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -100,7 +103,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "paragraph":
         return (
           <>
-            <Field label="Tekst"><Textarea value={p.text || ""} onChange={(e) => set("text", e.target.value)} rows={6} /></Field>
+            <Field label="Tekst (selecteer woorden om in te kleuren)">
+              <RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={6} />
+            </Field>
             <Field label="Uitlijning">{alignSelect}</Field>
           </>
         );
@@ -244,24 +249,24 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "two_columns":
         return (
           <>
-            <Field label="Linker kolom"><Textarea value={p.left || ""} onChange={(e) => set("left", e.target.value)} rows={5} /></Field>
-            <Field label="Rechter kolom"><Textarea value={p.right || ""} onChange={(e) => set("right", e.target.value)} rows={5} /></Field>
+            <Field label="Linker kolom"><RichText value={p.left || ""} onChange={(v) => set("left", v)} rows={5} /></Field>
+            <Field label="Rechter kolom"><RichText value={p.right || ""} onChange={(v) => set("right", v)} rows={5} /></Field>
           </>
         );
 
       case "three_columns":
         return (
           <>
-            <Field label="Kolom 1"><Textarea value={p.col1 || ""} onChange={(e) => set("col1", e.target.value)} rows={4} /></Field>
-            <Field label="Kolom 2"><Textarea value={p.col2 || ""} onChange={(e) => set("col2", e.target.value)} rows={4} /></Field>
-            <Field label="Kolom 3"><Textarea value={p.col3 || ""} onChange={(e) => set("col3", e.target.value)} rows={4} /></Field>
+            <Field label="Kolom 1"><RichText value={p.col1 || ""} onChange={(v) => set("col1", v)} rows={4} /></Field>
+            <Field label="Kolom 2"><RichText value={p.col2 || ""} onChange={(v) => set("col2", v)} rows={4} /></Field>
+            <Field label="Kolom 3"><RichText value={p.col3 || ""} onChange={(v) => set("col3", v)} rows={4} /></Field>
           </>
         );
 
       case "container":
         return (
           <>
-            <Field label="Inhoud"><Textarea value={p.content || ""} onChange={(e) => set("content", e.target.value)} rows={6} /></Field>
+            <Field label="Inhoud"><RichText value={p.content || ""} onChange={(v) => set("content", v)} rows={6} /></Field>
             <Field label="Achtergrondkleur">
               <Select value={p.bgColor || "muted"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
