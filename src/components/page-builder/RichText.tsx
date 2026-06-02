@@ -172,6 +172,28 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
 
   const clearColor = () => exec("removeFormat");
 
+  const applyFontSize = (size: string) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+    if (!ref.current) return;
+    ref.current.focus();
+    const range = sel.getRangeAt(0);
+    // Wikkel selectie in span met font-size; behoud bestaande opmaak.
+    const span = document.createElement("span");
+    span.style.fontSize = size;
+    try {
+      span.appendChild(range.extractContents());
+      range.insertNode(span);
+      // Herstel selectie over de nieuwe span
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    } catch {}
+    emit();
+    force((n) => n + 1);
+  };
+
   const insertLink = () => {
     const sel = window.getSelection();
     if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
@@ -281,6 +303,31 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
         <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Opmaak wissen" onMouseDown={(e) => e.preventDefault()} onClick={clearColor}>
           <Eraser className="h-3.5 w-3.5" />
         </Button>
+        <div className="w-px h-4 bg-border mx-0.5" />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Lettergrootte" onMouseDown={(e) => e.preventDefault()}>
+              <CaseSensitive className="h-3.5 w-3.5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-44 p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <p className="text-[11px] text-muted-foreground mb-2 px-1">Selecteer tekst, kies grootte</p>
+            <div className="grid grid-cols-3 gap-1">
+              {FONT_SIZES.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => applyFontSize(s.value)}
+                  className="h-8 rounded border border-border hover:bg-muted text-xs"
+                  title={s.value}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       <div
         ref={ref}
