@@ -13,16 +13,16 @@ import { cn } from "@/lib/utils";
 const PRESET_COLORS: { label: string; value: string }[] = [
   { label: "Primair", value: "hsl(var(--primary))" },
   { label: "Secundair", value: "hsl(var(--secondary))" },
+  { label: "Aqua", value: "hsl(var(--aqua))" },
+  { label: "Glow", value: "hsl(var(--primary-glow))" },
+  { label: "Inkt", value: "hsl(var(--ink))" },
   { label: "Tekst", value: "hsl(var(--foreground))" },
   { label: "Gedempt", value: "hsl(var(--muted-foreground))" },
   { label: "Wit", value: "#ffffff" },
   { label: "Zwart", value: "#000000" },
-  { label: "Rood", value: "#dc2626" },
-  { label: "Oranje", value: "#ea580c" },
-  { label: "Geel", value: "#ca8a04" },
-  { label: "Groen", value: "#16a34a" },
-  { label: "Blauw", value: "#2563eb" },
-  { label: "Paars", value: "#7c3aed" },
+  { label: "Diep blauw", value: "#084261" },
+  { label: "Middel blauw", value: "#4db8db" },
+  { label: "Destructive", value: "hsl(var(--destructive))" },
 ];
 
 export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br"];
