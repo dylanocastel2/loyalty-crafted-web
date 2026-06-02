@@ -39,6 +39,8 @@ const matchesSector = (c: KlantcaseItem, sector: string) => {
   return haystack.includes(sector.toLowerCase());
 };
 
+import { toRenderHtml } from "./RichText";
+
 const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter, maxRows }: Props) => {
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
