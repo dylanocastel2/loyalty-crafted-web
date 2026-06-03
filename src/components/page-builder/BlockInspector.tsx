@@ -56,6 +56,17 @@ const BlockInspector = ({ block, onChange }: Props) => {
     </Select>
   );
 
+  const titleAlignSelect = (defaultVal: "left" | "center" | "right" = "center") => (
+    <Select value={p.titleAlign || defaultVal} onValueChange={(v) => set("titleAlign", v)}>
+      <SelectTrigger><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="left">Links</SelectItem>
+        <SelectItem value="center">Midden</SelectItem>
+        <SelectItem value="right">Rechts</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+
   const renderFields = () => {
     switch (block.type) {
       case "heading":
