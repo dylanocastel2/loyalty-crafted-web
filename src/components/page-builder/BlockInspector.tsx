@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
 import AnyFileUpload from "@/components/AnyFileUpload";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react";
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
 import RichText from "./RichText";
