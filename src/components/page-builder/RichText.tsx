@@ -74,6 +74,23 @@ export function sanitizeRichText(html: string): string {
           // Sta alleen veilige eenheden toe
           if (/^[0-9.]+(px|rem|em|%)$/i.test(v)) parts.push(`font-size:${v}`);
         }
+        const fweight = attr.value.match(/(?:^|;)\s*font-weight\s*:\s*([^;]+)/i);
+        if (fweight && (tag === "span" || tag === "a" || tag === "div" || tag === "p")) {
+          const v = fweight[1].trim().toLowerCase();
+          if (/^(bold|bolder|lighter|normal|[1-9]00)$/.test(v)) parts.push(`font-weight:${v}`);
+        }
+        const fstyle = attr.value.match(/(?:^|;)\s*font-style\s*:\s*([^;]+)/i);
+        if (fstyle && (tag === "span" || tag === "a" || tag === "div" || tag === "p")) {
+          const v = fstyle[1].trim().toLowerCase();
+          if (["italic", "normal", "oblique"].includes(v)) parts.push(`font-style:${v}`);
+        }
+        const tdec = attr.value.match(/(?:^|;)\s*text-decoration(?:-line)?\s*:\s*([^;]+)/i);
+        if (tdec && (tag === "span" || tag === "a" || tag === "div" || tag === "p")) {
+          const v = tdec[1].trim().toLowerCase();
+          if (/^(underline|line-through|overline|none)(\s+(underline|line-through|overline))*$/.test(v)) {
+            parts.push(`text-decoration:${v}`);
+          }
+        }
         const align = attr.value.match(/text-align\s*:\s*([^;]+)/i);
         if (align && (tag === "div" || tag === "p")) {
           const v = align[1].trim().toLowerCase();
@@ -171,8 +188,9 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
   const exec = (cmd: string, val?: string) => {
     if (!ref.current) return;
     ref.current.focus();
+    const useTags = cmd === "bold" || cmd === "italic" || cmd === "underline";
     try {
-      document.execCommand("styleWithCSS", false, "true");
+      document.execCommand("styleWithCSS", false, useTags ? "false" : "true");
     } catch {}
     document.execCommand(cmd, false, val);
     emit();
