@@ -125,7 +125,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   if (view === "short") {
     return (
       <div className="container">
-        {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
+        {title && <h2 className="text-2xl md:text-3xl font-bold mb-8 ${tAlign}" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
         {filterBar}
         {visibleCases.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
@@ -166,7 +166,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   // Detailed view
   return (
     <div className="container">
-      {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
+      {title && <h2 className="text-2xl md:text-3xl font-bold mb-8 ${tAlign}" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
       {filterBar}
       {visibleCases.length === 0 ? (
         <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
