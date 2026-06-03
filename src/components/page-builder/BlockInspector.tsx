@@ -312,7 +312,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Tekstkleur">
               <Select value={p.textColor || "light"} onValueChange={(v) => set("textColor", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="gap-2">
+                  <span className={`inline-block w-3 h-3 rounded-full shrink-0 border ${p.textColor === "dark" ? "bg-foreground border-transparent" : "bg-white border-border"}`} />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="light">Licht</SelectItem>
                   <SelectItem value="dark">Donker</SelectItem>
@@ -1303,6 +1306,18 @@ const BlockInspector = ({ block, onChange }: Props) => {
     }
   };
 
+  const textColorDotMap: Record<string, string> = {
+    default: "bg-transparent border border-foreground/40",
+    foreground: "bg-foreground",
+    "muted-foreground": "bg-muted-foreground",
+    primary: "bg-primary",
+    "primary-foreground": "bg-primary-foreground border border-border",
+    secondary: "bg-secondary",
+    "secondary-foreground": "bg-secondary-foreground border border-border",
+    "accent-foreground": "bg-accent-foreground",
+    destructive: "bg-destructive",
+  };
+
   return (
     <div className="space-y-4">
       <div className="pb-3 border-b">
@@ -1316,7 +1331,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tekstkleur</h4>
           <Field label="Kleur (uit thema)">
             <Select value={p.textColorToken || "default"} onValueChange={(v) => set("textColorToken", v === "default" ? undefined : v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger className="gap-2">
+                <span className={`inline-block w-3 h-3 rounded-full shrink-0 ${textColorDotMap[p.textColorToken || "default"]}`} />
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="default">Standaard</SelectItem>
                 <SelectItem value="foreground">Donker (foreground)</SelectItem>
