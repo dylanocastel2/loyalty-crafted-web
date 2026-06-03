@@ -275,11 +275,14 @@ const BlockRenderer = ({ block }: Props) => {
           <div className={`container relative ${alignClass(titleAlign)} ${isLight && !noBg ? "text-primary-foreground" : "text-foreground"}`}>
             <RT as="h1" className="text-4xl md:text-6xl font-bold leading-tight mb-4" html={p.title} />
             {p.subtitle && <RT as="p" className={`text-lg md:text-xl leading-relaxed mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}
-            {p.ctaLabel && (
-              <Link to={p.ctaLink || "/"}>
-                <Button size="lg" variant={isLight && !noBg ? "secondary" : "default"}>{p.ctaLabel}</Button>
-              </Link>
-            )}
+            <CtaGroup
+              primary={{ label: p.ctaLabel, link: p.ctaLink, variant: p.ctaVariant }}
+              extras={p.extraCtas}
+              layout={p.ctaLayout}
+              align={titleAlign}
+              defaultVariant={isLight && !noBg ? "secondary" : "default"}
+              extraVariant={isLight && !noBg ? "outline" : "outline"}
+            />
           </div>
         </section>
       );
