@@ -780,6 +780,12 @@ const BlockRenderer = ({ block }: Props) => {
               successMessage={p.successMessage}
               fields={p.fields || []}
               maxWidth={p.maxWidth}
+              notifySubjectTpl={p.notifySubjectTpl}
+              notifyIntro={p.notifyIntro}
+              confirmEnabled={p.confirmEnabled !== false}
+              confirmSubjectTpl={p.confirmSubjectTpl}
+              confirmIntro={p.confirmIntro}
+              confirmOutro={p.confirmOutro}
             />
           </div>
         </section>
