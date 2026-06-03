@@ -42,7 +42,7 @@ const sanitizeUrl = (url: string): string => {
 };
 
 /** Sanitize HTML voor opslag/weergave — staat alleen veilige inline opmaak toe.
- *  Block-tags (div/p) worden omgezet naar hun inhoud + <br/> zodat Enter regelafbrekingen bewaard blijven. */
+ *  div/p worden omgezet naar <span style="display:block"> zodat ze geldig zijn binnen <p>/<h2>. */
 export function sanitizeRichText(html: string): string {
   if (!html) return "";
   if (typeof window === "undefined") return html;
