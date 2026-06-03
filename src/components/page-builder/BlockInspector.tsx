@@ -1390,6 +1390,87 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+
+            <div className="pt-3 border-t space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                E-mailinstellingen
+              </Label>
+              <p className="text-[10px] text-muted-foreground leading-snug">
+                Pas hieronder aan hoe de mails eruit zien. Laat leeg of klik op "Standaard" om de standaardtekst te gebruiken. Je kunt <code>{"{formulier}"}</code> en <code>{"{naam}"}</code> gebruiken als variabelen.
+              </p>
+
+              <div className="rounded border bg-muted/20 p-3 space-y-2">
+                <div className="text-xs font-semibold">Binnenkomende mail (naar beheerder)</div>
+                <Field label="Onderwerp">
+                  <div className="flex gap-2">
+                    <Input
+                      value={p.notifySubjectTpl || ""}
+                      onChange={(e) => set("notifySubjectTpl", e.target.value)}
+                      placeholder="Formulier ingevuld: {formulier}"
+                    />
+                    <Button variant="outline" size="sm" onClick={() => set("notifySubjectTpl", "")}>Standaard</Button>
+                  </div>
+                </Field>
+                <Field label="Introtekst (boven de gegevens)">
+                  <div className="flex gap-2 items-start">
+                    <Textarea
+                      value={p.notifyIntro || ""}
+                      onChange={(e) => set("notifyIntro", e.target.value)}
+                      rows={3}
+                      placeholder="Er is een nieuw formulier ingevuld op de website."
+                    />
+                    <Button variant="outline" size="sm" onClick={() => set("notifyIntro", "")}>Standaard</Button>
+                  </div>
+                </Field>
+              </div>
+
+              <div className="rounded border bg-muted/20 p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold">Bevestigingsmail (naar invuller)</div>
+                  <label className="flex items-center gap-2 text-xs cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={p.confirmEnabled !== false}
+                      onChange={(e) => set("confirmEnabled", e.target.checked)}
+                    />
+                    Versturen
+                  </label>
+                </div>
+                <Field label="Onderwerp">
+                  <div className="flex gap-2">
+                    <Input
+                      value={p.confirmSubjectTpl || ""}
+                      onChange={(e) => set("confirmSubjectTpl", e.target.value)}
+                      placeholder="Bevestiging: {formulier}"
+                    />
+                    <Button variant="outline" size="sm" onClick={() => set("confirmSubjectTpl", "")}>Standaard</Button>
+                  </div>
+                </Field>
+                <Field label="Introtekst">
+                  <div className="flex gap-2 items-start">
+                    <Textarea
+                      value={p.confirmIntro || ""}
+                      onChange={(e) => set("confirmIntro", e.target.value)}
+                      rows={4}
+                      placeholder={'Beste {naam},\nBedankt voor het invullen van het formulier "{formulier}". We nemen zo snel mogelijk contact met je op.'}
+                    />
+                    <Button variant="outline" size="sm" onClick={() => set("confirmIntro", "")}>Standaard</Button>
+                  </div>
+                </Field>
+                <Field label="Afsluittekst / ondertekening">
+                  <div className="flex gap-2 items-start">
+                    <Textarea
+                      value={p.confirmOutro || ""}
+                      onChange={(e) => set("confirmOutro", e.target.value)}
+                      rows={2}
+                      placeholder="Met vriendelijke groet,\nLoyaltygroup"
+                    />
+                    <Button variant="outline" size="sm" onClick={() => set("confirmOutro", "")}>Standaard</Button>
+                  </div>
+                </Field>
+              </div>
+            </div>
+
             <p className="text-[10px] text-muted-foreground leading-snug">
               Inzendingen worden opgeslagen in de database en zijn zichtbaar voor beheerders.
             </p>

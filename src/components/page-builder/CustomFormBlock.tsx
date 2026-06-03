@@ -51,6 +51,12 @@ interface Props {
   successMessage?: string;
   fields: FormField[];
   maxWidth?: number;
+  notifySubjectTpl?: string;
+  notifyIntro?: string;
+  confirmEnabled?: boolean;
+  confirmSubjectTpl?: string;
+  confirmIntro?: string;
+  confirmOutro?: string;
 }
 
 const initialValueFor = (f: FormField): any => {
@@ -72,6 +78,12 @@ const CustomFormBlock = ({
   successMessage = "Bedankt! Je inzending is ontvangen.",
   fields,
   maxWidth = 640,
+  notifySubjectTpl,
+  notifyIntro,
+  confirmEnabled = true,
+  confirmSubjectTpl,
+  confirmIntro,
+  confirmOutro,
 }: Props) => {
   const { toast } = useToast();
   const [values, setValues] = useState<Record<string, any>>(() =>
@@ -173,6 +185,14 @@ const CustomFormBlock = ({
           form_subject: subjectValue,
           page_path: pagePath,
           extra_fields: fieldData,
+          email_settings: {
+            notify_subject_tpl: notifySubjectTpl || null,
+            notify_intro: notifyIntro || null,
+            confirm_enabled: confirmEnabled !== false,
+            confirm_subject_tpl: confirmSubjectTpl || null,
+            confirm_intro: confirmIntro || null,
+            confirm_outro: confirmOutro || null,
+          },
         },
       })
       .catch(() => {});
