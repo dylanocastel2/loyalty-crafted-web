@@ -5,6 +5,7 @@ import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
+import SearchBlock from "@/components/page-builder/SearchBlock";
 
 const features = [
   {
@@ -78,6 +79,10 @@ const Index = () => (
               Demo aanvragen
             </Button>
           </Link>
+        </div>
+
+        <div className="mt-10 max-w-xl mx-auto">
+          <SearchBlock align="center" variant="rounded" maxWidth={560} />
         </div>
       </div>
     </section>
