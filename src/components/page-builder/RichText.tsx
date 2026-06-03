@@ -112,6 +112,17 @@ export function sanitizeRichText(html: string): string {
       node.setAttribute("target", "_blank");
       node.setAttribute("rel", "noopener noreferrer");
     }
+    // Vervang div/p door span met display:block zodat ze geldig zijn binnen <p>/<h2>
+    if (tag === "div" || tag === "p") {
+      const style = node.getAttribute("style");
+      const span = document.createElement("span");
+      if (style) span.setAttribute("style", `display:block;${style}`);
+      else span.setAttribute("style", "display:block");
+      while (node.firstChild) span.appendChild(node.firstChild);
+      if (node.parentNode) {
+        node.parentNode.replaceChild(span, node);
+      }
+    }
   };
   [...tpl.content.children].forEach((el) => walk(el as Element));
   // Verwijder dubbele <br/> aan einde
