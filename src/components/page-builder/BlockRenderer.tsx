@@ -77,7 +77,7 @@ const BlockRenderer = ({ block }: Props) => {
   switch (block.type) {
     case "heading": {
       const Tag = (`h${p.level || 2}`) as keyof JSX.IntrinsicElements;
-      const sizeClass = p.level === 1 ? "text-4xl md:text-5xl" : p.level === 2 ? "text-3xl md:text-4xl" : p.level === 3 ? "text-2xl md:text-3xl" : "text-xl md:text-2xl";
+      const sizeClass = p.level === 1 ? "text-4xl md:text-5xl leading-tight" : p.level === 2 ? "text-3xl md:text-4xl leading-tight" : p.level === 3 ? "text-2xl md:text-3xl leading-tight" : "text-xl md:text-2xl leading-tight";
       return (
         <section className={`${bgColorClass(p.bgColor)} ${p.bgColor && p.bgColor !== "background" ? paddingClass(p.padding) : "py-4"}`}>
           <div className="container">
@@ -220,8 +220,8 @@ const BlockRenderer = ({ block }: Props) => {
         >
           {p.bgImage && <div className="absolute inset-0 bg-black/50" />}
           <div className={`container relative ${alignClass(titleAlign)} ${isLight && !noBg ? "text-primary-foreground" : "text-foreground"}`}>
-            <RT as="h1" className="text-4xl md:text-6xl font-bold mb-4" html={p.title} />
-            {p.subtitle && <RT as="p" className={`text-lg md:text-xl mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}
+            <RT as="h1" className="text-4xl md:text-6xl font-bold leading-tight mb-4" html={p.title} />
+            {p.subtitle && <RT as="p" className={`text-lg md:text-xl leading-relaxed mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}
             {p.ctaLabel && (
               <Link to={p.ctaLink || "/"}>
                 <Button size="lg" variant={isLight && !noBg ? "secondary" : "default"}>{p.ctaLabel}</Button>
@@ -289,7 +289,7 @@ const BlockRenderer = ({ block }: Props) => {
           <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary mb-4 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
             <Icon className="h-5 w-5" />
           </div>
-          <RT as="h3" className="font-display font-semibold text-lg mb-2" html={p.title} />
+          <RT as="h3" className="font-display font-semibold text-lg leading-snug mb-2" html={p.title} />
           <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={p.description} />
         </div>
       );
@@ -309,8 +309,8 @@ const BlockRenderer = ({ block }: Props) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(p.items || []).map((item: any, i: number) => (
               <div key={i} className="border rounded-lg p-6 bg-card">
-                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                <RT as="p" className="text-muted-foreground text-sm whitespace-pre-wrap" html={item.description} />
+                <h3 className="font-bold text-lg leading-snug mb-2">{item.title}</h3>
+                <RT as="p" className="text-muted-foreground text-sm whitespace-pre-wrap leading-relaxed" html={item.description} />
               </div>
             ))}
           </div>
@@ -352,8 +352,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className="bg-gradient-to-br from-primary to-secondary py-16">
           <div className={`container ${alignClass(p.titleAlign || "center")} text-primary-foreground`}>
-            <RT as="h2" className="text-3xl font-bold mb-3" html={p.title} />
-            {p.subtitle && <RT as="p" className="mb-6 opacity-90 whitespace-pre-wrap" html={p.subtitle} />}
+            <RT as="h2" className="text-3xl font-bold leading-tight mb-3" html={p.title} />
+            {p.subtitle && <RT as="p" className="mb-6 opacity-90 leading-relaxed whitespace-pre-wrap" html={p.subtitle} />}
             {p.ctaLabel && (
               <Link to={p.ctaLink || "/contact"}>
                 <Button size="lg" variant="secondary">{p.ctaLabel}</Button>
@@ -366,7 +366,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "contact_form":
       return (
         <section className="container py-12 max-w-xl">
-          <h2 className={`text-2xl font-bold mb-6 ${alignClass(p.titleAlign || "center")}`}>{p.title}</h2>
+          <h2 className={`text-2xl font-bold leading-tight mb-6 ${alignClass(p.titleAlign || "center")}`}>{p.title}</h2>
           <form
             className="space-y-4"
             onSubmit={(e) => { e.preventDefault(); alert("Bedankt voor je bericht!"); }}
@@ -479,7 +479,7 @@ const BlockRenderer = ({ block }: Props) => {
       );
       const textEl = (
         <div className="w-full">
-          {p.title && <RT as="h2" className={`font-display font-bold text-2xl md:text-3xl mb-3 ${alignClass(p.titleAlign || "left")}`} html={p.title} />}
+          {p.title && <RT as="h2" className={`font-display font-bold text-2xl md:text-3xl leading-tight mb-3 ${alignClass(p.titleAlign || "left")}`} html={p.title} />}
           {p.text && <RT as="div" className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap" html={p.text} />}
           {p.ctaLabel && (
             <div className="mt-5">
@@ -595,8 +595,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold mb-2 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
-            {p.subtitle && <RT as="p" className={`text-muted-foreground mb-8 max-w-2xl whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
+            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold leading-tight mb-2 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
+            {p.subtitle && <RT as="p" className={`text-muted-foreground leading-relaxed mb-8 max-w-2xl whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
             <div className={`grid ${colClass} gap-6 mt-6`}>
               {files.map((f, i) => (
                 <a
@@ -634,8 +634,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold mb-4 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
-            {p.subtitle && <RT as="p" className={`text-muted-foreground max-w-2xl mb-12 whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
+            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold leading-tight mb-4 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
+            {p.subtitle && <RT as="p" className={`text-muted-foreground leading-relaxed max-w-2xl mb-12 whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
             <div className={`grid ${colClass} gap-8`}>
               {items.map((it, i) => (
                 <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
@@ -645,8 +645,8 @@ const BlockRenderer = ({ block }: Props) => {
                     <div className="w-full h-48 bg-muted flex items-center justify-center text-sm text-muted-foreground">Voeg een afbeelding toe</div>
                   )}
                   <div className="p-6">
-                    {it.title && <RT as="h3" className="font-bold text-lg mb-2 uppercase tracking-wider" html={it.title} />}
-                    {it.description && <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap" html={it.description} />}
+                    {it.title && <RT as="h3" className="font-bold text-lg leading-snug mb-2 uppercase tracking-wider" html={it.title} />}
+                    {it.description && <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={it.description} />}
                   </div>
                 </div>
               ))}
