@@ -728,7 +728,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             ) : (
               <Field label="Aantal cases">
-                <Input type="number" min={1} max={12} value={p.limit ?? 3} onChange={(e) => set("limit", Math.max(1, Math.min(12, parseInt(e.target.value) || 3)))} />
+                <NumberInput min={1} max={12} value={p.limit ?? 3} onChange={(v) => set("limit", v ?? 3)} />
               </Field>
             )}
             <Field label="Aantal kolommen">
@@ -949,7 +949,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             )}
             <Field label="Maximale breedte (px)">
-              <Input type="number" value={p.maxWidth ?? 560} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 560)} />
+              <NumberInput value={p.maxWidth ?? 560} onChange={(v) => set("maxWidth", v ?? 560)} />
             </Field>
             <Field label="Uitlijning">
               <Select value={p.align || "center"} onValueChange={(v) => set("align", v)}>
@@ -1055,7 +1055,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Textarea value={p.successMessage || ""} onChange={(e) => set("successMessage", e.target.value)} rows={2} />
             </Field>
             <Field label="Maximale breedte (px)">
-              <Input type="number" value={p.maxWidth ?? 640} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 640)} />
+              <NumberInput value={p.maxWidth ?? 640} onChange={(v) => set("maxWidth", v ?? 640)} />
             </Field>
 
             <div className="pt-3 border-t space-y-3">
@@ -1141,7 +1141,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     )}
                     {f.type === "textarea" && (
                       <Field label="Aantal regels">
-                        <Input type="number" value={f.rows ?? 4} onChange={(e) => updateField(i, { rows: parseInt(e.target.value) || 4 })} />
+                        <NumberInput value={f.rows ?? 4} onChange={(v) => updateField(i, { rows: v ?? 4 })} />
                       </Field>
                     )}
                     {needsOptions && (
