@@ -287,7 +287,15 @@ const BlockRenderer = ({ block }: Props) => {
 
     case "row": {
       const cols = p.columns || 2;
-      const colsClass = cols === 1 ? "grid-cols-1" : cols === 3 ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1 md:grid-cols-2";
+      const gridColsMap: Record<number, string> = {
+        1: "grid-cols-1",
+        2: "grid-cols-1 md:grid-cols-2",
+        3: "grid-cols-1 md:grid-cols-3",
+        4: "grid-cols-1 sm:grid-cols-2 md:grid-cols-4",
+        5: "grid-cols-1 sm:grid-cols-2 md:grid-cols-5",
+        6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6",
+      };
+      const colsClass = gridColsMap[cols] || gridColsMap[2];
       const valign = p.verticalAlign === "center" ? "items-center" : p.verticalAlign === "end" ? "items-end" : "items-start";
       const children = block.children || [];
       return (
@@ -295,7 +303,7 @@ const BlockRenderer = ({ block }: Props) => {
           <div className="container">
             <div className={`grid ${colsClass} ${valign}`} style={{ gap: `${p.gap ?? 32}px` }}>
               {Array.from({ length: cols }).map((_, ci) => (
-                <div key={ci} className="min-w-0">
+                <div key={ci} className="min-w-0 w-full flex flex-col">
                   {(children[ci] || []).map((child) => (
                     <BlockRenderer key={child.id} block={child} />
                   ))}
