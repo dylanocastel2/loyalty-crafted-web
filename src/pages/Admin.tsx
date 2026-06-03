@@ -465,10 +465,39 @@ const Admin = () => {
               <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
               <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
             </div>
-            <div>
-              <Label>Notificatie e-mailadres</Label>
-              <Input type="email" placeholder="info@loyaltygroup.nl" value={notifyEmail} onChange={(e) => setNotifyEmail(e.target.value)} disabled={!notifyEnabled} />
-              <p className="text-[11px] text-muted-foreground mt-1">Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.</p>
+            <div className="space-y-2">
+              <Label>Notificatie e-mailadressen</Label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  type="email"
+                  placeholder="info@loyaltygroup.nl"
+                  value={newNotifyEmail}
+                  onChange={(e) => setNewNotifyEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addNotifyEmail(); } }}
+                  disabled={!notifyEnabled}
+                />
+                <Button type="button" variant="outline" onClick={addNotifyEmail} disabled={!notifyEnabled}>
+                  <Plus className="h-4 w-4 mr-1" /> Toevoegen
+                </Button>
+              </div>
+              {notifyEmails.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {notifyEmails.map((e) => (
+                    <span key={e} className="inline-flex items-center gap-1 bg-muted text-foreground text-xs rounded-full pl-3 pr-1 py-1">
+                      {e}
+                      <button
+                        type="button"
+                        onClick={() => removeNotifyEmail(e)}
+                        className="hover:bg-background rounded-full p-0.5"
+                        aria-label={`${e} verwijderen`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="text-[11px] text-muted-foreground mt-1">Alle opgegeven adressen ontvangen een melding bij nieuwe formulier-inzendingen. Aanvragen blijven altijd zichtbaar in het tabblad "Aanvragen".</p>
             </div>
             <Button size="sm" onClick={saveSettings} disabled={savingSettings}>{savingSettings ? "Opslaan..." : "Instellingen opslaan"}</Button>
           </div>
