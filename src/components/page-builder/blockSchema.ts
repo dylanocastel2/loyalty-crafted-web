@@ -60,7 +60,7 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "two_columns", label: "Twee kolommen", category: "Layout", icon: "Columns2", defaultProps: { left: "Linkerkolom inhoud", right: "Rechterkolom inhoud" } },
   { type: "three_columns", label: "Drie kolommen", category: "Layout", icon: "Columns3", defaultProps: { col1: "Kolom 1", col2: "Kolom 2", col3: "Kolom 3" } },
   { type: "container", label: "Achtergrondblok", category: "Layout", icon: "Square", defaultProps: { content: "Inhoud van het blok", bgColor: "muted", padding: "large" } },
-  { type: "row", label: "Rij met kolommen", category: "Layout", icon: "Columns", defaultProps: { columns: 2, gap: 32, bgColor: "background", padding: "medium", verticalAlign: "start" } },
+  { type: "row", label: "Rij met kolommen", category: "Layout", icon: "Columns", defaultProps: { columns: 2, gap: 32, bgColor: "background", padding: "medium", verticalAlign: "stretch" } },
   { type: "image_text", label: "Afbeelding + Tekst", category: "Layout", icon: "Image", defaultProps: { imageUrl: "", imageAlt: "", imagePosition: "left", title: "Een pakkende titel", text: "Schrijf hier je tekst. Combineer een sterke afbeelding met begeleidende uitleg.", ctaLabel: "", ctaLink: "/", bgColor: "background", padding: "medium", imageRatio: "4/3", verticalAlign: "center", imageWidth: 50 } },
 
   // Content

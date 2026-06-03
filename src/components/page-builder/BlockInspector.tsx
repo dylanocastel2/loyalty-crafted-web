@@ -425,9 +425,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <NumberInput value={p.gap ?? 32} onChange={(v) => set("gap", v ?? 0)} />
             </Field>
             <Field label="Verticale uitlijning">
-              <Select value={p.verticalAlign || "start"} onValueChange={(v) => set("verticalAlign", v)}>
+              <Select value={p.verticalAlign || "stretch"} onValueChange={(v) => set("verticalAlign", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="stretch">Stretch — gelijke hoogte</SelectItem>
                   <SelectItem value="start">Boven</SelectItem>
                   <SelectItem value="center">Midden</SelectItem>
                   <SelectItem value="end">Onder</SelectItem>

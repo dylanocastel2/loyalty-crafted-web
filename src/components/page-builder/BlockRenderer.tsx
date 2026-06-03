@@ -296,16 +296,18 @@ const BlockRenderer = ({ block }: Props) => {
         6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6",
       };
       const colsClass = gridColsMap[cols] || gridColsMap[2];
-      const valign = p.verticalAlign === "center" ? "items-center" : p.verticalAlign === "end" ? "items-end" : "items-start";
+      const valign = p.verticalAlign === "center" ? "items-center" : p.verticalAlign === "end" ? "items-end" : p.verticalAlign === "start" ? "items-start" : "";
       const children = block.children || [];
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
             <div className={`grid ${colsClass} ${valign}`} style={{ gap: `${p.gap ?? 32}px` }}>
               {Array.from({ length: cols }).map((_, ci) => (
-                <div key={ci} className="min-w-0 w-full flex flex-col">
+                <div key={ci} className="min-w-0 w-full h-full flex flex-col">
                   {(children[ci] || []).map((child) => (
-                    <BlockRenderer key={child.id} block={child} />
+                    <div key={child.id} className="h-full">
+                      <BlockRenderer block={child} />
+                    </div>
                   ))}
                 </div>
               ))}
