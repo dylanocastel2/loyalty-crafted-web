@@ -123,13 +123,14 @@ const BlockRenderer = ({ block }: Props) => {
       const mwCls = mwMap[p.maxWidth || "none"] || "";
       const padCls = padMap[p.padding || "small"] || padMap.small;
       const hasBg = p.bgColor && p.bgColor !== "background";
-      const mwWrap = mwCls
-        ? p.align === "center"
-          ? `${mwCls} mx-auto`
-          : p.align === "right"
-          ? `${mwCls} ml-auto`
-          : mwCls
+      const hasCustomMw = typeof p.customMaxWidth === "number" && p.customMaxWidth > 0;
+      const alignWrap = p.align === "center" ? "mx-auto" : p.align === "right" ? "ml-auto" : "";
+      const mwWrap = hasCustomMw
+        ? `w-full ${alignWrap}`
+        : mwCls
+        ? `${mwCls} ${alignWrap}`
         : "";
+      const mwStyle: React.CSSProperties | undefined = hasCustomMw ? { maxWidth: `${p.customMaxWidth}px` } : undefined;
       return (
         <section className={`${hasBg ? bgColorClass(p.bgColor) : ""} ${padCls}`}>
           <div className="container">
@@ -137,6 +138,7 @@ const BlockRenderer = ({ block }: Props) => {
               as="p"
               className={`${sizeCls} ${lhCls} ${alignClass(p.align)} ${mwWrap} ${hasBg ? "" : "text-foreground/80"} whitespace-pre-wrap`}
               html={p.text}
+              style={mwStyle}
             />
           </div>
         </section>
