@@ -19,7 +19,7 @@ export const NumberInput = ({ value, onChange, min, max, placeholder, className 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
-    if (v === "" || v === "-" || /^\d+$/.test(v)) {
+    if (v === "" || /^-?\d*$/.test(v)) {
       setRaw(v);
     }
   };
@@ -45,8 +45,7 @@ export const NumberInput = ({ value, onChange, min, max, placeholder, className 
   return (
     <Input
       type="text"
-      inputMode="numeric"
-      pattern="[0-9]*"
+      inputMode={min !== undefined && min >= 0 ? "numeric" : "decimal"}
       value={raw}
       onChange={handleChange}
       onBlur={handleBlur}
