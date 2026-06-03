@@ -178,10 +178,11 @@ interface ItemActionsProps {
   block: Block;
   onDelete: () => void;
   onDuplicate: () => void;
+  onCopy: () => void;
   attributes: any;
   listeners: any;
 }
-const ItemHeader = ({ block, onDelete, onDuplicate, attributes, listeners, isSelected }: ItemActionsProps & { isSelected: boolean }) => {
+const ItemHeader = ({ block, onDelete, onDuplicate, onCopy, attributes, listeners, isSelected }: ItemActionsProps & { isSelected: boolean }) => {
   const meta = getBlockMeta(block.type);
   return (
     <div className={`flex items-center justify-between px-3 py-1.5 border-b text-xs ${isSelected ? "bg-primary/10" : "bg-muted/40"}`}>
@@ -192,7 +193,10 @@ const ItemHeader = ({ block, onDelete, onDuplicate, attributes, listeners, isSel
         <span className="font-medium">{meta?.label || block.type}</span>
       </div>
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onDuplicate(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Kopieer naar klembord (voor plakken op andere pagina)" onClick={(e) => { e.stopPropagation(); onCopy(); }}>
+          <ClipboardCopy className="h-3 w-3" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Dupliceren" onClick={(e) => { e.stopPropagation(); onDuplicate(); }}>
           <Copy className="h-3 w-3" />
         </Button>
         <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
@@ -210,11 +214,14 @@ interface SortableItemProps {
   onSelect: (id: string) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
+  onCopy: (id: string) => void;
   onAddToColumn: (rowId: string, col: number, type: BlockType) => void;
+  onPasteToColumn: (rowId: string, col: number) => void;
+  hasClipboard: boolean;
 }
 
 const SortableItem = (props: SortableItemProps) => {
-  const { block, isSelected, selectedId, onSelect, onDelete, onDuplicate, onAddToColumn } = props;
+  const { block, isSelected, selectedId, onSelect, onDelete, onDuplicate, onCopy, onAddToColumn, onPasteToColumn, hasClipboard } = props;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -235,7 +242,7 @@ const SortableItem = (props: SortableItemProps) => {
         isSelected ? "border-primary shadow-md" : "border-border hover:border-primary/40"
       }`}
     >
-      <ItemHeader block={block} onDelete={() => onDelete(block.id)} onDuplicate={() => onDuplicate(block.id)} attributes={attributes} listeners={listeners} isSelected={isSelected} />
+      <ItemHeader block={block} onDelete={() => onDelete(block.id)} onDuplicate={() => onDuplicate(block.id)} onCopy={() => onCopy(block.id)} attributes={attributes} listeners={listeners} isSelected={isSelected} />
       {isRow ? (
         <div className="p-3">
           <div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
@@ -249,7 +256,10 @@ const SortableItem = (props: SortableItemProps) => {
                 onSelect={onSelect}
                 onDelete={onDelete}
                 onDuplicate={onDuplicate}
+                onCopy={onCopy}
                 onAddToColumn={onAddToColumn}
+                onPasteToColumn={onPasteToColumn}
+                hasClipboard={hasClipboard}
               />
             ))}
           </div>
