@@ -78,10 +78,13 @@ const BlockRenderer = ({ block }: Props) => {
     case "heading": {
       const Tag = (`h${p.level || 2}`) as keyof JSX.IntrinsicElements;
       const sizeClass = p.level === 1 ? "text-4xl md:text-5xl leading-tight" : p.level === 2 ? "text-3xl md:text-4xl leading-tight" : p.level === 3 ? "text-2xl md:text-3xl leading-tight" : "text-xl md:text-2xl leading-tight";
+      const hHasCustomMw = typeof p.customMaxWidth === "number" && p.customMaxWidth > 0;
+      const hAlignWrap = p.align === "center" ? "mx-auto" : p.align === "right" ? "ml-auto" : "";
+      const hStyle: React.CSSProperties | undefined = hHasCustomMw ? { maxWidth: `${p.customMaxWidth}px` } : undefined;
       return (
         <section className={`${bgColorClass(p.bgColor)} ${p.bgColor && p.bgColor !== "background" ? paddingClass(p.padding) : "py-4"}`}>
           <div className="container">
-            <RT as={Tag} className={`font-bold ${sizeClass} ${alignClass(p.align)}`} html={p.text} />
+            <RT as={Tag} className={`font-bold ${sizeClass} ${alignClass(p.align)} ${hHasCustomMw ? `w-full ${hAlignWrap}` : ""}`} html={p.text} style={hStyle} />
           </div>
         </section>
       );
