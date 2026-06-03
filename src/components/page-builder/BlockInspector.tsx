@@ -718,6 +718,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Knop link (kies pagina)">
               <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
             </Field>
+            {ctaEditor(true)}
             <Field label="Verticale uitlijning">
               <Select value={p.verticalAlign || "center"} onValueChange={(v) => set("verticalAlign", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
