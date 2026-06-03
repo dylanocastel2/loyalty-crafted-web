@@ -1013,6 +1013,30 @@ const BlockInspector = ({ block, onChange }: Props) => {
           [next[i], next[j]] = [next[j], next[i]];
           set("fields", next);
         };
+        const insertFieldAt = (i: number) => {
+          const newField = {
+            id: `veld_${fields.length + 1}`,
+            label: `Veld ${fields.length + 1}`,
+            type: "text",
+            required: false,
+          };
+          const next = [...fields];
+          next.splice(i, 0, newField);
+          set("fields", next);
+        };
+        const onDragStart = (e: React.DragEvent, i: number) => {
+          e.dataTransfer.setData("text/plain", String(i));
+          e.dataTransfer.effectAllowed = "move";
+        };
+        const onDrop = (e: React.DragEvent, target: number) => {
+          e.preventDefault();
+          const from = parseInt(e.dataTransfer.getData("text/plain"), 10);
+          if (Number.isNaN(from) || from === target) return;
+          const next = [...fields];
+          const [moved] = next.splice(from, 1);
+          next.splice(from < target ? target - 1 : target, 0, moved);
+          set("fields", next);
+        };
         const slugify = (s: string) =>
           s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) || `veld_${fields.length + 1}`;
         return (
@@ -1040,12 +1064,39 @@ const BlockInspector = ({ block, onChange }: Props) => {
               {fields.map((f, i) => {
                 const needsOptions = f.type === "select" || f.type === "radio" || f.type === "checkbox_group";
                 return (
-                  <div key={i} className="border rounded p-3 space-y-2 bg-muted/20">
+                  <div key={f.id || i}>
+                    <button
+                      type="button"
+                      onClick={() => insertFieldAt(i)}
+                      className="w-full text-[10px] text-muted-foreground hover:text-primary hover:bg-muted/40 py-1 rounded border border-dashed border-transparent hover:border-primary/40 transition-colors flex items-center justify-center gap-1"
+                      title="Voeg veld hierboven toe"
+                    >
+                      <Plus className="h-3 w-3" /> Veld hier invoegen
+                    </button>
+                    <div
+                      className="border rounded p-3 space-y-2 bg-muted/20"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => onDrop(e, i)}
+                    >
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-semibold">Veld {i + 1}</span>
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, -1)} disabled={i === 0} title="Omhoog">↑</Button>
-                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, 1)} disabled={i === fields.length - 1} title="Omlaag">↓</Button>
+                        <span
+                          draggable
+                          onDragStart={(e) => onDragStart(e, i)}
+                          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+                          title="Sleep om te verplaatsen"
+                        >
+                          <GripVertical className="h-4 w-4" />
+                        </span>
+                        <span className="text-xs font-semibold">Veld {i + 1}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, -1)} disabled={i === 0} title="Omhoog">
+                          <ChevronUp className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, 1)} disabled={i === fields.length - 1} title="Omlaag">
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
                         <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("fields", i)}>
                           <Trash2 className="h-3 w-3" />
                         </Button>
