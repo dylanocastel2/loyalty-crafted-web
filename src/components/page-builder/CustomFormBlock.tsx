@@ -44,6 +44,7 @@ export interface FormField {
 interface Props {
   formId: string;
   title?: string;
+  titleAlign?: string;
   formSubject?: string;
   description?: string;
   submitLabel?: string;
@@ -64,6 +65,7 @@ const initialValueFor = (f: FormField): any => {
 const CustomFormBlock = ({
   formId,
   title,
+  titleAlign,
   formSubject,
   description,
   submitLabel = "Versturen",
@@ -198,9 +200,9 @@ const CustomFormBlock = ({
         className="w-full bg-card border rounded-xl p-6 md:p-8 shadow-sm space-y-5"
         style={{ maxWidth }}
       >
-        {title && <h3 className="text-xl md:text-2xl font-bold text-foreground">{title}</h3>}
+        {title && <h3 className={`text-xl md:text-2xl font-bold text-foreground ${titleAlign === "center" ? "text-center" : titleAlign === "right" ? "text-right" : "text-left"}`}>{title}</h3>}
         {description && (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{description}</p>
+          <p className={`text-sm text-muted-foreground whitespace-pre-wrap ${titleAlign === "center" ? "text-center" : titleAlign === "right" ? "text-right" : "text-left"}`}>{description}</p>
         )}
 
         {fields.map((f) => {

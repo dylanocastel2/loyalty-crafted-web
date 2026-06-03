@@ -23,6 +23,7 @@ interface Props {
   showBranche?: boolean;
   showCategory?: boolean;
   title?: string;
+  titleAlign?: string;
   showFilter?: boolean;
   maxRows?: number;
 }
@@ -41,7 +42,8 @@ const matchesSector = (c: KlantcaseItem, sector: string) => {
 
 import { toRenderHtml } from "./RichText";
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, showFilter, maxRows }: Props) => {
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows }: Props) => {
+  const tAlign = titleAlign === "left" ? "text-left" : titleAlign === "right" ? "text-right" : "text-center";
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSector, setActiveSector] = useState<string>("all");
@@ -123,7 +125,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   if (view === "short") {
     return (
       <div className="container">
-        {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
+        {title && <h2 className={`text-2xl md:text-3xl font-bold mb-8 ${tAlign}`} dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
         {filterBar}
         {visibleCases.length === 0 ? (
           <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>
@@ -164,7 +166,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
   // Detailed view
   return (
     <div className="container">
-      {title && <h2 className="text-2xl md:text-3xl font-bold text-center mb-8" dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
+      {title && <h2 className={`text-2xl md:text-3xl font-bold mb-8 ${tAlign}`} dangerouslySetInnerHTML={{ __html: toRenderHtml(title) }} />}
       {filterBar}
       {visibleCases.length === 0 ? (
         <p className="text-center text-sm text-muted-foreground py-8">Geen klantcases in deze sector.</p>

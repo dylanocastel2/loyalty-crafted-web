@@ -56,6 +56,17 @@ const BlockInspector = ({ block, onChange }: Props) => {
     </Select>
   );
 
+  const titleAlignSelect = (defaultVal: "left" | "center" | "right" = "center") => (
+    <Select value={p.titleAlign || defaultVal} onValueChange={(v) => set("titleAlign", v)}>
+      <SelectTrigger><SelectValue /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="left">Links</SelectItem>
+        <SelectItem value="center">Midden</SelectItem>
+        <SelectItem value="right">Rechts</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+
   const renderFields = () => {
     switch (block.type) {
       case "heading":
@@ -290,6 +301,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Select value={p.bgColor || "primary"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Geen achtergrond</SelectItem>
                   <SelectItem value="primary">Primair</SelectItem>
                   <SelectItem value="secondary">Secundair</SelectItem>
                   <SelectItem value="gradient">Verloop</SelectItem>
@@ -297,6 +309,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Tekstkleur">
               <Select value={p.textColor || "light"} onValueChange={(v) => set("textColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -489,13 +502,19 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Subtitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={2} /></Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
           </>
         );
 
       case "contact_form":
-        return <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>;
+        return (
+          <>
+            <Field label="Titel"><Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} /></Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
+          </>
+        );
 
       case "video_embed":
         return (
@@ -602,6 +621,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             </Field>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Tekst"><RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={8} /></Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("left")}</Field>
             <Field label="Knoptekst (optioneel)"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link (kies pagina)">
               <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
@@ -648,6 +668,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel boven (optioneel)">
               <RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine />
             </Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Achtergrond">
               <Select value={p.bgColor || "muted"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -704,6 +725,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel boven (optioneel)">
               <RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine placeholder="Bijv. Onze klantcases" />
             </Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Weergave">
               <Select value={p.view || "short"} onValueChange={(v) => set("view", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -802,6 +824,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine placeholder="Bijv. Downloads" /></Field>
             <Field label="Ondertitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={3} /></Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Aantal kolommen">
               <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -874,6 +897,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Ondertitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={4} /></Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Aantal kolommen">
               <Select value={String(p.columns || 3)} onValueChange={(v) => set("columns", parseInt(v))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -1045,6 +1069,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel">
               <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} />
             </Field>
+            <Field label="Titel uitlijning">{titleAlignSelect("left")}</Field>
             <Field label="Onderwerp (voor e-mailmelding & overzicht)">
               <Input
                 value={p.formSubject || ""}
