@@ -596,6 +596,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
+            {ctaEditor(false)}
           </>
         );
 
