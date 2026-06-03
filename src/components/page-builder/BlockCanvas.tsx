@@ -338,6 +338,42 @@ const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelet
 };
 
 const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
+  const { toast } = useToast();
+  const [hasClipboard, setHasClipboard] = useState<boolean>(() => {
+    try { return !!localStorage.getItem(CLIPBOARD_KEY); } catch { return false; }
+  });
+  useEffect(() => {
+    const refresh = () => {
+      try { setHasClipboard(!!localStorage.getItem(CLIPBOARD_KEY)); } catch {}
+    };
+    window.addEventListener("storage", refresh);
+    window.addEventListener("lovable-pb-clipboard", refresh);
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("lovable-pb-clipboard", refresh);
+    };
+  }, []);
+
+  const handleCopy = (id: string) => {
+    const b = getById(blocks, id);
+    if (!b) return;
+    writeClipboard(b);
+    setHasClipboard(true);
+    toast({ title: "Blok gekopieerd", description: "Plak het op een andere pagina via de plak-knop." });
+  };
+  const handlePasteRoot = () => {
+    const b = readClipboard();
+    if (!b) return;
+    onChange([...blocks, b]);
+    onSelect(b.id);
+  };
+  const handlePasteToColumn = (rowId: string, col: number) => {
+    const b = readClipboard();
+    if (!b) return;
+    onChange(addBlockToContainer(blocks, { kind: "column", rowId, col }, b));
+    onSelect(b.id);
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -393,12 +429,24 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
         {blocks.length === 0 ? (
-          <div className="border-2 border-dashed rounded-lg p-12 text-center text-muted-foreground">
+          <div className="border-2 border-dashed rounded-lg p-12 text-center text-muted-foreground space-y-3">
             <p className="font-medium mb-1">Nog geen blokken</p>
             <p className="text-sm">Klik op een blok in de bibliotheek links om te beginnen</p>
+            {hasClipboard && (
+              <Button variant="outline" size="sm" onClick={handlePasteRoot}>
+                <ClipboardPaste className="h-3 w-3 mr-1" /> Plak gekopieerd blok
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
+            {hasClipboard && (
+              <div className="flex justify-end">
+                <Button variant="outline" size="sm" onClick={handlePasteRoot}>
+                  <ClipboardPaste className="h-3 w-3 mr-1" /> Plak gekopieerd blok hier
+                </Button>
+              </div>
+            )}
             {blocks.map((block) => (
               <SortableItem
                 key={block.id}
@@ -408,11 +456,14 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
                 onSelect={onSelect}
                 onDelete={(id) => onChange(removeBlockById(blocks, id))}
                 onDuplicate={(id) => onChange(duplicateBlockById(blocks, id))}
+                onCopy={handleCopy}
                 onAddToColumn={(rowId, col, type) => {
                   const block = createBlock(type);
                   onChange(addBlockToContainer(blocks, { kind: "column", rowId, col }, block));
                   onSelect(block.id);
                 }}
+                onPasteToColumn={handlePasteToColumn}
+                hasClipboard={hasClipboard}
               />
             ))}
           </div>
