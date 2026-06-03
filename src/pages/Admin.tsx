@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check, X, FileText } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
@@ -32,6 +32,15 @@ type Submission = {
   created_at: string;
 };
 
+type FormSubmission = {
+  id: string;
+  form_id: string;
+  form_title: string | null;
+  page_path: string | null;
+  data: Record<string, any>;
+  created_at: string;
+};
+
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
 const Admin = () => {
@@ -46,12 +55,15 @@ const Admin = () => {
   const [savingSocials, setSavingSocials] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [openSubmission, setOpenSubmission] = useState<Submission | null>(null);
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
+  const [openFormSubmission, setOpenFormSubmission] = useState<FormSubmission | null>(null);
   const [admins, setAdmins] = useState<{ user_id: string; email: string | null; roles: string[] }[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [newAdminRole, setNewAdminRole] = useState<"admin" | "editor" | "viewer">("editor");
   const [myRole, setMyRole] = useState<"admin" | "editor" | "viewer" | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notifyEmails, setNotifyEmails] = useState<string[]>([]);
+  const [newNotifyEmail, setNewNotifyEmail] = useState("");
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -129,6 +141,11 @@ const Admin = () => {
       .select("*")
       .order("created_at", { ascending: false });
     if (data) setSubmissions(data as Submission[]);
+    const { data: forms } = await supabase
+      .from("form_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (forms) setFormSubmissions(forms as any as FormSubmission[]);
   };
 
   const markRead = async (id: string, read: boolean) => {
@@ -139,6 +156,12 @@ const Admin = () => {
   const deleteSubmission = async (id: string) => {
     await supabase.from("contact_submissions").delete().eq("id", id);
     setOpenSubmission(null);
+    fetchSubmissions();
+  };
+
+  const deleteFormSubmission = async (id: string) => {
+    await supabase.from("form_submissions").delete().eq("id", id);
+    setOpenFormSubmission(null);
     fetchSubmissions();
   };
 
@@ -197,14 +220,20 @@ const Admin = () => {
       .eq("page", "settings")
       .in("key", ["notify_email", "notify_enabled"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
-    setNotifyEmail(map["notify_email"] || "");
+    const raw = map["notify_email"] || "";
+    setNotifyEmails(
+      raw
+        .split(/[,;\n]+/)
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+    );
     setNotifyEnabled(map["notify_enabled"] === "true");
   };
 
   const saveSettings = async () => {
     setSavingSettings(true);
     const rows = [
-      { page: "settings", key: "notify_email", content: notifyEmail.trim() },
+      { page: "settings", key: "notify_email", content: notifyEmails.join(", ") },
       { page: "settings", key: "notify_enabled", content: notifyEnabled ? "true" : "false" },
     ];
     const { error } = await supabase.from("page_content").upsert(rows, { onConflict: "page,key" });
@@ -214,6 +243,22 @@ const Admin = () => {
       return;
     }
     toast({ title: "Instellingen opgeslagen" });
+  };
+
+  const addNotifyEmail = () => {
+    const v = newNotifyEmail.trim();
+    if (!v) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      toast({ title: "Ongeldig e-mailadres", variant: "destructive" });
+      return;
+    }
+    if (notifyEmails.includes(v)) return;
+    setNotifyEmails([...notifyEmails, v]);
+    setNewNotifyEmail("");
+  };
+
+  const removeNotifyEmail = (e: string) => {
+    setNotifyEmails(notifyEmails.filter((x) => x !== e));
   };
 
   const unreadCount = submissions.filter((s) => !s.read).length;
