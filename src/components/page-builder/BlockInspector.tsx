@@ -385,8 +385,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="CTA knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
-            <Field label="CTA link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
-            {ctaEditor(false)}
+            <Field label="CTA link (kies pagina)">
+              <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
+            </Field>
+            {ctaEditor(true)}
           </>
         );
 
