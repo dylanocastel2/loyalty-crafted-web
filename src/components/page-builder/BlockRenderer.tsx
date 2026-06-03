@@ -240,15 +240,32 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
-    case "two_columns":
+    case "two_columns": {
+      const leftW = Math.max(15, Math.min(85, p.leftWidth ?? 50));
+      const rightW = 100 - leftW;
+      const valign2 =
+        p.verticalAlign === "start" ? "items-start" : p.verticalAlign === "end" ? "items-end" : "items-center";
+      const gap2 = p.gap ?? 32;
+      const swap = p.swapOrder === true;
       return (
         <section className="container py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <RT as="div" className="prose max-w-none" html={p.left} />
-            <RT as="div" className="prose max-w-none" html={p.right} />
+          <div className={`grid grid-cols-1 md:grid-cols-12 ${valign2}`} style={{ gap: `${gap2}px` }}>
+            <div
+              className={`min-w-0 ${swap ? "md:order-2" : ""}`}
+              style={{ gridColumn: `span ${Math.round((leftW / 100) * 12)} / span ${Math.round((leftW / 100) * 12)}` }}
+            >
+              <RT as="div" className="prose max-w-none" html={p.left} />
+            </div>
+            <div
+              className={`min-w-0 ${swap ? "md:order-1" : ""}`}
+              style={{ gridColumn: `span ${Math.round((rightW / 100) * 12)} / span ${Math.round((rightW / 100) * 12)}` }}
+            >
+              <RT as="div" className="prose max-w-none" html={p.right} />
+            </div>
           </div>
         </section>
       );
+    }
 
     case "three_columns":
       return (
