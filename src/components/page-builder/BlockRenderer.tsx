@@ -308,11 +308,19 @@ const BlockRenderer = ({ block }: Props) => {
     }
 
     case "icon_card": {
-      const Icon = (Icons as any)[p.icon] || Icons.Star;
+      const Icon = p.icon ? ((Icons as any)[p.icon] || Icons.Star) : Icons.Star;
+      const colorStyle = p.iconColor && !["primary", "secondary"].includes(p.iconColor)
+        ? { color: p.iconColor }
+        : undefined;
+      const colorClass = p.iconColor === "secondary" ? "text-secondary" : colorStyle ? "" : "text-primary";
       return (
         <div className="group relative rounded-2xl border border-border bg-card p-6 card-hover h-full">
-          <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary mb-4 transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-            <Icon className="h-5 w-5" />
+          <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent mb-4 transition-colors ${colorClass}`} style={colorStyle}>
+            {p.iconImage ? (
+              <img src={p.iconImage} alt="" className="h-6 w-6 object-contain" />
+            ) : (
+              <Icon className="h-5 w-5" />
+            )}
           </div>
           <RT as="h3" className="font-display font-semibold text-lg leading-snug mb-2" html={p.title} />
           <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={p.description} />
