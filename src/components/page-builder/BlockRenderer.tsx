@@ -16,8 +16,11 @@ import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
 
+const LIST_CLASSES =
+  "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2 [&_li]:my-0.5";
+
 const RT = ({ html, as: Tag = "span", className, ...rest }: { html?: string; as?: any; className?: string } & React.HTMLAttributes<HTMLElement>) => (
-  <Tag className={className} {...rest} dangerouslySetInnerHTML={{ __html: toRenderHtml(html) }} />
+  <Tag className={`${className ?? ""} ${LIST_CLASSES}`} {...rest} dangerouslySetInnerHTML={{ __html: toRenderHtml(html) }} />
 );
 
 const alignClass = (align?: string) =>
@@ -138,7 +141,7 @@ const BlockRenderer = ({ block }: Props) => {
         <section className={`${hasBg ? bgColorClass(p.bgColor) : ""} ${padCls}`}>
           <div className="container">
             <RT
-              as="p"
+              as="div"
               className={`${sizeCls} ${lhCls} ${alignClass(p.align)} ${mwWrap} ${hasBg ? "" : "text-foreground/80"} whitespace-pre-wrap`}
               html={p.text}
               style={mwStyle}
@@ -237,15 +240,32 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
-    case "two_columns":
+    case "two_columns": {
+      const leftW = Math.max(15, Math.min(85, p.leftWidth ?? 50));
+      const rightW = 100 - leftW;
+      const valign2 =
+        p.verticalAlign === "start" ? "items-start" : p.verticalAlign === "end" ? "items-end" : "items-center";
+      const gap2 = p.gap ?? 32;
+      const swap = p.swapOrder === true;
       return (
         <section className="container py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <RT as="div" className="prose max-w-none" html={p.left} />
-            <RT as="div" className="prose max-w-none" html={p.right} />
+          <div className={`grid grid-cols-1 md:grid-cols-12 ${valign2}`} style={{ gap: `${gap2}px` }}>
+            <div
+              className={`min-w-0 ${swap ? "md:order-2" : ""}`}
+              style={{ gridColumn: `span ${Math.round((leftW / 100) * 12)} / span ${Math.round((leftW / 100) * 12)}` }}
+            >
+              <RT as="div" className="prose max-w-none" html={p.left} />
+            </div>
+            <div
+              className={`min-w-0 ${swap ? "md:order-1" : ""}`}
+              style={{ gridColumn: `span ${Math.round((rightW / 100) * 12)} / span ${Math.round((rightW / 100) * 12)}` }}
+            >
+              <RT as="div" className="prose max-w-none" html={p.right} />
+            </div>
           </div>
         </section>
       );
+    }
 
     case "three_columns":
       return (

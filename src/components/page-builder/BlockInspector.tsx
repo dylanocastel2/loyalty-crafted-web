@@ -338,6 +338,31 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <>
             <Field label="Linker kolom"><RichText value={p.left || ""} onChange={(v) => set("left", v)} rows={5} /></Field>
             <Field label="Rechter kolom"><RichText value={p.right || ""} onChange={(v) => set("right", v)} rows={5} /></Field>
+            <Field label="Breedte linker kolom (% — 15–85)">
+              <NumberInput min={15} max={85} value={p.leftWidth ?? 50} onChange={(v) => set("leftWidth", v ?? 50)} />
+            </Field>
+            <Field label="Tussenruimte (px)">
+              <NumberInput min={0} max={200} value={p.gap ?? 32} onChange={(v) => set("gap", v ?? 32)} />
+            </Field>
+            <Field label="Verticale uitlijning">
+              <Select value={p.verticalAlign || "center"} onValueChange={(v) => set("verticalAlign", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="start">Boven</SelectItem>
+                  <SelectItem value="center">Midden</SelectItem>
+                  <SelectItem value="end">Onder</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Kolommen omwisselen">
+              <Select value={p.swapOrder ? "yes" : "no"} onValueChange={(v) => set("swapOrder", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="no">Nee (links / rechts)</SelectItem>
+                  <SelectItem value="yes">Ja (rechts / links)</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
           </>
         );
 
