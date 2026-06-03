@@ -46,6 +46,61 @@ const BlockInspector = ({ block, onChange }: Props) => {
   const addItem = (key: string, template: any) => set(key, [...(p[key] || []), template]);
   const removeItem = (key: string, idx: number) => set(key, (p[key] || []).filter((_: any, i: number) => i !== idx));
 
+  const ctaEditor = (linkUsePagePicker: boolean) => {
+    const extras: any[] = p.extraCtas || [];
+    return (
+      <div className="space-y-3 border rounded p-3 bg-muted/30">
+        <div className="text-xs font-semibold">Extra knoppen</div>
+        {extras.map((c, i) => (
+          <div key={i} className="border rounded p-2 space-y-2 bg-background">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-medium">Knop {i + 2}</span>
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("extraCtas", i)}>
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+            <Input
+              value={c.label || ""}
+              placeholder="Knoptekst"
+              onChange={(e) => setItem("extraCtas", i, "label", e.target.value)}
+            />
+            {linkUsePagePicker ? (
+              <PagePicker value={c.link || ""} onChange={(v) => setItem("extraCtas", i, "link", v)} />
+            ) : (
+              <Input
+                value={c.link || ""}
+                placeholder="Link (bv. /contact of https://...)"
+                onChange={(e) => setItem("extraCtas", i, "link", e.target.value)}
+              />
+            )}
+            <Select value={c.variant || "outline"} onValueChange={(v) => setItem("extraCtas", i, "variant", v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Primair</SelectItem>
+                <SelectItem value="secondary">Secundair</SelectItem>
+                <SelectItem value="outline">Omlijnd</SelectItem>
+                <SelectItem value="ghost">Transparant</SelectItem>
+                <SelectItem value="link">Link</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+        <Button variant="outline" size="sm" onClick={() => addItem("extraCtas", { label: "Knop", link: "/", variant: "outline" })}>
+          <Plus className="h-3 w-3 mr-1" /> Voeg knop toe
+        </Button>
+        <Field label="Knoppen layout">
+          <Select value={p.ctaLayout || "row"} onValueChange={(v) => set("ctaLayout", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="row">Naast elkaar</SelectItem>
+              <SelectItem value="stack">Onder elkaar</SelectItem>
+            </SelectContent>
+          </Select>
+        </Field>
+      </div>
+    );
+  };
+
   const alignSelect = (
     <Select value={p.align || "left"} onValueChange={(v) => set("align", v)}>
       <SelectTrigger><SelectValue /></SelectTrigger>
