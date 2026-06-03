@@ -1215,6 +1215,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                       />
                       Verplicht veld
                     </label>
+                    </div>
                   </div>
                 );
               })}
