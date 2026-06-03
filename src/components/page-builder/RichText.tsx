@@ -42,7 +42,7 @@ const sanitizeUrl = (url: string): string => {
 };
 
 /** Sanitize HTML voor opslag/weergave — staat alleen veilige inline opmaak toe.
- *  Block-tags (div/p) worden omgezet naar hun inhoud + <br/> zodat Enter regelafbrekingen bewaard blijven. */
+ *  div/p worden omgezet naar <span style="display:block"> zodat ze geldig zijn binnen <p>/<h2>. */
 export function sanitizeRichText(html: string): string {
   if (!html) return "";
   if (typeof window === "undefined") return html;
@@ -111,6 +111,17 @@ export function sanitizeRichText(html: string): string {
     if (tag === "a") {
       node.setAttribute("target", "_blank");
       node.setAttribute("rel", "noopener noreferrer");
+    }
+    // Vervang div/p door span met display:block zodat ze geldig zijn binnen <p>/<h2>
+    if (tag === "div" || tag === "p") {
+      const style = node.getAttribute("style");
+      const span = document.createElement("span");
+      if (style) span.setAttribute("style", `display:block;${style}`);
+      else span.setAttribute("style", "display:block");
+      while (node.firstChild) span.appendChild(node.firstChild);
+      if (node.parentNode) {
+        node.parentNode.replaceChild(span, node);
+      }
     }
   };
   [...tpl.content.children].forEach((el) => walk(el as Element));
@@ -278,23 +289,22 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
           <Underline className="h-3.5 w-3.5" />
         </Button>
         <div className="w-px h-4 bg-border mx-0.5" />
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Links uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyLeft")}>
+          <AlignLeft className="h-3.5 w-3.5" />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Centreren" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyCenter")}>
+          <AlignCenter className="h-3.5 w-3.5" />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Rechts uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyRight")}>
+          <AlignRight className="h-3.5 w-3.5" />
+        </Button>
         {!singleLine && (
-          <>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Links uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyLeft")}>
-              <AlignLeft className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Centreren" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyCenter")}>
-              <AlignCenter className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Rechts uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyRight")}>
-              <AlignRight className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Uitvullen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyFull")}>
-              <AlignJustify className="h-3.5 w-3.5" />
-            </Button>
-            <div className="w-px h-4 bg-border mx-0.5" />
-          </>
+          <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Uitvullen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyFull")}>
+            <AlignJustify className="h-3.5 w-3.5" />
+          </Button>
         )}
+        <div className="w-px h-4 bg-border mx-0.5" />
+
         <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Hyperlink toevoegen" onMouseDown={(e) => e.preventDefault()} onClick={insertLink}>
           <LinkIcon className="h-3.5 w-3.5" />
         </Button>
