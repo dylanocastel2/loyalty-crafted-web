@@ -47,13 +47,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       (_event, session) => {
         if (session?.user) {
           setUser(session.user);
-          // Check admin in a non-blocking way
-          checkAdmin(session.user.id).then(setIsAdmin);
+          setLoading(true);
+          checkAdmin(session.user.id).then((admin) => {
+            setIsAdmin(admin);
+            setLoading(false);
+          });
         } else {
           setUser(null);
           setIsAdmin(false);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
