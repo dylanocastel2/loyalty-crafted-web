@@ -25,7 +25,16 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { name, email, company, subject, message, attachments } = await req.json();
+    const body = await req.json();
+    const name: string = body.name || "";
+    const email: string = body.email || "";
+    const company: string = body.company || "";
+    const subject: string = body.subject || body.form_subject || body.form_title || "Aanvraag";
+    const message: string = body.message || "";
+    const attachments = body.attachments;
+    const formTitle: string | undefined = body.form_title;
+    const pagePath: string | undefined = body.page_path;
+    const extraFields: Record<string, any> | undefined = body.extra_fields;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -53,16 +62,38 @@ Deno.serve(async (req) => {
       throw new Error("Mailverbinding niet geconfigureerd");
     }
 
-    const to = map.notify_email;
-    const mailSubject = `Nieuw formulier: ${subject || "Aanvraag"}`;
+    // Allow comma-separated list of notification emails
+    const recipients = map.notify_email
+      .split(/[,;\n]+/)
+      .map((s: string) => s.trim())
+      .filter((s: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s));
+    if (recipients.length === 0) {
+      return new Response(JSON.stringify({ ok: true, skipped: true, reason: "no_valid_recipients" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const to = recipients.join(", ");
+
+    const extraHtml = extraFields && typeof extraFields === "object"
+      ? Object.entries(extraFields)
+          .map(([k, v]) => `<p><strong>${escapeHtml(String(k))}:</strong> ${escapeHtml(
+              Array.isArray(v) ? v.join(", ") : (v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v))
+            )}</p>`)
+          .join("")
+      : "";
+
+    const mailSubject = `Nieuw formulier: ${subject}`;
     const html = `
       <h2>Nieuw ingevuld formulier</h2>
+      ${formTitle ? `<p><strong>Formulier:</strong> ${escapeHtml(formTitle)}</p>` : ""}
       <p><strong>Onderwerp:</strong> ${escapeHtml(subject || "")}</p>
-      <p><strong>Naam:</strong> ${escapeHtml(name || "")}</p>
-      <p><strong>E-mail:</strong> ${escapeHtml(email || "")}</p>
+      ${name ? `<p><strong>Naam:</strong> ${escapeHtml(name)}</p>` : ""}
+      ${email ? `<p><strong>E-mail:</strong> ${escapeHtml(email)}</p>` : ""}
       ${company ? `<p><strong>Organisatie:</strong> ${escapeHtml(company)}</p>` : ""}
-      <p><strong>Bericht:</strong></p>
-      <pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(message || "")}</pre>
+      ${pagePath ? `<p><strong>Pagina:</strong> ${escapeHtml(pagePath)}</p>` : ""}
+      ${extraHtml}
+      ${message ? `<p><strong>Bericht:</strong></p>
+      <pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(message)}</pre>` : ""}
     `;
 
     // Fetch attachments (each: { url, name })
