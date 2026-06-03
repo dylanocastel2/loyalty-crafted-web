@@ -415,6 +415,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   <SelectItem value="1">1 kolom</SelectItem>
                   <SelectItem value="2">2 kolommen</SelectItem>
                   <SelectItem value="3">3 kolommen</SelectItem>
+                  <SelectItem value="4">4 kolommen</SelectItem>
+                  <SelectItem value="5">5 kolommen</SelectItem>
+                  <SelectItem value="6">6 kolommen</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
