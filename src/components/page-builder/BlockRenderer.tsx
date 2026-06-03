@@ -649,6 +649,23 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
+    case "search_bar": {
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            <SearchBlock
+              placeholder={p.placeholder}
+              buttonLabel={p.buttonLabel}
+              maxWidth={p.maxWidth}
+              align={p.align}
+              variant={p.variant}
+              showButton={p.showButton !== false}
+            />
+          </div>
+        </section>
+      );
+    }
+
     default:
       return null;
   }
