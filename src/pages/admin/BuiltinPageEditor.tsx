@@ -284,7 +284,7 @@ const BuiltinPageEditor = () => {
           <TabsContent value="seo" className="flex-1 mt-0 p-6 overflow-y-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl">
               <SeoFields data={seo} onChange={setSeo} />
-              <SeoAnalysis seo={seo} blocks={fullBlocks} slug={builtin?.slug || builtin?.key || ""} storageKey={`builtin_${builtin?.key || ""}`} />
+              <SeoAnalysis seo={seo} blocks={fullBlocks} slug={builtin?.key || ""} storageKey={`builtin_${builtin?.key || ""}`} />
             </div>
           </TabsContent>
 
