@@ -14,6 +14,7 @@ import BlockLibrary from "@/components/page-builder/BlockLibrary";
 import BlockCanvas, { updateBlockPropsById, getById } from "@/components/page-builder/BlockCanvas";
 import BlockInspector from "@/components/page-builder/BlockInspector";
 import SeoFields, { SeoData } from "@/components/page-builder/SeoFields";
+import SeoAnalysis from "@/components/page-builder/SeoAnalysis";
 import PageSettingsForm, { PageSettingsData } from "@/components/page-builder/PageSettings";
 import { useBlockHistory } from "@/hooks/useBlockHistory";
 
@@ -296,7 +297,10 @@ const PageEditor = () => {
           </TabsContent>
 
           <TabsContent value="seo" className="p-6">
-            <SeoFields data={seo} onChange={setSeo} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl">
+              <SeoFields data={seo} onChange={setSeo} />
+              <SeoAnalysis seo={seo} blocks={blocks} slug={slug} storageKey={id || slug || "new"} />
+            </div>
           </TabsContent>
 
           <TabsContent value="settings" className="p-6">
