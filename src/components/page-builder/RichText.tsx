@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Bold, Italic, Underline, Palette, Eraser, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Unlink, CaseSensitive } from "lucide-react";
+import { Bold, Italic, Underline, Palette, Eraser, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Unlink, CaseSensitive, List, ListOrdered } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -29,9 +29,9 @@ const PRESET_COLORS: { label: string; value: string }[] = [
 // Numerieke lettergroottes in pixels — zelfde schaal als gangbare editors (Word/Docs).
 const FONT_SIZES: number[] = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 48, 56, 64, 72];
 
-export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br", "a", "div", "p"];
+export const SANITIZED_TAGS = ["span", "strong", "b", "em", "i", "u", "br", "a", "div", "p", "ul", "ol", "li"];
 
-const BLOCK_TAGS = ["section", "article", "header", "footer", "li", "h1", "h2", "h3", "h4", "h5", "h6"];
+const BLOCK_TAGS = ["section", "article", "header", "footer", "h1", "h2", "h3", "h4", "h5", "h6"];
 
 const sanitizeUrl = (url: string): string => {
   const u = url.trim();
@@ -113,6 +113,7 @@ export function sanitizeRichText(html: string): string {
       node.setAttribute("rel", "noopener noreferrer");
     }
     // Vervang div/p door span met display:block zodat ze geldig zijn binnen <p>/<h2>
+    // (lijsten ul/ol/li blijven intact)
     if (tag === "div" || tag === "p") {
       const style = node.getAttribute("style");
       const span = document.createElement("span");
