@@ -43,6 +43,51 @@ const bgColorClass = (color?: string) => {
 const paddingClass = (size?: string) =>
   size === "small" ? "py-6" : size === "large" ? "py-16 md:py-24" : "py-10 md:py-14";
 
+type CtaItem = { label?: string; link?: string; variant?: string };
+
+const CtaLink = ({ to, children }: { to?: string; children: React.ReactNode }) => {
+  const link = to || "/";
+  if (link.startsWith("http")) {
+    return <a href={link} target="_blank" rel="noopener noreferrer">{children}</a>;
+  }
+  return <Link to={link}>{children}</Link>;
+};
+
+const CtaGroup = ({
+  primary,
+  extras,
+  layout,
+  align,
+  defaultVariant,
+  extraVariant,
+}: {
+  primary?: CtaItem;
+  extras?: CtaItem[];
+  layout?: string;
+  align?: string;
+  defaultVariant?: any;
+  extraVariant?: any;
+}) => {
+  const items: (CtaItem & { _variant: any })[] = [];
+  if (primary?.label) items.push({ ...primary, _variant: primary.variant || defaultVariant || "default" });
+  (extras || []).forEach((c) => {
+    if (c?.label) items.push({ ...c, _variant: c.variant || extraVariant || "outline" });
+  });
+  if (!items.length) return null;
+  const isStack = layout === "stack";
+  const justify = align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start";
+  const itemsAlign = align === "center" ? "items-center" : align === "right" ? "items-end" : "items-start";
+  return (
+    <div className={`flex flex-wrap gap-3 ${isStack ? `flex-col ${itemsAlign}` : `flex-row ${justify}`}`}>
+      {items.map((c, i) => (
+        <CtaLink key={i} to={c.link}>
+          <Button size="lg" variant={c._variant}>{c.label}</Button>
+        </CtaLink>
+      ))}
+    </div>
+  );
+};
+
 interface Props {
   block: Block;
 }
