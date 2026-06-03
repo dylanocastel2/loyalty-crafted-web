@@ -141,7 +141,7 @@ const BlockRenderer = ({ block }: Props) => {
         <section className={`${hasBg ? bgColorClass(p.bgColor) : ""} ${padCls}`}>
           <div className="container">
             <RT
-              as="p"
+              as="div"
               className={`${sizeCls} ${lhCls} ${alignClass(p.align)} ${mwWrap} ${hasBg ? "" : "text-foreground/80"} whitespace-pre-wrap`}
               html={p.text}
               style={mwStyle}
