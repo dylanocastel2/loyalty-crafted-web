@@ -35,6 +35,7 @@ Deno.serve(async (req) => {
     const formTitle: string | undefined = body.form_title;
     const pagePath: string | undefined = body.page_path;
     const extraFields: Record<string, any> | undefined = body.extra_fields;
+    const emailSettings: Record<string, any> = body.email_settings || {};
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -83,9 +84,24 @@ Deno.serve(async (req) => {
       : "";
 
     const formLabel = (formTitle && formTitle.trim()) || subject || "Aanvraag";
-    const mailSubject = `Formulier ingevuld: ${formLabel}`;
+    const fillTpl = (tpl: string) =>
+      tpl
+        .replace(/\{formulier\}/gi, formLabel)
+        .replace(/\{naam\}/gi, name || "");
+    const textToHtml = (s: string) =>
+      escapeHtml(s).replace(/\n/g, "<br/>");
+
+    const notifySubjectTpl: string = (emailSettings.notify_subject_tpl || "").trim();
+    const mailSubject = notifySubjectTpl
+      ? fillTpl(notifySubjectTpl)
+      : `Formulier ingevuld: ${formLabel}`;
+
+    const notifyIntroRaw: string = (emailSettings.notify_intro || "").trim();
+    const introHtml = notifyIntroRaw
+      ? `<p>${textToHtml(fillTpl(notifyIntroRaw))}</p>`
+      : `<h2>Nieuw ingevuld formulier</h2>`;
     const html = `
-      <h2>Nieuw ingevuld formulier</h2>
+      ${introHtml}
       ${formTitle ? `<p><strong>Formulier:</strong> ${escapeHtml(formTitle)}</p>` : ""}
       <p><strong>Onderwerp:</strong> ${escapeHtml(subject || "")}</p>
       ${name ? `<p><strong>Naam:</strong> ${escapeHtml(name)}</p>` : ""}
@@ -178,16 +194,31 @@ Deno.serve(async (req) => {
       throw new Error(`Gmail API error [${res.status}]: ${JSON.stringify(data)}`);
     }
 
-    // Send confirmation email to the submitter (if a valid email was provided)
+    // Send confirmation email to the submitter (if a valid email was provided and not disabled)
     let confirmationId: string | null = null;
-    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const confirmEnabled = emailSettings.confirm_enabled !== false;
+    if (confirmEnabled && email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       try {
-        const confirmSubject = `Bevestiging: ${formLabel}`;
+        const confirmSubjectTpl: string = (emailSettings.confirm_subject_tpl || "").trim();
+        const confirmSubject = confirmSubjectTpl
+          ? fillTpl(confirmSubjectTpl)
+          : `Bevestiging: ${formLabel}`;
+
+        const confirmIntroRaw: string = (emailSettings.confirm_intro || "").trim();
+        const confirmIntroHtml = confirmIntroRaw
+          ? `<p>${textToHtml(fillTpl(confirmIntroRaw))}</p>`
+          : `<p>Beste ${escapeHtml(name || "")},</p>
+             <p>Bedankt voor het invullen van het formulier${formTitle ? ` "<strong>${escapeHtml(formTitle)}</strong>"` : ""}. We hebben je bericht goed ontvangen en nemen zo snel mogelijk contact met je op.</p>`;
+
+        const confirmOutroRaw: string = (emailSettings.confirm_outro || "").trim();
+        const confirmOutroHtml = confirmOutroRaw
+          ? `<p>${textToHtml(fillTpl(confirmOutroRaw))}</p>`
+          : `<p>Met vriendelijke groet,<br/>Loyaltygroup</p>`;
+
         const confirmHtml = `
-          <p>Beste ${escapeHtml(name || "")},</p>
-          <p>Bedankt voor het invullen van het formulier${formTitle ? ` "<strong>${escapeHtml(formTitle)}</strong>"` : ""}. We hebben je bericht goed ontvangen en nemen zo snel mogelijk contact met je op.</p>
+          ${confirmIntroHtml}
           ${message ? `<p><strong>Jouw bericht:</strong></p><pre style="white-space:pre-wrap;font-family:inherit;background:#f6f6f6;padding:12px;border-radius:6px">${escapeHtml(message)}</pre>` : ""}
-          <p>Met vriendelijke groet,<br/>Loyaltygroup</p>
+          ${confirmOutroHtml}
         `;
         const confirmRfc = [
           `To: ${email}`,
