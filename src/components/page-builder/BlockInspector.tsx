@@ -163,6 +163,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+            <Field label="Eigen breedte (px, overschrijft bovenstaande)">
+              <NumberInput value={p.customMaxWidth} onChange={(v) => set("customMaxWidth", v)} min={50} max={2000} placeholder="bijv. 720" />
+            </Field>
             <Field label="Achtergrondkleur">
               <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
