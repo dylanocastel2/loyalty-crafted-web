@@ -188,8 +188,9 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
   const exec = (cmd: string, val?: string) => {
     if (!ref.current) return;
     ref.current.focus();
+    const useTags = cmd === "bold" || cmd === "italic" || cmd === "underline";
     try {
-      document.execCommand("styleWithCSS", false, "true");
+      document.execCommand("styleWithCSS", false, useTags ? "false" : "true");
     } catch {}
     document.execCommand(cmd, false, val);
     emit();
