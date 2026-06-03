@@ -999,6 +999,164 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </>
         );
 
+      case "custom_form": {
+        const fields: any[] = p.fields || [];
+        const updateField = (i: number, patch: Record<string, any>) => {
+          const next = [...fields];
+          next[i] = { ...next[i], ...patch };
+          set("fields", next);
+        };
+        const moveField = (i: number, dir: -1 | 1) => {
+          const j = i + dir;
+          if (j < 0 || j >= fields.length) return;
+          const next = [...fields];
+          [next[i], next[j]] = [next[j], next[i]];
+          set("fields", next);
+        };
+        const slugify = (s: string) =>
+          s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 40) || `veld_${fields.length + 1}`;
+        return (
+          <>
+            <Field label="Titel">
+              <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} />
+            </Field>
+            <Field label="Beschrijving">
+              <Textarea value={p.description || ""} onChange={(e) => set("description", e.target.value)} rows={3} />
+            </Field>
+            <Field label="Knoptekst">
+              <Input value={p.submitLabel || ""} onChange={(e) => set("submitLabel", e.target.value)} placeholder="Versturen" />
+            </Field>
+            <Field label="Bedank-bericht">
+              <Textarea value={p.successMessage || ""} onChange={(e) => set("successMessage", e.target.value)} rows={2} />
+            </Field>
+            <Field label="Maximale breedte (px)">
+              <Input type="number" value={p.maxWidth ?? 640} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 640)} />
+            </Field>
+
+            <div className="pt-3 border-t space-y-3">
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Formuliervelden ({fields.length})
+              </Label>
+              {fields.map((f, i) => {
+                const needsOptions = f.type === "select" || f.type === "radio";
+                return (
+                  <div key={i} className="border rounded p-3 space-y-2 bg-muted/20">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-semibold">Veld {i + 1}</span>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, -1)} disabled={i === 0} title="Omhoog">↑</Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveField(i, 1)} disabled={i === fields.length - 1} title="Omlaag">↓</Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("fields", i)}>
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <Field label="Label (vraag)">
+                      <Input
+                        value={f.label || ""}
+                        onChange={(e) => {
+                          const label = e.target.value;
+                          const id = f.id && f.id !== slugify(f.label || "") ? f.id : slugify(label);
+                          updateField(i, { label, id });
+                        }}
+                      />
+                    </Field>
+                    <Field label="Type">
+                      <Select value={f.type || "text"} onValueChange={(v) => updateField(i, { type: v })}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="text">Korte tekst</SelectItem>
+                          <SelectItem value="textarea">Lange tekst</SelectItem>
+                          <SelectItem value="email">E-mail</SelectItem>
+                          <SelectItem value="tel">Telefoon</SelectItem>
+                          <SelectItem value="number">Nummer</SelectItem>
+                          <SelectItem value="url">URL</SelectItem>
+                          <SelectItem value="date">Datum</SelectItem>
+                          <SelectItem value="select">Keuzelijst</SelectItem>
+                          <SelectItem value="radio">Radioknoppen</SelectItem>
+                          <SelectItem value="checkbox">Vinkje (akkoord)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    {f.type !== "checkbox" && (
+                      <Field label="Placeholder">
+                        <Input value={f.placeholder || ""} onChange={(e) => updateField(i, { placeholder: e.target.value })} />
+                      </Field>
+                    )}
+                    {f.type === "textarea" && (
+                      <Field label="Aantal regels">
+                        <Input type="number" value={f.rows ?? 4} onChange={(e) => updateField(i, { rows: parseInt(e.target.value) || 4 })} />
+                      </Field>
+                    )}
+                    {needsOptions && (
+                      <Field label="Opties (één per regel)">
+                        <Textarea
+                          value={(f.options || []).join("\n")}
+                          onChange={(e) => updateField(i, { options: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                          rows={4}
+                        />
+                      </Field>
+                    )}
+                    <Field label="Hulptekst (optioneel)">
+                      <Input value={f.helpText || ""} onChange={(e) => updateField(i, { helpText: e.target.value })} />
+                    </Field>
+                    <label className="flex items-center gap-2 text-xs cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!!f.required}
+                        onChange={(e) => updateField(i, { required: e.target.checked })}
+                      />
+                      Verplicht veld
+                    </label>
+                  </div>
+                );
+              })}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  addItem("fields", {
+                    id: `veld_${fields.length + 1}`,
+                    label: `Veld ${fields.length + 1}`,
+                    type: "text",
+                    required: false,
+                  })
+                }
+              >
+                <Plus className="h-3 w-3 mr-1" /> Veld toevoegen
+              </Button>
+            </div>
+
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <p className="text-[10px] text-muted-foreground leading-snug">
+              Inzendingen worden opgeslagen in de database en zijn zichtbaar voor beheerders.
+            </p>
+          </>
+        );
+      }
+
       default:
         return null;
     }

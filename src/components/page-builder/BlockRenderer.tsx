@@ -11,6 +11,7 @@ import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
 import SearchBlock from "./SearchBlock";
+import CustomFormBlock from "./CustomFormBlock";
 import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
@@ -660,6 +661,24 @@ const BlockRenderer = ({ block }: Props) => {
               align={p.align}
               variant={p.variant}
               showButton={p.showButton !== false}
+            />
+          </div>
+        </section>
+      );
+    }
+
+    case "custom_form": {
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            <CustomFormBlock
+              formId={block.id}
+              title={p.title}
+              description={p.description}
+              submitLabel={p.submitLabel}
+              successMessage={p.successMessage}
+              fields={p.fields || []}
+              maxWidth={p.maxWidth}
             />
           </div>
         </section>
