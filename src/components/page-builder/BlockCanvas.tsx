@@ -3,10 +3,39 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, v
 import { CSS } from "@dnd-kit/utilities";
 import { Block, BlockType, createBlock, getBlockMeta, safeUUID } from "./blockSchema";
 import BlockRenderer from "./BlockRenderer";
-import { GripVertical, Trash2, Copy, Plus } from "lucide-react";
+import { GripVertical, Trash2, Copy, Plus, ClipboardCopy, ClipboardPaste } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+
+const CLIPBOARD_KEY = "lovable:pageBuilder:clipboard";
+
+const reassignIds = (b: Block) => {
+  b.id = safeUUID();
+  if (b.children) b.children.forEach((col) => col.forEach(reassignIds));
+};
+
+const writeClipboard = (block: Block) => {
+  try {
+    const copy: Block = JSON.parse(JSON.stringify(block));
+    localStorage.setItem(CLIPBOARD_KEY, JSON.stringify(copy));
+    window.dispatchEvent(new Event("lovable-pb-clipboard"));
+  } catch {}
+};
+
+const readClipboard = (): Block | null => {
+  try {
+    const raw = localStorage.getItem(CLIPBOARD_KEY);
+    if (!raw) return null;
+    const b = JSON.parse(raw) as Block;
+    if (!b || !b.type) return null;
+    reassignIds(b);
+    return b;
+  } catch {
+    return null;
+  }
+};
 
 interface Props {
   blocks: Block[];
