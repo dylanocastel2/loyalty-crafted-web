@@ -312,7 +312,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Tekstkleur">
               <Select value={p.textColor || "light"} onValueChange={(v) => set("textColor", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger className="gap-2">
+                  <span className={`inline-block w-3 h-3 rounded-full shrink-0 border ${p.textColor === "dark" ? "bg-foreground border-transparent" : "bg-white border-border"}`} />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="light">Licht</SelectItem>
                   <SelectItem value="dark">Donker</SelectItem>
