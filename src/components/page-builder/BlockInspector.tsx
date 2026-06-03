@@ -597,8 +597,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Subtitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={2} /></Field>
             <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
             <Field label="Knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
-            <Field label="Knop link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
-            {ctaEditor(false)}
+            <Field label="Knop link (kies pagina)">
+              <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
+            </Field>
+            {ctaEditor(true)}
           </>
         );
 
