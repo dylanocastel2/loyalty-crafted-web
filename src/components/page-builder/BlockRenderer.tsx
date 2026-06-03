@@ -445,11 +445,14 @@ const BlockRenderer = ({ block }: Props) => {
           <div className={`container ${alignClass(p.titleAlign || "center")} text-primary-foreground`}>
             <RT as="h2" className="text-3xl font-bold leading-tight mb-3" html={p.title} />
             {p.subtitle && <RT as="p" className="mb-6 opacity-90 leading-relaxed whitespace-pre-wrap" html={p.subtitle} />}
-            {p.ctaLabel && (
-              <Link to={p.ctaLink || "/contact"}>
-                <Button size="lg" variant="secondary">{p.ctaLabel}</Button>
-              </Link>
-            )}
+            <CtaGroup
+              primary={{ label: p.ctaLabel, link: p.ctaLink || "/contact", variant: p.ctaVariant }}
+              extras={p.extraCtas}
+              layout={p.ctaLayout}
+              align={p.titleAlign || "center"}
+              defaultVariant="secondary"
+              extraVariant="outline"
+            />
           </div>
         </section>
       );
