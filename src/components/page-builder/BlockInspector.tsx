@@ -386,6 +386,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
             </Field>
             <Field label="CTA knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="CTA link"><Input value={p.ctaLink || ""} onChange={(e) => set("ctaLink", e.target.value)} /></Field>
+            {ctaEditor(false)}
           </>
         );
 
