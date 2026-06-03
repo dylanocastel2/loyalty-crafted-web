@@ -16,8 +16,11 @@ import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
 
+const LIST_CLASSES =
+  "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2 [&_li]:my-0.5";
+
 const RT = ({ html, as: Tag = "span", className, ...rest }: { html?: string; as?: any; className?: string } & React.HTMLAttributes<HTMLElement>) => (
-  <Tag className={className} {...rest} dangerouslySetInnerHTML={{ __html: toRenderHtml(html) }} />
+  <Tag className={`${className ?? ""} ${LIST_CLASSES}`} {...rest} dangerouslySetInnerHTML={{ __html: toRenderHtml(html) }} />
 );
 
 const alignClass = (align?: string) =>
