@@ -27,7 +27,8 @@ export type BlockType =
   | "klantcases"
   | "download_files"
   | "image_cards"
-  | "search_bar";
+  | "search_bar"
+  | "custom_form";
 
 export interface Block {
   id: string;
@@ -86,6 +87,20 @@ export const BLOCK_META: BlockMeta[] = [
     { image: "", title: "Sales & Marketing", description: "Met onze jarenlange ervaring in CRM en loyalty kunnen wij u helpen uw doelstellingen te realiseren." },
   ] } },
   { type: "search_bar", label: "Zoekbalk", category: "Content", icon: "Search", defaultProps: { placeholder: "Waar bent u naar op zoek?", buttonLabel: "Zoek", maxWidth: 560, align: "center", variant: "rounded", showButton: true, bgColor: "background", padding: "medium" } },
+  { type: "custom_form", label: "Aangepast formulier", category: "Content", icon: "ClipboardList", defaultProps: {
+    title: "Neem contact op",
+    description: "Vul het formulier in en we nemen zo snel mogelijk contact op.",
+    submitLabel: "Versturen",
+    successMessage: "Bedankt! Je inzending is ontvangen.",
+    bgColor: "background",
+    padding: "medium",
+    maxWidth: 640,
+    fields: [
+      { id: "naam", label: "Naam", type: "text", required: true, placeholder: "Je naam" },
+      { id: "email", label: "E-mail", type: "email", required: true, placeholder: "naam@bedrijf.nl" },
+      { id: "bericht", label: "Bericht", type: "textarea", required: true, placeholder: "Vertel kort wat je nodig hebt", rows: 4 },
+    ],
+  } },
 ];
 
 export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>
