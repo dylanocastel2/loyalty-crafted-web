@@ -82,7 +82,8 @@ Deno.serve(async (req) => {
           .join("")
       : "";
 
-    const mailSubject = `Nieuw formulier: ${subject}`;
+    const formLabel = (formTitle && formTitle.trim()) || subject || "Aanvraag";
+    const mailSubject = `Formulier ingevuld: ${formLabel}`;
     const html = `
       <h2>Nieuw ingevuld formulier</h2>
       ${formTitle ? `<p><strong>Formulier:</strong> ${escapeHtml(formTitle)}</p>` : ""}
@@ -177,7 +178,43 @@ Deno.serve(async (req) => {
       throw new Error(`Gmail API error [${res.status}]: ${JSON.stringify(data)}`);
     }
 
-    return new Response(JSON.stringify({ ok: true, id: data.id }), {
+    // Send confirmation email to the submitter (if a valid email was provided)
+    let confirmationId: string | null = null;
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      try {
+        const confirmSubject = `Bevestiging: ${formLabel}`;
+        const confirmHtml = `
+          <p>Beste ${escapeHtml(name || "")},</p>
+          <p>Bedankt voor het invullen van het formulier${formTitle ? ` "<strong>${escapeHtml(formTitle)}</strong>"` : ""}. We hebben je bericht goed ontvangen en nemen zo snel mogelijk contact met je op.</p>
+          ${message ? `<p><strong>Jouw bericht:</strong></p><pre style="white-space:pre-wrap;font-family:inherit;background:#f6f6f6;padding:12px;border-radius:6px">${escapeHtml(message)}</pre>` : ""}
+          <p>Met vriendelijke groet,<br/>Loyaltygroup</p>
+        `;
+        const confirmRfc = [
+          `To: ${email}`,
+          `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(confirmSubject)))}?=`,
+          "MIME-Version: 1.0",
+          'Content-Type: text/html; charset="UTF-8"',
+          "",
+          confirmHtml,
+        ].join("\r\n");
+        const confirmRes = await fetch(`${GATEWAY_URL}/users/me/messages/send`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+            "X-Connection-Api-Key": GOOGLE_MAIL_API_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ raw: b64url(confirmRfc) }),
+        });
+        const confirmData = await confirmRes.json();
+        if (confirmRes.ok) confirmationId = confirmData.id;
+        else console.error("confirmation send failed", confirmRes.status, confirmData);
+      } catch (err) {
+        console.error("confirmation email error", err);
+      }
+    }
+
+    return new Response(JSON.stringify({ ok: true, id: data.id, confirmationId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
