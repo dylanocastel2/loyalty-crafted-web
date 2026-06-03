@@ -11,6 +11,7 @@ import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
 import RichText from "./RichText";
+import IconPicker from "./IconPicker";
 
 
 interface Props {
@@ -460,20 +461,16 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "icon_card":
         return (
           <>
-            <Field label="Icoon (Lucide naam, bv. Star, Heart, Code)">
-              <Input value={p.icon || ""} onChange={(e) => set("icon", e.target.value)} />
+            <Field label="Icoon">
+              <IconPicker
+                icon={p.icon}
+                iconImage={p.iconImage}
+                iconColor={p.iconColor}
+                onChange={(v) => onChange({ ...p, ...v })}
+              />
             </Field>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Beschrijving"><RichText value={p.description || ""} onChange={(v) => set("description", v)} rows={5} /></Field>
-            <Field label="Icoonkleur">
-              <Select value={p.iconColor || "primary"} onValueChange={(v) => set("iconColor", v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="primary">Primair</SelectItem>
-                  <SelectItem value="secondary">Secundair</SelectItem>
-                </SelectContent>
-              </Select>
-            </Field>
           </>
         );
 
