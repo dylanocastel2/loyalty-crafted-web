@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Bold, Italic, Underline, Palette, Eraser, Type, AlignLeft, AlignCenter, AlignRight, AlignJustify, Link as LinkIcon, Unlink, CaseSensitive } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -339,6 +340,33 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
             <p className="text-[11px] text-muted-foreground mb-2 px-1">
               Huidig: <span className="font-medium text-foreground">{currentSize ? `${currentSize}px` : "–"}</span> · Selecteer tekst, kies grootte (px)
             </p>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Input
+                type="number"
+                placeholder="Eigen grootte..."
+                min={1}
+                max={200}
+                defaultValue={currentSize ?? ""}
+                className="h-8 text-sm"
+                onMouseDown={(e) => e.preventDefault()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const val = parseInt((e.currentTarget as HTMLInputElement).value, 10);
+                    if (!Number.isNaN(val) && val > 0 && val <= 200) {
+                      applyFontSize(`${val}px`);
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  const val = parseInt(e.currentTarget.value, 10);
+                  if (!Number.isNaN(val) && val > 0 && val <= 200) {
+                    applyFontSize(`${val}px`);
+                  }
+                }}
+              />
+              <span className="text-xs text-muted-foreground">px</span>
+            </div>
             <div className="grid grid-cols-6 gap-1 max-h-56 overflow-auto">
               {FONT_SIZES.map((n) => (
                 <button
