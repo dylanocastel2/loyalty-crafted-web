@@ -43,6 +43,51 @@ const bgColorClass = (color?: string) => {
 const paddingClass = (size?: string) =>
   size === "small" ? "py-6" : size === "large" ? "py-16 md:py-24" : "py-10 md:py-14";
 
+type CtaItem = { label?: string; link?: string; variant?: string };
+
+const CtaLink = ({ to, children }: { to?: string; children: React.ReactNode }) => {
+  const link = to || "/";
+  if (link.startsWith("http")) {
+    return <a href={link} target="_blank" rel="noopener noreferrer">{children}</a>;
+  }
+  return <Link to={link}>{children}</Link>;
+};
+
+const CtaGroup = ({
+  primary,
+  extras,
+  layout,
+  align,
+  defaultVariant,
+  extraVariant,
+}: {
+  primary?: CtaItem;
+  extras?: CtaItem[];
+  layout?: string;
+  align?: string;
+  defaultVariant?: any;
+  extraVariant?: any;
+}) => {
+  const items: (CtaItem & { _variant: any })[] = [];
+  if (primary?.label) items.push({ ...primary, _variant: primary.variant || defaultVariant || "default" });
+  (extras || []).forEach((c) => {
+    if (c?.label) items.push({ ...c, _variant: c.variant || extraVariant || "outline" });
+  });
+  if (!items.length) return null;
+  const isStack = layout === "stack";
+  const justify = align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start";
+  const itemsAlign = align === "center" ? "items-center" : align === "right" ? "items-end" : "items-start";
+  return (
+    <div className={`flex flex-wrap gap-3 ${isStack ? `flex-col ${itemsAlign}` : `flex-row ${justify}`}`}>
+      {items.map((c, i) => (
+        <CtaLink key={i} to={c.link}>
+          <Button size="lg" variant={c._variant}>{c.label}</Button>
+        </CtaLink>
+      ))}
+    </div>
+  );
+};
+
 interface Props {
   block: Block;
 }
@@ -230,11 +275,14 @@ const BlockRenderer = ({ block }: Props) => {
           <div className={`container relative ${alignClass(titleAlign)} ${isLight && !noBg ? "text-primary-foreground" : "text-foreground"}`}>
             <RT as="h1" className="text-4xl md:text-6xl font-bold leading-tight mb-4" html={p.title} />
             {p.subtitle && <RT as="p" className={`text-lg md:text-xl leading-relaxed mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}
-            {p.ctaLabel && (
-              <Link to={p.ctaLink || "/"}>
-                <Button size="lg" variant={isLight && !noBg ? "secondary" : "default"}>{p.ctaLabel}</Button>
-              </Link>
-            )}
+            <CtaGroup
+              primary={{ label: p.ctaLabel, link: p.ctaLink, variant: p.ctaVariant }}
+              extras={p.extraCtas}
+              layout={p.ctaLayout}
+              align={titleAlign}
+              defaultVariant={isLight && !noBg ? "secondary" : "default"}
+              extraVariant={isLight && !noBg ? "outline" : "outline"}
+            />
           </div>
         </section>
       );
@@ -397,11 +445,14 @@ const BlockRenderer = ({ block }: Props) => {
           <div className={`container ${alignClass(p.titleAlign || "center")} text-primary-foreground`}>
             <RT as="h2" className="text-3xl font-bold leading-tight mb-3" html={p.title} />
             {p.subtitle && <RT as="p" className="mb-6 opacity-90 leading-relaxed whitespace-pre-wrap" html={p.subtitle} />}
-            {p.ctaLabel && (
-              <Link to={p.ctaLink || "/contact"}>
-                <Button size="lg" variant="secondary">{p.ctaLabel}</Button>
-              </Link>
-            )}
+            <CtaGroup
+              primary={{ label: p.ctaLabel, link: p.ctaLink || "/contact", variant: p.ctaVariant }}
+              extras={p.extraCtas}
+              layout={p.ctaLayout}
+              align={p.titleAlign || "center"}
+              defaultVariant="secondary"
+              extraVariant="outline"
+            />
           </div>
         </section>
       );
@@ -524,17 +575,16 @@ const BlockRenderer = ({ block }: Props) => {
         <div className="w-full">
           {p.title && <RT as="h2" className={`font-display font-bold text-2xl md:text-3xl leading-tight mb-3 ${alignClass(p.titleAlign || "left")}`} html={p.title} />}
           {p.text && <RT as="div" className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap" html={p.text} />}
-          {p.ctaLabel && (
+          {(p.ctaLabel || (p.extraCtas || []).some((c: any) => c?.label)) && (
             <div className="mt-5">
-              {p.ctaLink?.startsWith("http") ? (
-                <a href={p.ctaLink} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg">{p.ctaLabel}</Button>
-                </a>
-              ) : (
-                <Link to={p.ctaLink || "/"}>
-                  <Button size="lg">{p.ctaLabel}</Button>
-                </Link>
-              )}
+              <CtaGroup
+                primary={{ label: p.ctaLabel, link: p.ctaLink, variant: p.ctaVariant }}
+                extras={p.extraCtas}
+                layout={p.ctaLayout}
+                align={p.titleAlign || "left"}
+                defaultVariant="default"
+                extraVariant="outline"
+              />
             </div>
           )}
         </div>
