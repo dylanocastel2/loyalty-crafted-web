@@ -1096,8 +1096,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
                       <Field label="Opties (één per regel)">
                         <Textarea
                           value={(f.options || []).join("\n")}
-                          onChange={(e) => updateField(i, { options: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                          onChange={(e) => updateField(i, { options: e.target.value.split("\n").map((s) => s.trim()) })}
                           rows={4}
+                          placeholder="Keuze 1&#10;Keuze 2&#10;Keuze 3"
                         />
                       </Field>
                     )}

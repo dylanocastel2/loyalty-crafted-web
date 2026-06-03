@@ -204,7 +204,7 @@ const CustomFormBlock = ({
                     <SelectValue placeholder={f.placeholder || "Maak een keuze"} />
                   </SelectTrigger>
                   <SelectContent>
-                    {(f.options || []).map((opt) => (
+                    {(f.options || []).filter(Boolean).map((opt) => (
                       <SelectItem key={opt} value={opt}>
                         {opt}
                       </SelectItem>
@@ -213,7 +213,7 @@ const CustomFormBlock = ({
                 </Select>
               ) : f.type === "select" && f.multiple ? (
                 <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-1 bg-background">
-                  {(f.options || []).map((opt) => {
+                  {(f.options || []).filter(Boolean).map((opt) => {
                     const arr: string[] = Array.isArray(values[f.id]) ? values[f.id] : [];
                     const checked = arr.includes(opt);
                     return (
@@ -232,7 +232,7 @@ const CustomFormBlock = ({
                 </div>
               ) : f.type === "checkbox_group" ? (
                 <div className="space-y-1.5">
-                  {(f.options || []).map((opt) => {
+                  {(f.options || []).filter(Boolean).map((opt) => {
                     const arr: string[] = Array.isArray(values[f.id]) ? values[f.id] : [];
                     const checked = arr.includes(opt);
                     return (
@@ -294,7 +294,7 @@ const CustomFormBlock = ({
                 </div>
               ) : f.type === "radio" ? (
                 <RadioGroup value={values[f.id] || ""} onValueChange={(v) => update(f.id, v)}>
-                  {(f.options || []).map((opt) => (
+                  {(f.options || []).filter(Boolean).map((opt) => (
                     <div key={opt} className="flex items-center gap-2">
                       <RadioGroupItem value={opt} id={`${common.id}-${opt}`} />
                       <Label htmlFor={`${common.id}-${opt}`} className="text-sm font-normal">
