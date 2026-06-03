@@ -23,6 +23,7 @@ interface Props {
   showBranche?: boolean;
   showCategory?: boolean;
   title?: string;
+  titleAlign?: string;
   showFilter?: boolean;
   maxRows?: number;
 }
