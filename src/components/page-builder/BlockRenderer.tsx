@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
+import SearchBlock from "./SearchBlock";
 import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
