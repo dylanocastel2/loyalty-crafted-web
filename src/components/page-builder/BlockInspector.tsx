@@ -1038,7 +1038,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 Formuliervelden ({fields.length})
               </Label>
               {fields.map((f, i) => {
-                const needsOptions = f.type === "select" || f.type === "radio";
+                const needsOptions = f.type === "select" || f.type === "radio" || f.type === "checkbox_group";
                 return (
                   <div key={i} className="border rounded p-3 space-y-2 bg-muted/20">
                     <div className="flex justify-between items-center">
@@ -1072,13 +1072,17 @@ const BlockInspector = ({ block, onChange }: Props) => {
                           <SelectItem value="number">Nummer</SelectItem>
                           <SelectItem value="url">URL</SelectItem>
                           <SelectItem value="date">Datum</SelectItem>
-                          <SelectItem value="select">Keuzelijst</SelectItem>
-                          <SelectItem value="radio">Radioknoppen</SelectItem>
+                          <SelectItem value="time">Tijd</SelectItem>
+                          <SelectItem value="select">Dropdown (keuzelijst)</SelectItem>
+                          <SelectItem value="radio">Radioknoppen (één keuze)</SelectItem>
+                          <SelectItem value="checkbox_group">Meerkeuze (meerdere antwoorden)</SelectItem>
+                          <SelectItem value="rating">Sterrenbeoordeling</SelectItem>
+                          <SelectItem value="range">Schuifregelaar</SelectItem>
                           <SelectItem value="checkbox">Vinkje (akkoord)</SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
-                    {f.type !== "checkbox" && (
+                    {f.type !== "checkbox" && f.type !== "rating" && f.type !== "range" && f.type !== "checkbox_group" && (
                       <Field label="Placeholder">
                         <Input value={f.placeholder || ""} onChange={(e) => updateField(i, { placeholder: e.target.value })} />
                       </Field>
@@ -1096,6 +1100,57 @@ const BlockInspector = ({ block, onChange }: Props) => {
                           rows={4}
                         />
                       </Field>
+                    )}
+                    {f.type === "select" && (
+                      <label className="flex items-center gap-2 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={!!f.multiple}
+                          onChange={(e) => updateField(i, { multiple: e.target.checked })}
+                        />
+                        Meerdere keuzes toestaan
+                      </label>
+                    )}
+                    {f.type === "number" && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <Field label="Min">
+                          <Input type="number" value={f.min ?? ""} onChange={(e) => updateField(i, { min: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                        </Field>
+                        <Field label="Max">
+                          <Input type="number" value={f.max ?? ""} onChange={(e) => updateField(i, { max: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                        </Field>
+                        <Field label="Stap">
+                          <Input type="number" value={f.step ?? ""} onChange={(e) => updateField(i, { step: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                        </Field>
+                      </div>
+                    )}
+                    {f.type === "range" && (
+                      <div className="grid grid-cols-3 gap-2">
+                        <Field label="Min">
+                          <Input type="number" value={f.min ?? 0} onChange={(e) => updateField(i, { min: Number(e.target.value) })} />
+                        </Field>
+                        <Field label="Max">
+                          <Input type="number" value={f.max ?? 100} onChange={(e) => updateField(i, { max: Number(e.target.value) })} />
+                        </Field>
+                        <Field label="Stap">
+                          <Input type="number" value={f.step ?? 1} onChange={(e) => updateField(i, { step: Number(e.target.value) || 1 })} />
+                        </Field>
+                      </div>
+                    )}
+                    {f.type === "rating" && (
+                      <Field label="Aantal sterren">
+                        <Input type="number" min={3} max={10} value={f.max ?? 5} onChange={(e) => updateField(i, { max: Number(e.target.value) || 5 })} />
+                      </Field>
+                    )}
+                    {(f.type === "text" || f.type === "textarea") && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <Field label="Min. tekens">
+                          <Input type="number" value={f.minLength ?? ""} onChange={(e) => updateField(i, { minLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                        </Field>
+                        <Field label="Max. tekens">
+                          <Input type="number" value={f.maxLength ?? ""} onChange={(e) => updateField(i, { maxLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                        </Field>
+                      </div>
                     )}
                     <Field label="Hulptekst (optioneel)">
                       <Input value={f.helpText || ""} onChange={(e) => updateField(i, { helpText: e.target.value })} />
