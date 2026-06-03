@@ -23,6 +23,9 @@ const RT = ({ html, as: Tag = "span", className, ...rest }: { html?: string; as?
 const alignClass = (align?: string) =>
   align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
 
+const titleAlignWrapClass = (align?: string) =>
+  align === "center" ? "mx-auto" : align === "right" ? "ml-auto" : "";
+
 const bgColorClass = (color?: string) => {
   switch (color) {
     case "primary": return "bg-primary text-primary-foreground";
@@ -208,18 +211,20 @@ const BlockRenderer = ({ block }: Props) => {
       const bg = p.bgImage
         ? { backgroundImage: `url(${p.bgImage})`, backgroundSize: "cover", backgroundPosition: "center" }
         : {};
+      const noBg = !p.bgImage && p.bgColor === "none";
+      const titleAlign = p.titleAlign || "center";
       return (
         <section
-          className={`relative py-20 md:py-32 ${!p.bgImage ? bgColorClass(p.bgColor || "primary") : ""}`}
+          className={`relative py-20 md:py-32 ${!p.bgImage && !noBg ? bgColorClass(p.bgColor || "primary") : ""}`}
           style={bg}
         >
           {p.bgImage && <div className="absolute inset-0 bg-black/50" />}
-          <div className={`container relative text-center ${isLight ? "text-primary-foreground" : "text-foreground"}`}>
+          <div className={`container relative ${alignClass(titleAlign)} ${isLight && !noBg ? "text-primary-foreground" : "text-foreground"}`}>
             <RT as="h1" className="text-4xl md:text-6xl font-bold mb-4" html={p.title} />
-            {p.subtitle && <RT as="p" className="text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto whitespace-pre-wrap" html={p.subtitle} />}
+            {p.subtitle && <RT as="p" className={`text-lg md:text-xl mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}
             {p.ctaLabel && (
               <Link to={p.ctaLink || "/"}>
-                <Button size="lg" variant={isLight ? "secondary" : "default"}>{p.ctaLabel}</Button>
+                <Button size="lg" variant={isLight && !noBg ? "secondary" : "default"}>{p.ctaLabel}</Button>
               </Link>
             )}
           </div>
@@ -346,7 +351,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "cta_banner":
       return (
         <section className="bg-gradient-to-br from-primary to-secondary py-16">
-          <div className="container text-center text-primary-foreground">
+          <div className={`container ${alignClass(p.titleAlign || "center")} text-primary-foreground`}>
             <RT as="h2" className="text-3xl font-bold mb-3" html={p.title} />
             {p.subtitle && <RT as="p" className="mb-6 opacity-90 whitespace-pre-wrap" html={p.subtitle} />}
             {p.ctaLabel && (
@@ -361,7 +366,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "contact_form":
       return (
         <section className="container py-12 max-w-xl">
-          <h2 className="text-2xl font-bold mb-6 text-center">{p.title}</h2>
+          <h2 className={`text-2xl font-bold mb-6 ${alignClass(p.titleAlign || "center")}`}>{p.title}</h2>
           <form
             className="space-y-4"
             onSubmit={(e) => { e.preventDefault(); alert("Bedankt voor je bericht!"); }}
@@ -474,7 +479,7 @@ const BlockRenderer = ({ block }: Props) => {
       );
       const textEl = (
         <div className="w-full">
-          {p.title && <RT as="h2" className="font-display font-bold text-2xl md:text-3xl mb-3" html={p.title} />}
+          {p.title && <RT as="h2" className={`font-display font-bold text-2xl md:text-3xl mb-3 ${alignClass(p.titleAlign || "left")}`} html={p.title} />}
           {p.text && <RT as="div" className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap" html={p.text} />}
           {p.ctaLabel && (
             <div className="mt-5">
@@ -533,7 +538,7 @@ const BlockRenderer = ({ block }: Props) => {
         <section className={`${bgColorClass(p.bgColor || "muted")} py-12`}>
           <div className="container">
             {p.title && (
-              <RT as="h3" className="text-center text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8" html={p.title} />
+              <RT as="h3" className={`${alignClass(p.titleAlign || "center")} text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8`} html={p.title} />
             )}
             <div className="marquee-mask overflow-hidden">
               <div
@@ -569,6 +574,7 @@ const BlockRenderer = ({ block }: Props) => {
             showBranche={p.showBranche !== false}
             showCategory={p.showCategory !== false}
             title={p.title}
+            titleAlign={p.titleAlign}
             showFilter={p.showFilter === true}
             maxRows={p.maxRows || 0}
           />
@@ -589,8 +595,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <RT as="h2" className="text-2xl md:text-3xl font-bold text-center mb-2" html={p.title} />}
-            {p.subtitle && <RT as="p" className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto whitespace-pre-wrap" html={p.subtitle} />}
+            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold mb-2 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
+            {p.subtitle && <RT as="p" className={`text-muted-foreground mb-8 max-w-2xl whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
             <div className={`grid ${colClass} gap-6 mt-6`}>
               {files.map((f, i) => (
                 <a
@@ -628,8 +634,8 @@ const BlockRenderer = ({ block }: Props) => {
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
           <div className="container">
-            {p.title && <RT as="h2" className="text-2xl md:text-3xl font-bold text-center mb-4" html={p.title} />}
-            {p.subtitle && <RT as="p" className="text-muted-foreground text-center max-w-2xl mx-auto mb-12 whitespace-pre-wrap" html={p.subtitle} />}
+            {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold mb-4 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
+            {p.subtitle && <RT as="p" className={`text-muted-foreground max-w-2xl mb-12 whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
             <div className={`grid ${colClass} gap-8`}>
               {items.map((it, i) => (
                 <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
@@ -674,6 +680,7 @@ const BlockRenderer = ({ block }: Props) => {
             <CustomFormBlock
               formId={block.id}
               title={p.title}
+              titleAlign={p.titleAlign}
               formSubject={p.formSubject}
               description={p.description}
               submitLabel={p.submitLabel}
