@@ -1,5 +1,6 @@
 import { Block } from "./blockSchema";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "./NumberInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
 import RichText from "./RichText";
+
 
 interface Props {
   block: Block | null;
@@ -210,12 +212,11 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     </Select>
                   </Field>
                   <Field label="Intensiteit (%)">
-                    <Input
-                      type="number"
+                    <NumberInput
                       min={0}
                       max={100}
                       value={p.gradientOpacity ?? 100}
-                      onChange={(e) => set("gradientOpacity", Math.max(0, Math.min(100, parseInt(e.target.value) || 0)))}
+                      onChange={(v) => set("gradientOpacity", v ?? 100)}
                     />
                   </Field>
                   <Field label="Tekst over afbeelding (titel)">
@@ -273,7 +274,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "spacer":
         return (
           <Field label="Hoogte (px)">
-            <Input type="number" value={p.height || 40} onChange={(e) => set("height", parseInt(e.target.value) || 0)} />
+            <NumberInput value={p.height || 40} onChange={(v) => set("height", v ?? 40)} />
           </Field>
         );
 
@@ -370,7 +371,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Tussenruimte (px)">
-              <Input type="number" value={p.gap ?? 32} onChange={(e) => set("gap", parseInt(e.target.value) || 0)} />
+              <NumberInput value={p.gap ?? 32} onChange={(v) => set("gap", v ?? 0)} />
             </Field>
             <Field label="Verticale uitlijning">
               <Select value={p.verticalAlign || "start"} onValueChange={(v) => set("verticalAlign", v)}>
@@ -597,7 +598,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Breedte afbeelding (% — 20–80)">
-              <Input type="number" min={20} max={80} value={p.imageWidth ?? 50} onChange={(e) => set("imageWidth", Math.max(20, Math.min(80, parseInt(e.target.value) || 50)))} />
+              <NumberInput min={20} max={80} value={p.imageWidth ?? 50} onChange={(v) => set("imageWidth", v ?? 50)} />
             </Field>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Tekst"><RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={8} /></Field>
@@ -659,10 +660,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Logo hoogte (px)">
-              <Input type="number" value={p.height ?? 60} onChange={(e) => set("height", parseInt(e.target.value) || 60)} />
+              <NumberInput value={p.height ?? 60} onChange={(v) => set("height", v ?? 60)} />
             </Field>
             <Field label="Snelheid (sec — lager = sneller)">
-              <Input type="number" value={p.speed ?? 30} onChange={(e) => set("speed", parseInt(e.target.value) || 30)} />
+              <NumberInput value={p.speed ?? 30} onChange={(v) => set("speed", v ?? 30)} />
             </Field>
             <Field label="Grijswaarden tot hover">
               <Select value={p.grayscale ? "yes" : "no"} onValueChange={(v) => set("grayscale", v === "yes")}>
@@ -727,7 +728,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             ) : (
               <Field label="Aantal cases">
-                <Input type="number" min={1} max={12} value={p.limit ?? 3} onChange={(e) => set("limit", Math.max(1, Math.min(12, parseInt(e.target.value) || 3)))} />
+                <NumberInput min={1} max={12} value={p.limit ?? 3} onChange={(v) => set("limit", v ?? 3)} />
               </Field>
             )}
             <Field label="Aantal kolommen">
@@ -948,7 +949,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             )}
             <Field label="Maximale breedte (px)">
-              <Input type="number" value={p.maxWidth ?? 560} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 560)} />
+              <NumberInput value={p.maxWidth ?? 560} onChange={(v) => set("maxWidth", v ?? 560)} />
             </Field>
             <Field label="Uitlijning">
               <Select value={p.align || "center"} onValueChange={(v) => set("align", v)}>
@@ -1054,7 +1055,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Textarea value={p.successMessage || ""} onChange={(e) => set("successMessage", e.target.value)} rows={2} />
             </Field>
             <Field label="Maximale breedte (px)">
-              <Input type="number" value={p.maxWidth ?? 640} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 640)} />
+              <NumberInput value={p.maxWidth ?? 640} onChange={(v) => set("maxWidth", v ?? 640)} />
             </Field>
 
             <div className="pt-3 border-t space-y-3">
@@ -1140,7 +1141,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     )}
                     {f.type === "textarea" && (
                       <Field label="Aantal regels">
-                        <Input type="number" value={f.rows ?? 4} onChange={(e) => updateField(i, { rows: parseInt(e.target.value) || 4 })} />
+                        <NumberInput value={f.rows ?? 4} onChange={(v) => updateField(i, { rows: v ?? 4 })} />
                       </Field>
                     )}
                     {needsOptions && (
@@ -1166,41 +1167,41 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     {f.type === "number" && (
                       <div className="grid grid-cols-3 gap-2">
                         <Field label="Min">
-                          <Input type="number" value={f.min ?? ""} onChange={(e) => updateField(i, { min: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.min} onChange={(v) => updateField(i, { min: v })} />
                         </Field>
                         <Field label="Max">
-                          <Input type="number" value={f.max ?? ""} onChange={(e) => updateField(i, { max: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.max} onChange={(v) => updateField(i, { max: v })} />
                         </Field>
                         <Field label="Stap">
-                          <Input type="number" value={f.step ?? ""} onChange={(e) => updateField(i, { step: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.step} onChange={(v) => updateField(i, { step: v })} />
                         </Field>
                       </div>
                     )}
                     {f.type === "range" && (
                       <div className="grid grid-cols-3 gap-2">
                         <Field label="Min">
-                          <Input type="number" value={f.min ?? 0} onChange={(e) => updateField(i, { min: Number(e.target.value) })} />
+                          <NumberInput value={f.min ?? 0} onChange={(v) => updateField(i, { min: v ?? 0 })} />
                         </Field>
                         <Field label="Max">
-                          <Input type="number" value={f.max ?? 100} onChange={(e) => updateField(i, { max: Number(e.target.value) })} />
+                          <NumberInput value={f.max ?? 100} onChange={(v) => updateField(i, { max: v ?? 100 })} />
                         </Field>
                         <Field label="Stap">
-                          <Input type="number" value={f.step ?? 1} onChange={(e) => updateField(i, { step: Number(e.target.value) || 1 })} />
+                          <NumberInput value={f.step ?? 1} onChange={(v) => updateField(i, { step: v ?? 1 })} />
                         </Field>
                       </div>
                     )}
                     {f.type === "rating" && (
                       <Field label="Aantal sterren">
-                        <Input type="number" min={3} max={10} value={f.max ?? 5} onChange={(e) => updateField(i, { max: Number(e.target.value) || 5 })} />
+                        <NumberInput min={3} max={10} value={f.max ?? 5} onChange={(v) => updateField(i, { max: v ?? 5 })} />
                       </Field>
                     )}
                     {(f.type === "text" || f.type === "textarea") && (
                       <div className="grid grid-cols-2 gap-2">
                         <Field label="Min. tekens">
-                          <Input type="number" value={f.minLength ?? ""} onChange={(e) => updateField(i, { minLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.minLength} onChange={(v) => updateField(i, { minLength: v })} />
                         </Field>
                         <Field label="Max. tekens">
-                          <Input type="number" value={f.maxLength ?? ""} onChange={(e) => updateField(i, { maxLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.maxLength} onChange={(v) => updateField(i, { maxLength: v })} />
                         </Field>
                       </div>
                     )}
@@ -1319,26 +1320,26 @@ const BlockInspector = ({ block, onChange }: Props) => {
       <div className="pt-4 mt-4 border-t space-y-3">
         <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Positie & marges</h4>
         <Field label="Marge boven (px)">
-          <Input type="number" value={p.marginTop ?? ""} onChange={(e) => set("marginTop", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.marginTop} onChange={(v) => set("marginTop", v)} placeholder="0" />
         </Field>
         <Field label="Marge onder (px)">
-          <Input type="number" value={p.marginBottom ?? ""} onChange={(e) => set("marginBottom", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.marginBottom} onChange={(v) => set("marginBottom", v)} placeholder="0" />
         </Field>
         <Field label="Horizontale offset (px)">
-          <Input type="number" value={p.offsetX ?? ""} onChange={(e) => set("offsetX", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.offsetX} onChange={(v) => set("offsetX", v)} placeholder="0" />
         </Field>
         <p className="text-[10px] text-muted-foreground leading-snug">Tip: gebruik 'Uitlijning' bovenaan en deze velden om je tekst of afbeelding precies op de juiste plek te zetten.</p>
 
         <div className="pt-3 mt-3 border-t space-y-3">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Mobiel (overschrijft desktop)</h5>
           <Field label="Marge boven mobiel (px)">
-            <Input type="number" value={p.marginTopMobile ?? ""} onChange={(e) => set("marginTopMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.marginTopMobile} onChange={(v) => set("marginTopMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <Field label="Marge onder mobiel (px)">
-            <Input type="number" value={p.marginBottomMobile ?? ""} onChange={(e) => set("marginBottomMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.marginBottomMobile} onChange={(v) => set("marginBottomMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <Field label="Horizontale offset mobiel (px)">
-            <Input type="number" value={p.offsetXMobile ?? ""} onChange={(e) => set("offsetXMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.offsetXMobile} onChange={(v) => set("offsetXMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <p className="text-[10px] text-muted-foreground leading-snug">Laat leeg om de desktopwaarde te gebruiken. Mobiel = breedte onder 768px.</p>
         </div>
