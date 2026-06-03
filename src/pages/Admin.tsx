@@ -446,6 +446,79 @@ const Admin = () => {
               </div>
             </div>
           )}
+
+          <div className="bg-card border rounded-lg mt-6">
+            <div className="p-5 border-b flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Formulier-inzendingen</h2>
+              <span className="ml-auto text-sm text-muted-foreground">{formSubmissions.length} totaal</span>
+            </div>
+            {formSubmissions.length === 0 ? (
+              <p className="p-8 text-center text-muted-foreground">Nog geen formulier-inzendingen.</p>
+            ) : (
+              <ul className="divide-y">
+                {formSubmissions.map((s) => {
+                  const subj = (s.data && (s.data._subject as string)) || s.form_title || "Formulier";
+                  const preview = Object.entries(s.data || {})
+                    .filter(([k]) => k !== "_subject")
+                    .slice(0, 3)
+                    .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v ?? ""}`)
+                    .join(" · ");
+                  return (
+                    <li
+                      key={s.id}
+                      className="p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer"
+                      onClick={() => setOpenFormSubmission(s)}
+                    >
+                      <div className="mt-1.5 h-2 w-2 rounded-full bg-primary/60" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{subj}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{preview || "—"}</p>
+                        {s.page_path && <p className="text-[11px] text-muted-foreground mt-0.5">Pagina: {s.page_path}</p>}
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {openFormSubmission && (
+            <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenFormSubmission(null)}>
+              <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="p-5 border-b flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-lg">
+                      {(openFormSubmission.data && (openFormSubmission.data._subject as string)) || openFormSubmission.form_title || "Formulier"}
+                    </h3>
+                    {openFormSubmission.page_path && (
+                      <p className="text-xs text-muted-foreground mt-1">Pagina: {openFormSubmission.page_path}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">{new Date(openFormSubmission.created_at).toLocaleString("nl-NL")}</p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => setOpenFormSubmission(null)}>Sluiten</Button>
+                </div>
+                <div className="p-5 space-y-2 text-sm">
+                  {Object.entries(openFormSubmission.data || {})
+                    .filter(([k]) => k !== "_subject")
+                    .map(([k, v]) => (
+                      <div key={k} className="grid grid-cols-3 gap-3 border-b last:border-0 pb-2">
+                        <div className="font-medium text-muted-foreground">{k}</div>
+                        <div className="col-span-2 whitespace-pre-wrap break-words">
+                          {Array.isArray(v) ? v.join(", ") : (v == null || v === "" ? "—" : typeof v === "object" ? JSON.stringify(v) : String(v))}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="p-5 border-t flex gap-2 justify-end">
+                  <Button variant="destructive" size="sm" onClick={() => deleteFormSubmission(openFormSubmission.id)}>
+                    <Trash2 className="h-4 w-4 mr-1" /> Verwijderen
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
 
