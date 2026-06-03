@@ -442,6 +442,7 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
         className={cn(
           "px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring/40 rounded-b-md overflow-y-auto overflow-x-hidden break-words",
           "[&_a]:text-primary [&_a]:underline",
+          "[&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-0.5",
           "[&[data-placeholder]:empty]:before:content-[attr(data-placeholder)] [&[data-placeholder]:empty]:before:text-muted-foreground",
           singleLine ? "min-h-[2rem]" : "whitespace-pre-wrap"
         )}
