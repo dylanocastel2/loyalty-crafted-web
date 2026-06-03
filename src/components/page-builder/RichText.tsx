@@ -306,6 +306,18 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
         )}
         <div className="w-px h-4 bg-border mx-0.5" />
 
+        {!singleLine && (
+          <>
+            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Bullet-lijst" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("insertUnorderedList")}>
+              <List className="h-3.5 w-3.5" />
+            </Button>
+            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Genummerde lijst" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("insertOrderedList")}>
+              <ListOrdered className="h-3.5 w-3.5" />
+            </Button>
+            <div className="w-px h-4 bg-border mx-0.5" />
+          </>
+        )}
+
         <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Hyperlink toevoegen" onMouseDown={(e) => e.preventDefault()} onClick={insertLink}>
           <LinkIcon className="h-3.5 w-3.5" />
         </Button>
