@@ -1045,6 +1045,13 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel">
               <Input value={p.title || ""} onChange={(e) => set("title", e.target.value)} />
             </Field>
+            <Field label="Onderwerp (voor e-mailmelding & overzicht)">
+              <Input
+                value={p.formSubject || ""}
+                onChange={(e) => set("formSubject", e.target.value)}
+                placeholder="bv. Aanvraag offerte"
+              />
+            </Field>
             <Field label="Beschrijving">
               <Textarea value={p.description || ""} onChange={(e) => set("description", e.target.value)} rows={3} />
             </Field>
