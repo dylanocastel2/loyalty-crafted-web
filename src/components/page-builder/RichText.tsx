@@ -278,23 +278,22 @@ const RichText = ({ value, onChange, singleLine, rows = 4, placeholder, classNam
           <Underline className="h-3.5 w-3.5" />
         </Button>
         <div className="w-px h-4 bg-border mx-0.5" />
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Links uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyLeft")}>
+          <AlignLeft className="h-3.5 w-3.5" />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Centreren" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyCenter")}>
+          <AlignCenter className="h-3.5 w-3.5" />
+        </Button>
+        <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Rechts uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyRight")}>
+          <AlignRight className="h-3.5 w-3.5" />
+        </Button>
         {!singleLine && (
-          <>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Links uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyLeft")}>
-              <AlignLeft className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Centreren" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyCenter")}>
-              <AlignCenter className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Rechts uitlijnen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyRight")}>
-              <AlignRight className="h-3.5 w-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Uitvullen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyFull")}>
-              <AlignJustify className="h-3.5 w-3.5" />
-            </Button>
-            <div className="w-px h-4 bg-border mx-0.5" />
-          </>
+          <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Uitvullen" onMouseDown={(e) => e.preventDefault()} onClick={() => exec("justifyFull")}>
+            <AlignJustify className="h-3.5 w-3.5" />
+          </Button>
         )}
+        <div className="w-px h-4 bg-border mx-0.5" />
+
         <Button type="button" variant="ghost" size="icon" className="h-7 w-7" title="Hyperlink toevoegen" onMouseDown={(e) => e.preventDefault()} onClick={insertLink}>
           <LinkIcon className="h-3.5 w-3.5" />
         </Button>
