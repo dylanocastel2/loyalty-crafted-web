@@ -1331,7 +1331,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
           <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tekstkleur</h4>
           <Field label="Kleur (uit thema)">
             <Select value={p.textColorToken || "default"} onValueChange={(v) => set("textColorToken", v === "default" ? undefined : v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger className="gap-2">
+                <span className={`inline-block w-3 h-3 rounded-full shrink-0 ${textColorDotMap[p.textColorToken || "default"]}`} />
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="default">Standaard</SelectItem>
                 <SelectItem value="foreground">Donker (foreground)</SelectItem>
