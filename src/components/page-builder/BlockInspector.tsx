@@ -1167,41 +1167,41 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     {f.type === "number" && (
                       <div className="grid grid-cols-3 gap-2">
                         <Field label="Min">
-                          <Input type="number" value={f.min ?? ""} onChange={(e) => updateField(i, { min: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.min} onChange={(v) => updateField(i, { min: v })} />
                         </Field>
                         <Field label="Max">
-                          <Input type="number" value={f.max ?? ""} onChange={(e) => updateField(i, { max: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.max} onChange={(v) => updateField(i, { max: v })} />
                         </Field>
                         <Field label="Stap">
-                          <Input type="number" value={f.step ?? ""} onChange={(e) => updateField(i, { step: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.step} onChange={(v) => updateField(i, { step: v })} />
                         </Field>
                       </div>
                     )}
                     {f.type === "range" && (
                       <div className="grid grid-cols-3 gap-2">
                         <Field label="Min">
-                          <Input type="number" value={f.min ?? 0} onChange={(e) => updateField(i, { min: Number(e.target.value) })} />
+                          <NumberInput value={f.min ?? 0} onChange={(v) => updateField(i, { min: v ?? 0 })} />
                         </Field>
                         <Field label="Max">
-                          <Input type="number" value={f.max ?? 100} onChange={(e) => updateField(i, { max: Number(e.target.value) })} />
+                          <NumberInput value={f.max ?? 100} onChange={(v) => updateField(i, { max: v ?? 100 })} />
                         </Field>
                         <Field label="Stap">
-                          <Input type="number" value={f.step ?? 1} onChange={(e) => updateField(i, { step: Number(e.target.value) || 1 })} />
+                          <NumberInput value={f.step ?? 1} onChange={(v) => updateField(i, { step: v ?? 1 })} />
                         </Field>
                       </div>
                     )}
                     {f.type === "rating" && (
                       <Field label="Aantal sterren">
-                        <Input type="number" min={3} max={10} value={f.max ?? 5} onChange={(e) => updateField(i, { max: Number(e.target.value) || 5 })} />
+                        <NumberInput min={3} max={10} value={f.max ?? 5} onChange={(v) => updateField(i, { max: v ?? 5 })} />
                       </Field>
                     )}
                     {(f.type === "text" || f.type === "textarea") && (
                       <div className="grid grid-cols-2 gap-2">
                         <Field label="Min. tekens">
-                          <Input type="number" value={f.minLength ?? ""} onChange={(e) => updateField(i, { minLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.minLength} onChange={(v) => updateField(i, { minLength: v })} />
                         </Field>
                         <Field label="Max. tekens">
-                          <Input type="number" value={f.maxLength ?? ""} onChange={(e) => updateField(i, { maxLength: e.target.value === "" ? undefined : Number(e.target.value) })} />
+                          <NumberInput value={f.maxLength} onChange={(v) => updateField(i, { maxLength: v })} />
                         </Field>
                       </div>
                     )}
@@ -1320,26 +1320,26 @@ const BlockInspector = ({ block, onChange }: Props) => {
       <div className="pt-4 mt-4 border-t space-y-3">
         <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Positie & marges</h4>
         <Field label="Marge boven (px)">
-          <Input type="number" value={p.marginTop ?? ""} onChange={(e) => set("marginTop", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.marginTop} onChange={(v) => set("marginTop", v)} placeholder="0" />
         </Field>
         <Field label="Marge onder (px)">
-          <Input type="number" value={p.marginBottom ?? ""} onChange={(e) => set("marginBottom", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.marginBottom} onChange={(v) => set("marginBottom", v)} placeholder="0" />
         </Field>
         <Field label="Horizontale offset (px)">
-          <Input type="number" value={p.offsetX ?? ""} onChange={(e) => set("offsetX", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="0" />
+          <NumberInput value={p.offsetX} onChange={(v) => set("offsetX", v)} placeholder="0" />
         </Field>
         <p className="text-[10px] text-muted-foreground leading-snug">Tip: gebruik 'Uitlijning' bovenaan en deze velden om je tekst of afbeelding precies op de juiste plek te zetten.</p>
 
         <div className="pt-3 mt-3 border-t space-y-3">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Mobiel (overschrijft desktop)</h5>
           <Field label="Marge boven mobiel (px)">
-            <Input type="number" value={p.marginTopMobile ?? ""} onChange={(e) => set("marginTopMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.marginTopMobile} onChange={(v) => set("marginTopMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <Field label="Marge onder mobiel (px)">
-            <Input type="number" value={p.marginBottomMobile ?? ""} onChange={(e) => set("marginBottomMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.marginBottomMobile} onChange={(v) => set("marginBottomMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <Field label="Horizontale offset mobiel (px)">
-            <Input type="number" value={p.offsetXMobile ?? ""} onChange={(e) => set("offsetXMobile", e.target.value === "" ? undefined : parseInt(e.target.value) || 0)} placeholder="Gebruik desktopwaarde" />
+            <NumberInput value={p.offsetXMobile} onChange={(v) => set("offsetXMobile", v)} placeholder="Gebruik desktopwaarde" />
           </Field>
           <p className="text-[10px] text-muted-foreground leading-snug">Laat leeg om de desktopwaarde te gebruiken. Mobiel = breedte onder 768px.</p>
         </div>
