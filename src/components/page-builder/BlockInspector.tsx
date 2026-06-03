@@ -927,6 +927,78 @@ const BlockInspector = ({ block, onChange }: Props) => {
           </>
         );
 
+      case "search_bar":
+        return (
+          <>
+            <Field label="Placeholder">
+              <Input value={p.placeholder || ""} onChange={(e) => set("placeholder", e.target.value)} placeholder="Waar bent u naar op zoek?" />
+            </Field>
+            <Field label="Knop tonen">
+              <Select value={p.showButton === false ? "no" : "yes"} onValueChange={(v) => set("showButton", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Ja</SelectItem>
+                  <SelectItem value="no">Nee</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            {p.showButton !== false && (
+              <Field label="Knoptekst">
+                <Input value={p.buttonLabel || ""} onChange={(e) => set("buttonLabel", e.target.value)} placeholder="Zoek" />
+              </Field>
+            )}
+            <Field label="Maximale breedte (px)">
+              <Input type="number" value={p.maxWidth ?? 560} onChange={(e) => set("maxWidth", parseInt(e.target.value) || 560)} />
+            </Field>
+            <Field label="Uitlijning">
+              <Select value={p.align || "center"} onValueChange={(v) => set("align", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Links</SelectItem>
+                  <SelectItem value="center">Midden</SelectItem>
+                  <SelectItem value="right">Rechts</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Stijl">
+              <Select value={p.variant || "rounded"} onValueChange={(v) => set("variant", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Standaard</SelectItem>
+                  <SelectItem value="rounded">Afgerond</SelectItem>
+                  <SelectItem value="pill">Pill</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="background">Geen</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Padding">
+              <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="small">Klein</SelectItem>
+                  <SelectItem value="medium">Gemiddeld</SelectItem>
+                  <SelectItem value="large">Groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <p className="text-[10px] text-muted-foreground leading-snug">
+              Zoekt automatisch door alle pagina's van de site. Klik op een resultaat om te navigeren.
+            </p>
+          </>
+        );
+
       default:
         return null;
     }
