@@ -44,6 +44,7 @@ export interface FormField {
 interface Props {
   formId: string;
   title?: string;
+  formSubject?: string;
   description?: string;
   submitLabel?: string;
   successMessage?: string;
@@ -63,6 +64,7 @@ const initialValueFor = (f: FormField): any => {
 const CustomFormBlock = ({
   formId,
   title,
+  formSubject,
   description,
   submitLabel = "Versturen",
   successMessage = "Bedankt! Je inzending is ontvangen.",
@@ -129,14 +131,17 @@ const CustomFormBlock = ({
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
+    const fieldData = fields.reduce<Record<string, any>>((acc, f) => {
+      acc[f.label || f.id] = values[f.id];
+      return acc;
+    }, {});
+    const subjectValue = (formSubject && formSubject.trim()) || title || "Formulier";
+    const pagePath = typeof window !== "undefined" ? window.location.pathname : null;
     const payload = {
       form_id: formId,
-      form_title: title || null,
-      page_path: typeof window !== "undefined" ? window.location.pathname : null,
-      data: fields.reduce<Record<string, any>>((acc, f) => {
-        acc[f.label || f.id] = values[f.id];
-        return acc;
-      }, {}),
+      form_title: subjectValue,
+      page_path: pagePath,
+      data: { _subject: subjectValue, ...fieldData },
     };
     const { error } = await supabase.from("form_submissions").insert(payload);
     setSubmitting(false);
@@ -144,6 +149,31 @@ const CustomFormBlock = ({
       toast({ title: "Versturen mislukt", description: error.message, variant: "destructive" });
       return;
     }
+    // Find best-guess name/email from fields for the notification
+    const findVal = (matcher: RegExp) => {
+      const f = fields.find((x) =>
+        matcher.test(x.label || "") || matcher.test(x.id || "") || x.type === "email"
+      );
+      return f ? String(values[f.id] ?? "") : "";
+    };
+    const guessedEmail = (() => {
+      const f = fields.find((x) => x.type === "email") || fields.find((x) => /e-?mail/i.test(x.label || x.id));
+      return f ? String(values[f.id] ?? "") : "";
+    })();
+    const guessedName = findVal(/naam|name/i);
+    supabase.functions
+      .invoke("send-contact-notification", {
+        body: {
+          name: guessedName,
+          email: guessedEmail,
+          subject: subjectValue,
+          form_title: title || subjectValue,
+          form_subject: subjectValue,
+          page_path: pagePath,
+          extra_fields: fieldData,
+        },
+      })
+      .catch(() => {});
     setSubmitted(true);
   };
 

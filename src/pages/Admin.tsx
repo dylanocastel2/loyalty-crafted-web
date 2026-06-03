@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check, X, FileText } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
@@ -32,6 +32,15 @@ type Submission = {
   created_at: string;
 };
 
+type FormSubmission = {
+  id: string;
+  form_id: string;
+  form_title: string | null;
+  page_path: string | null;
+  data: Record<string, any>;
+  created_at: string;
+};
+
 type Klantcase = Database["public"]["Tables"]["klantcases"]["Row"];
 
 const Admin = () => {
@@ -46,12 +55,15 @@ const Admin = () => {
   const [savingSocials, setSavingSocials] = useState(false);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [openSubmission, setOpenSubmission] = useState<Submission | null>(null);
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([]);
+  const [openFormSubmission, setOpenFormSubmission] = useState<FormSubmission | null>(null);
   const [admins, setAdmins] = useState<{ user_id: string; email: string | null; roles: string[] }[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState("");
   const [newAdminRole, setNewAdminRole] = useState<"admin" | "editor" | "viewer">("editor");
   const [myRole, setMyRole] = useState<"admin" | "editor" | "viewer" | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [notifyEmail, setNotifyEmail] = useState("");
+  const [notifyEmails, setNotifyEmails] = useState<string[]>([]);
+  const [newNotifyEmail, setNewNotifyEmail] = useState("");
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -129,6 +141,11 @@ const Admin = () => {
       .select("*")
       .order("created_at", { ascending: false });
     if (data) setSubmissions(data as Submission[]);
+    const { data: forms } = await supabase
+      .from("form_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (forms) setFormSubmissions(forms as any as FormSubmission[]);
   };
 
   const markRead = async (id: string, read: boolean) => {
@@ -139,6 +156,12 @@ const Admin = () => {
   const deleteSubmission = async (id: string) => {
     await supabase.from("contact_submissions").delete().eq("id", id);
     setOpenSubmission(null);
+    fetchSubmissions();
+  };
+
+  const deleteFormSubmission = async (id: string) => {
+    await supabase.from("form_submissions").delete().eq("id", id);
+    setOpenFormSubmission(null);
     fetchSubmissions();
   };
 
@@ -197,14 +220,20 @@ const Admin = () => {
       .eq("page", "settings")
       .in("key", ["notify_email", "notify_enabled"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
-    setNotifyEmail(map["notify_email"] || "");
+    const raw = map["notify_email"] || "";
+    setNotifyEmails(
+      raw
+        .split(/[,;\n]+/)
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+    );
     setNotifyEnabled(map["notify_enabled"] === "true");
   };
 
   const saveSettings = async () => {
     setSavingSettings(true);
     const rows = [
-      { page: "settings", key: "notify_email", content: notifyEmail.trim() },
+      { page: "settings", key: "notify_email", content: notifyEmails.join(", ") },
       { page: "settings", key: "notify_enabled", content: notifyEnabled ? "true" : "false" },
     ];
     const { error } = await supabase.from("page_content").upsert(rows, { onConflict: "page,key" });
@@ -214,6 +243,22 @@ const Admin = () => {
       return;
     }
     toast({ title: "Instellingen opgeslagen" });
+  };
+
+  const addNotifyEmail = () => {
+    const v = newNotifyEmail.trim();
+    if (!v) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      toast({ title: "Ongeldig e-mailadres", variant: "destructive" });
+      return;
+    }
+    if (notifyEmails.includes(v)) return;
+    setNotifyEmails([...notifyEmails, v]);
+    setNewNotifyEmail("");
+  };
+
+  const removeNotifyEmail = (e: string) => {
+    setNotifyEmails(notifyEmails.filter((x) => x !== e));
   };
 
   const unreadCount = submissions.filter((s) => !s.read).length;
@@ -401,6 +446,79 @@ const Admin = () => {
               </div>
             </div>
           )}
+
+          <div className="bg-card border rounded-lg mt-6">
+            <div className="p-5 border-b flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Formulier-inzendingen</h2>
+              <span className="ml-auto text-sm text-muted-foreground">{formSubmissions.length} totaal</span>
+            </div>
+            {formSubmissions.length === 0 ? (
+              <p className="p-8 text-center text-muted-foreground">Nog geen formulier-inzendingen.</p>
+            ) : (
+              <ul className="divide-y">
+                {formSubmissions.map((s) => {
+                  const subj = (s.data && (s.data._subject as string)) || s.form_title || "Formulier";
+                  const preview = Object.entries(s.data || {})
+                    .filter(([k]) => k !== "_subject")
+                    .slice(0, 3)
+                    .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v ?? ""}`)
+                    .join(" · ");
+                  return (
+                    <li
+                      key={s.id}
+                      className="p-4 flex items-start gap-3 hover:bg-muted/40 cursor-pointer"
+                      onClick={() => setOpenFormSubmission(s)}
+                    >
+                      <div className="mt-1.5 h-2 w-2 rounded-full bg-primary/60" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{subj}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{preview || "—"}</p>
+                        {s.page_path && <p className="text-[11px] text-muted-foreground mt-0.5">Pagina: {s.page_path}</p>}
+                      </div>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date(s.created_at).toLocaleDateString("nl-NL", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {openFormSubmission && (
+            <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setOpenFormSubmission(null)}>
+              <div className="bg-card border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="p-5 border-b flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-lg">
+                      {(openFormSubmission.data && (openFormSubmission.data._subject as string)) || openFormSubmission.form_title || "Formulier"}
+                    </h3>
+                    {openFormSubmission.page_path && (
+                      <p className="text-xs text-muted-foreground mt-1">Pagina: {openFormSubmission.page_path}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">{new Date(openFormSubmission.created_at).toLocaleString("nl-NL")}</p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => setOpenFormSubmission(null)}>Sluiten</Button>
+                </div>
+                <div className="p-5 space-y-2 text-sm">
+                  {Object.entries(openFormSubmission.data || {})
+                    .filter(([k]) => k !== "_subject")
+                    .map(([k, v]) => (
+                      <div key={k} className="grid grid-cols-3 gap-3 border-b last:border-0 pb-2">
+                        <div className="font-medium text-muted-foreground">{k}</div>
+                        <div className="col-span-2 whitespace-pre-wrap break-words">
+                          {Array.isArray(v) ? v.join(", ") : (v == null || v === "" ? "—" : typeof v === "object" ? JSON.stringify(v) : String(v))}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="p-5 border-t flex gap-2 justify-end">
+                  <Button variant="destructive" size="sm" onClick={() => deleteFormSubmission(openFormSubmission.id)}>
+                    <Trash2 className="h-4 w-4 mr-1" /> Verwijderen
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
 
@@ -420,10 +538,39 @@ const Admin = () => {
               <Switch checked={notifyEnabled} onCheckedChange={setNotifyEnabled} />
               <Label>E-mailmeldingen ontvangen bij nieuwe aanvragen</Label>
             </div>
-            <div>
-              <Label>Notificatie e-mailadres</Label>
-              <Input type="email" placeholder="info@loyaltygroup.nl" value={notifyEmail} onChange={(e) => setNotifyEmail(e.target.value)} disabled={!notifyEnabled} />
-              <p className="text-[11px] text-muted-foreground mt-1">Tip: nieuwe aanvragen verschijnen altijd in het tabblad "Aanvragen", ook zonder mailmelding.</p>
+            <div className="space-y-2">
+              <Label>Notificatie e-mailadressen</Label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  type="email"
+                  placeholder="info@loyaltygroup.nl"
+                  value={newNotifyEmail}
+                  onChange={(e) => setNewNotifyEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addNotifyEmail(); } }}
+                  disabled={!notifyEnabled}
+                />
+                <Button type="button" variant="outline" onClick={addNotifyEmail} disabled={!notifyEnabled}>
+                  <Plus className="h-4 w-4 mr-1" /> Toevoegen
+                </Button>
+              </div>
+              {notifyEmails.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {notifyEmails.map((e) => (
+                    <span key={e} className="inline-flex items-center gap-1 bg-muted text-foreground text-xs rounded-full pl-3 pr-1 py-1">
+                      {e}
+                      <button
+                        type="button"
+                        onClick={() => removeNotifyEmail(e)}
+                        className="hover:bg-background rounded-full p-0.5"
+                        aria-label={`${e} verwijderen`}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="text-[11px] text-muted-foreground mt-1">Alle opgegeven adressen ontvangen een melding bij nieuwe formulier-inzendingen. Aanvragen blijven altijd zichtbaar in het tabblad "Aanvragen".</p>
             </div>
             <Button size="sm" onClick={saveSettings} disabled={savingSettings}>{savingSettings ? "Opslaan..." : "Instellingen opslaan"}</Button>
           </div>

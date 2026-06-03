@@ -674,6 +674,7 @@ const BlockRenderer = ({ block }: Props) => {
             <CustomFormBlock
               formId={block.id}
               title={p.title}
+              formSubject={p.formSubject}
               description={p.description}
               submitLabel={p.submitLabel}
               successMessage={p.successMessage}
