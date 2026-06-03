@@ -1,5 +1,6 @@
 import { Block } from "./blockSchema";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "./NumberInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +11,7 @@ import { Plus, Trash2, ChevronUp, ChevronDown, GripVertical } from "lucide-react
 import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
 import RichText from "./RichText";
+
 
 interface Props {
   block: Block | null;
