@@ -73,7 +73,7 @@ const BlockRenderer = ({ block }: Props) => {
     WebkitTextFillColor: gradientBg ? "transparent" : undefined,
   };
   const wrap = (node: React.ReactNode) => (
-    <div style={wrapperStyle}>{node}</div>
+    <div className="h-full" style={wrapperStyle}>{node}</div>
   );
 
   const rendered = (() => {
@@ -324,7 +324,7 @@ const BlockRenderer = ({ block }: Props) => {
         : undefined;
       const colorClass = p.iconColor === "secondary" ? "text-secondary" : colorStyle ? "" : "text-primary";
       return (
-        <div className="group relative rounded-2xl border border-border bg-card p-6 card-hover h-full">
+        <div className="group relative rounded-2xl border border-border bg-card p-6 card-hover h-full flex flex-col">
           <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent mb-4 transition-colors ${colorClass}`} style={colorStyle}>
             {p.iconImage ? (
               <img src={p.iconImage} alt="" className="h-6 w-6 object-contain" />
@@ -333,7 +333,7 @@ const BlockRenderer = ({ block }: Props) => {
             )}
           </div>
           <RT as="h3" className="font-display font-semibold text-lg leading-snug mb-2" html={p.title} />
-          <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={p.description} />
+          <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed flex-grow" html={p.description} />
         </div>
       );
     }
