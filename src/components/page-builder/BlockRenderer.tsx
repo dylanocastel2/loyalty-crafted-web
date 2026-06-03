@@ -575,17 +575,16 @@ const BlockRenderer = ({ block }: Props) => {
         <div className="w-full">
           {p.title && <RT as="h2" className={`font-display font-bold text-2xl md:text-3xl leading-tight mb-3 ${alignClass(p.titleAlign || "left")}`} html={p.title} />}
           {p.text && <RT as="div" className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap" html={p.text} />}
-          {p.ctaLabel && (
+          {(p.ctaLabel || (p.extraCtas || []).some((c: any) => c?.label)) && (
             <div className="mt-5">
-              {p.ctaLink?.startsWith("http") ? (
-                <a href={p.ctaLink} target="_blank" rel="noopener noreferrer">
-                  <Button size="lg">{p.ctaLabel}</Button>
-                </a>
-              ) : (
-                <Link to={p.ctaLink || "/"}>
-                  <Button size="lg">{p.ctaLabel}</Button>
-                </Link>
-              )}
+              <CtaGroup
+                primary={{ label: p.ctaLabel, link: p.ctaLink, variant: p.ctaVariant }}
+                extras={p.extraCtas}
+                layout={p.ctaLayout}
+                align={p.titleAlign || "left"}
+                defaultVariant="default"
+                extraVariant="outline"
+              />
             </div>
           )}
         </div>
