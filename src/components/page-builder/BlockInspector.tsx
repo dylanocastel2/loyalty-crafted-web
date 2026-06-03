@@ -328,7 +328,9 @@ const BlockInspector = ({ block, onChange }: Props) => {
         return (
           <>
             <Field label="Knoptekst"><Input value={p.label || ""} onChange={(e) => set("label", e.target.value)} /></Field>
-            <Field label="Link"><Input value={p.link || ""} onChange={(e) => set("link", e.target.value)} placeholder="/contact of https://..." /></Field>
+            <Field label="Link (kies pagina)">
+              <PagePicker value={p.link || ""} onChange={(v) => set("link", v)} />
+            </Field>
             <Field label="Stijl">
               <Select value={p.variant || "default"} onValueChange={(v) => set("variant", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
