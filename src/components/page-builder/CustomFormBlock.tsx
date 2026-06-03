@@ -8,17 +8,37 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Star } from "lucide-react";
 
 export interface FormField {
   id: string;
   label: string;
-  type: "text" | "email" | "tel" | "number" | "url" | "date" | "textarea" | "select" | "radio" | "checkbox";
+  type:
+    | "text"
+    | "email"
+    | "tel"
+    | "number"
+    | "url"
+    | "date"
+    | "time"
+    | "textarea"
+    | "select"
+    | "radio"
+    | "checkbox"
+    | "checkbox_group"
+    | "rating"
+    | "range";
   required?: boolean;
   placeholder?: string;
   rows?: number;
   options?: string[]; // for select / radio
   helpText?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  minLength?: number;
+  maxLength?: number;
+  multiple?: boolean; // allow multi-select for "select"
 }
 
 interface Props {
@@ -31,7 +51,14 @@ interface Props {
   maxWidth?: number;
 }
 
-const initialValueFor = (f: FormField) => (f.type === "checkbox" ? false : "");
+const initialValueFor = (f: FormField): any => {
+  if (f.type === "checkbox") return false;
+  if (f.type === "checkbox_group") return [] as string[];
+  if (f.type === "select" && f.multiple) return [] as string[];
+  if (f.type === "rating") return 0;
+  if (f.type === "range") return f.min ?? 0;
+  return "";
+};
 
 const CustomFormBlock = ({
   formId,
@@ -60,7 +87,15 @@ const CustomFormBlock = ({
     fields.forEach((f) => {
       const v = values[f.id];
       if (f.required) {
-        if (f.type === "checkbox" ? !v : !String(v ?? "").trim()) {
+        const empty =
+          f.type === "checkbox"
+            ? !v
+            : f.type === "checkbox_group" || (f.type === "select" && f.multiple)
+            ? !Array.isArray(v) || v.length === 0
+            : f.type === "rating"
+            ? !v || Number(v) < 1
+            : !String(v ?? "").trim();
+        if (empty) {
           next[f.id] = "Verplicht veld";
           return;
         }
@@ -71,7 +106,18 @@ const CustomFormBlock = ({
       if (v && f.type === "url" && !/^https?:\/\//.test(String(v))) {
         next[f.id] = "URL moet beginnen met http(s)://";
       }
-      if (v && String(v).length > 5000) {
+      if (f.type === "number" && v !== "" && v != null) {
+        const n = Number(v);
+        if (Number.isNaN(n)) next[f.id] = "Voer een geldig getal in";
+        else if (f.min != null && n < f.min) next[f.id] = `Minimaal ${f.min}`;
+        else if (f.max != null && n > f.max) next[f.id] = `Maximaal ${f.max}`;
+      }
+      if ((f.type === "text" || f.type === "textarea") && v) {
+        const len = String(v).length;
+        if (f.minLength != null && len < f.minLength) next[f.id] = `Minimaal ${f.minLength} tekens`;
+        else if (f.maxLength != null && len > f.maxLength) next[f.id] = `Maximaal ${f.maxLength} tekens`;
+      }
+      if (typeof v === "string" && v.length > 5000) {
         next[f.id] = "Maximaal 5000 tekens";
       }
     });
@@ -150,8 +196,9 @@ const CustomFormBlock = ({
                   onChange={(e) => update(f.id, e.target.value)}
                   placeholder={f.placeholder}
                   rows={f.rows || 4}
+                  maxLength={f.maxLength}
                 />
-              ) : f.type === "select" ? (
+              ) : f.type === "select" && !f.multiple ? (
                 <Select value={values[f.id] || ""} onValueChange={(v) => update(f.id, v)}>
                   <SelectTrigger id={common.id}>
                     <SelectValue placeholder={f.placeholder || "Maak een keuze"} />
@@ -164,6 +211,87 @@ const CustomFormBlock = ({
                     ))}
                   </SelectContent>
                 </Select>
+              ) : f.type === "select" && f.multiple ? (
+                <div className="border rounded-md p-2 max-h-48 overflow-y-auto space-y-1 bg-background">
+                  {(f.options || []).map((opt) => {
+                    const arr: string[] = Array.isArray(values[f.id]) ? values[f.id] : [];
+                    const checked = arr.includes(opt);
+                    return (
+                      <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer px-1 py-0.5 hover:bg-muted rounded">
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={(c) => {
+                            const next = c ? [...arr, opt] : arr.filter((x) => x !== opt);
+                            update(f.id, next);
+                          }}
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : f.type === "checkbox_group" ? (
+                <div className="space-y-1.5">
+                  {(f.options || []).map((opt) => {
+                    const arr: string[] = Array.isArray(values[f.id]) ? values[f.id] : [];
+                    const checked = arr.includes(opt);
+                    return (
+                      <label key={opt} className="flex items-center gap-2 text-sm cursor-pointer">
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={(c) => {
+                            const next = c ? [...arr, opt] : arr.filter((x) => x !== opt);
+                            update(f.id, next);
+                          }}
+                        />
+                        <span className="font-normal">{opt}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : f.type === "rating" ? (
+                <div className="flex items-center gap-1" id={common.id}>
+                  {Array.from({ length: f.max || 5 }).map((_, idx) => {
+                    const n = idx + 1;
+                    const active = (Number(values[f.id]) || 0) >= n;
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => update(f.id, values[f.id] === n ? 0 : n)}
+                        className="p-0.5"
+                        aria-label={`${n} sterren`}
+                      >
+                        <Star
+                          className={`h-6 w-6 transition-colors ${
+                            active ? "fill-primary text-primary" : "text-muted-foreground"
+                          }`}
+                        />
+                      </button>
+                    );
+                  })}
+                  {values[f.id] ? (
+                    <span className="text-xs text-muted-foreground ml-2">{values[f.id]} / {f.max || 5}</span>
+                  ) : null}
+                </div>
+              ) : f.type === "range" ? (
+                <div className="space-y-1">
+                  <input
+                    id={common.id}
+                    type="range"
+                    min={f.min ?? 0}
+                    max={f.max ?? 100}
+                    step={f.step ?? 1}
+                    value={values[f.id] ?? f.min ?? 0}
+                    onChange={(e) => update(f.id, Number(e.target.value))}
+                    className="w-full accent-primary"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{f.min ?? 0}</span>
+                    <span className="font-medium text-foreground">{values[f.id] ?? f.min ?? 0}</span>
+                    <span>{f.max ?? 100}</span>
+                  </div>
+                </div>
               ) : f.type === "radio" ? (
                 <RadioGroup value={values[f.id] || ""} onValueChange={(v) => update(f.id, v)}>
                   {(f.options || []).map((opt) => (
@@ -194,6 +322,11 @@ const CustomFormBlock = ({
                   value={values[f.id] || ""}
                   onChange={(e) => update(f.id, e.target.value)}
                   placeholder={f.placeholder}
+                  min={f.type === "number" ? f.min : undefined}
+                  max={f.type === "number" ? f.max : undefined}
+                  step={f.type === "number" ? f.step : undefined}
+                  minLength={f.type === "text" ? f.minLength : undefined}
+                  maxLength={f.type === "text" ? f.maxLength : undefined}
                 />
               )}
 
