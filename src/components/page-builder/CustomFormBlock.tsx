@@ -51,6 +51,12 @@ interface Props {
   successMessage?: string;
   fields: FormField[];
   maxWidth?: number;
+  notifySubjectTpl?: string;
+  notifyIntro?: string;
+  confirmEnabled?: boolean;
+  confirmSubjectTpl?: string;
+  confirmIntro?: string;
+  confirmOutro?: string;
 }
 
 const initialValueFor = (f: FormField): any => {
