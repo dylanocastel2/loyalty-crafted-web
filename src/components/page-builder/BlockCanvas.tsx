@@ -282,7 +282,7 @@ const QUICK_ADD: { type: BlockType; label: string }[] = [
   { type: "stat", label: "Statistiek" },
 ];
 
-const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelete, onDuplicate, onAddToColumn }: any) => {
+const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelete, onDuplicate, onCopy, onAddToColumn, onPasteToColumn, hasClipboard }: any) => {
   const { setNodeRef, isOver } = useDroppable({ id: `col:${rowId}:${colIndex}` });
   const [pickerOpen, setPickerOpen] = useState(false);
   return (
@@ -298,12 +298,15 @@ const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelet
               onSelect={onSelect}
               onDelete={onDelete}
               onDuplicate={onDuplicate}
+              onCopy={onCopy}
               onAddToColumn={onAddToColumn}
+              onPasteToColumn={onPasteToColumn}
+              hasClipboard={hasClipboard}
             />
           ))}
         </div>
       </SortableContext>
-      <div className="mt-2">
+      <div className="mt-2 flex items-center gap-1">
         {pickerOpen ? (
           <Select onValueChange={(v) => { onAddToColumn(rowId, colIndex, v as BlockType); setPickerOpen(false); }}>
             <SelectTrigger className="h-7 text-xs"><SelectValue placeholder="Kies blok..." /></SelectTrigger>
@@ -312,9 +315,22 @@ const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelet
             </SelectContent>
           </Select>
         ) : (
-          <Button variant="ghost" size="sm" className="h-7 text-xs w-full" onClick={(e) => { e.stopPropagation(); setPickerOpen(true); }}>
-            <Plus className="h-3 w-3 mr-1" /> Blok in kolom {colIndex + 1}
-          </Button>
+          <>
+            <Button variant="ghost" size="sm" className="h-7 text-xs flex-1" onClick={(e) => { e.stopPropagation(); setPickerOpen(true); }}>
+              <Plus className="h-3 w-3 mr-1" /> Blok in kolom {colIndex + 1}
+            </Button>
+            {hasClipboard && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 text-xs"
+                title="Plak gekopieerd blok"
+                onClick={(e) => { e.stopPropagation(); onPasteToColumn(rowId, colIndex); }}
+              >
+                <ClipboardPaste className="h-3 w-3 mr-1" /> Plak
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>
