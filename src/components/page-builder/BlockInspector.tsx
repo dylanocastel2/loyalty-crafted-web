@@ -212,12 +212,11 @@ const BlockInspector = ({ block, onChange }: Props) => {
                     </Select>
                   </Field>
                   <Field label="Intensiteit (%)">
-                    <Input
-                      type="number"
+                    <NumberInput
                       min={0}
                       max={100}
                       value={p.gradientOpacity ?? 100}
-                      onChange={(e) => set("gradientOpacity", Math.max(0, Math.min(100, parseInt(e.target.value) || 0)))}
+                      onChange={(v) => set("gradientOpacity", v ?? 100)}
                     />
                   </Field>
                   <Field label="Tekst over afbeelding (titel)">
@@ -275,7 +274,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
       case "spacer":
         return (
           <Field label="Hoogte (px)">
-            <Input type="number" value={p.height || 40} onChange={(e) => set("height", parseInt(e.target.value) || 0)} />
+            <NumberInput value={p.height || 40} onChange={(v) => set("height", v ?? 40)} />
           </Field>
         );
 
@@ -372,7 +371,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Tussenruimte (px)">
-              <Input type="number" value={p.gap ?? 32} onChange={(e) => set("gap", parseInt(e.target.value) || 0)} />
+              <NumberInput value={p.gap ?? 32} onChange={(v) => set("gap", v ?? 0)} />
             </Field>
             <Field label="Verticale uitlijning">
               <Select value={p.verticalAlign || "start"} onValueChange={(v) => set("verticalAlign", v)}>
@@ -599,7 +598,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Breedte afbeelding (% — 20–80)">
-              <Input type="number" min={20} max={80} value={p.imageWidth ?? 50} onChange={(e) => set("imageWidth", Math.max(20, Math.min(80, parseInt(e.target.value) || 50)))} />
+              <NumberInput min={20} max={80} value={p.imageWidth ?? 50} onChange={(v) => set("imageWidth", v ?? 50)} />
             </Field>
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Tekst"><RichText value={p.text || ""} onChange={(v) => set("text", v)} rows={8} /></Field>
@@ -661,10 +660,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Logo hoogte (px)">
-              <Input type="number" value={p.height ?? 60} onChange={(e) => set("height", parseInt(e.target.value) || 60)} />
+              <NumberInput value={p.height ?? 60} onChange={(v) => set("height", v ?? 60)} />
             </Field>
             <Field label="Snelheid (sec — lager = sneller)">
-              <Input type="number" value={p.speed ?? 30} onChange={(e) => set("speed", parseInt(e.target.value) || 30)} />
+              <NumberInput value={p.speed ?? 30} onChange={(v) => set("speed", v ?? 30)} />
             </Field>
             <Field label="Grijswaarden tot hover">
               <Select value={p.grayscale ? "yes" : "no"} onValueChange={(v) => set("grayscale", v === "yes")}>
