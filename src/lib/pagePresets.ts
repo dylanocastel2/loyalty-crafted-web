@@ -24,6 +24,16 @@ export const getDefaultPageBlocks = (pageKey: string): Block[] => {
           ctaLabel: "Bekijk ons spaarsysteem",
           ctaLink: "/spaarsysteem",
         }),
+        b("search_bar", {
+          placeholder: "Waar bent u naar op zoek?",
+          buttonLabel: "Zoek",
+          maxWidth: 560,
+          align: "center",
+          variant: "rounded",
+          showButton: true,
+          bgColor: "background",
+          padding: "small",
+        }),
         b("heading", { text: "Waarom Loyaltygroup?", level: 2, align: "left", marginTop: 40 }),
         b("paragraph", {
           text: "Alles in eigen beheer ontwikkeld. Geen outsourcing, geen beperkingen.",

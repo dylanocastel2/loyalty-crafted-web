@@ -26,7 +26,8 @@ export type BlockType =
   | "custom_html"
   | "klantcases"
   | "download_files"
-  | "image_cards";
+  | "image_cards"
+  | "search_bar";
 
 export interface Block {
   id: string;
@@ -84,6 +85,7 @@ export const BLOCK_META: BlockMeta[] = [
     { image: "", title: "Installatie & Onderhoud", description: "Wij zorgen dat u in de winkel aan de slag kunt en op de achtergrond houden we het systeem up-to-date." },
     { image: "", title: "Sales & Marketing", description: "Met onze jarenlange ervaring in CRM en loyalty kunnen wij u helpen uw doelstellingen te realiseren." },
   ] } },
+  { type: "search_bar", label: "Zoekbalk", category: "Content", icon: "Search", defaultProps: { placeholder: "Waar bent u naar op zoek?", buttonLabel: "Zoek", maxWidth: 560, align: "center", variant: "rounded", showButton: true, bgColor: "background", padding: "medium" } },
 ];
 
 export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>

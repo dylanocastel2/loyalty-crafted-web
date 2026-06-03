@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Quote } from "lucide-react";
 import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
+import SearchBlock from "./SearchBlock";
 import { Download, FileIcon } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
@@ -643,6 +644,23 @@ const BlockRenderer = ({ block }: Props) => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+      );
+    }
+
+    case "search_bar": {
+      return (
+        <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
+          <div className="container">
+            <SearchBlock
+              placeholder={p.placeholder}
+              buttonLabel={p.buttonLabel}
+              maxWidth={p.maxWidth}
+              align={p.align}
+              variant={p.variant}
+              showButton={p.showButton !== false}
+            />
           </div>
         </section>
       );
