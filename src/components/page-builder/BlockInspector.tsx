@@ -1306,6 +1306,18 @@ const BlockInspector = ({ block, onChange }: Props) => {
     }
   };
 
+  const textColorDotMap: Record<string, string> = {
+    default: "bg-transparent border border-foreground/40",
+    foreground: "bg-foreground",
+    "muted-foreground": "bg-muted-foreground",
+    primary: "bg-primary",
+    "primary-foreground": "bg-primary-foreground border border-border",
+    secondary: "bg-secondary",
+    "secondary-foreground": "bg-secondary-foreground border border-border",
+    "accent-foreground": "bg-accent-foreground",
+    destructive: "bg-destructive",
+  };
+
   return (
     <div className="space-y-4">
       <div className="pb-3 border-b">
