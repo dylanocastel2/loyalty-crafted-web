@@ -8,6 +8,16 @@ import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2 } from 
 
 const BUCKETS = ["media", "page-media", "form-uploads"] as const;
 type Bucket = (typeof BUCKETS)[number];
+const PRIVATE_BUCKETS: readonly Bucket[] = ["form-uploads"];
+const isPrivate = (b: Bucket) => PRIVATE_BUCKETS.includes(b);
+
+async function resolveUrl(bucket: Bucket, name: string): Promise<string> {
+  if (isPrivate(bucket)) {
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(name, 3600);
+    return data?.signedUrl ?? "";
+  }
+  return supabase.storage.from(bucket).getPublicUrl(name).data.publicUrl;
+}
 
 type FileRow = {
   name: string;
@@ -38,6 +48,7 @@ export default function MediaLibrary() {
   const [search, setSearch] = useState("");
   const [usedUrls, setUsedUrls] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<"all" | "used" | "unused">("all");
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -59,6 +70,26 @@ export default function MediaLibrary() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucket]);
+
+  // For private buckets, fetch signed URLs for previews
+  useEffect(() => {
+    if (!isPrivate(bucket) || files.length === 0) {
+      setSignedUrls({});
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const names = files.map((f) => f.name);
+      const { data } = await supabase.storage.from(bucket).createSignedUrls(names, 3600);
+      if (cancelled || !data) return;
+      const map: Record<string, string> = {};
+      for (const item of data) {
+        if (item.path && item.signedUrl) map[item.path] = item.signedUrl;
+      }
+      setSignedUrls(map);
+    })();
+    return () => { cancelled = true; };
+  }, [bucket, files]);
 
   useEffect(() => {
     const loadUsed = async () => {
@@ -123,14 +154,22 @@ export default function MediaLibrary() {
   };
 
   const copyUrl = async (name: string) => {
-    const { data } = supabase.storage.from(bucket).getPublicUrl(name);
-    await navigator.clipboard.writeText(data.publicUrl);
-    toast({ title: "URL gekopieerd", description: data.publicUrl });
+    const url = await resolveUrl(bucket, name);
+    if (!url) {
+      toast({ title: "URL ophalen mislukt", variant: "destructive" });
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    toast({ title: isPrivate(bucket) ? "Tijdelijke URL gekopieerd (1 uur geldig)" : "URL gekopieerd", description: url });
   };
 
   const filtered = files.filter((f) => {
     if (!f.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === "all") return true;
+    if (isPrivate(bucket)) {
+      // Private files (form attachments) are never embedded on public pages
+      return filter === "unused";
+    }
     const url = supabase.storage.from(bucket).getPublicUrl(f.name).data.publicUrl;
     const isUsed = usedUrls.has(url);
     return filter === "used" ? isUsed : !isUsed;
@@ -185,9 +224,11 @@ export default function MediaLibrary() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
           {filtered.map((f) => {
-            const url = supabase.storage.from(bucket).getPublicUrl(f.name).data.publicUrl;
+            const url = isPrivate(bucket)
+              ? (signedUrls[f.name] || "")
+              : supabase.storage.from(bucket).getPublicUrl(f.name).data.publicUrl;
             const img = isImage(f.name, f.metadata?.mimetype);
-            const used = usedUrls.has(url);
+            const used = !isPrivate(bucket) && usedUrls.has(url);
             return (
               <div key={f.name} className="bg-card border rounded-lg overflow-hidden group">
                 <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden relative">
