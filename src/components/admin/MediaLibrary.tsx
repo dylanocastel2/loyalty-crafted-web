@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw } from "lucide-react";
+import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2 } from "lucide-react";
 
 const BUCKETS = ["media", "page-media", "form-uploads"] as const;
 type Bucket = (typeof BUCKETS)[number];
@@ -36,6 +36,8 @@ export default function MediaLibrary() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
+  const [usedUrls, setUsedUrls] = useState<Set<string>>(new Set());
+  const [filter, setFilter] = useState<"all" | "used" | "unused">("all");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -57,6 +59,33 @@ export default function MediaLibrary() {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bucket]);
+
+  useEffect(() => {
+    const loadUsed = async () => {
+      const urls = new Set<string>();
+      const collect = (val: unknown) => {
+        if (!val) return;
+        if (typeof val === "string") {
+          const re = /https?:\/\/[^\s"')]+\.(?:png|jpe?g|gif|webp|svg|avif|pdf)/gi;
+          const matches = val.match(re);
+          if (matches) matches.forEach((u) => urls.add(u));
+        } else if (Array.isArray(val)) {
+          val.forEach(collect);
+        } else if (typeof val === "object") {
+          Object.values(val as Record<string, unknown>).forEach(collect);
+        }
+      };
+      const [cp, pb, pc, kc] = await Promise.all([
+        supabase.from("custom_pages").select("blocks,og_image_url"),
+        supabase.from("page_blocks").select("blocks"),
+        supabase.from("page_content").select("content"),
+        supabase.from("klantcases").select("image_url,header_image_url,video_url"),
+      ]);
+      [cp.data, pb.data, pc.data, kc.data].forEach((rows) => rows?.forEach(collect));
+      setUsedUrls(urls);
+    };
+    loadUsed();
+  }, []);
 
   const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
@@ -99,7 +128,13 @@ export default function MediaLibrary() {
     toast({ title: "URL gekopieerd", description: data.publicUrl });
   };
 
-  const filtered = files.filter((f) => f.name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = files.filter((f) => {
+    if (!f.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (filter === "all") return true;
+    const url = supabase.storage.from(bucket).getPublicUrl(f.name).data.publicUrl;
+    const isUsed = usedUrls.has(url);
+    return filter === "used" ? isUsed : !isUsed;
+  });
 
   return (
     <div className="space-y-4">
@@ -120,6 +155,14 @@ export default function MediaLibrary() {
             <Search className="h-4 w-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek bestand..." className="pl-8 w-56" />
           </div>
+          <Select value={filter} onValueChange={(v) => setFilter(v as typeof filter)}>
+            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Alle bestanden</SelectItem>
+              <SelectItem value="used">Alleen gebruikt</SelectItem>
+              <SelectItem value="unused">Niet gebruikt</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <input ref={inputRef} type="file" multiple onChange={onUpload} className="hidden" id="media-upload" />
@@ -144,13 +187,19 @@ export default function MediaLibrary() {
           {filtered.map((f) => {
             const url = supabase.storage.from(bucket).getPublicUrl(f.name).data.publicUrl;
             const img = isImage(f.name, f.metadata?.mimetype);
+            const used = usedUrls.has(url);
             return (
               <div key={f.name} className="bg-card border rounded-lg overflow-hidden group">
-                <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
+                <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden relative">
                   {img ? (
                     <img src={url} alt={f.name} className="h-full w-full object-cover" loading="lazy" />
                   ) : (
                     <FileIcon className="h-10 w-10 text-muted-foreground" />
+                  )}
+                  {used && (
+                    <span className="absolute top-1 left-1 inline-flex items-center gap-1 rounded-full bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 shadow">
+                      <CheckCircle2 className="h-3 w-3" /> In gebruik
+                    </span>
                   )}
                 </div>
                 <div className="p-2 space-y-1">
