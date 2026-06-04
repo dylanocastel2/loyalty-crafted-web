@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Search, RefreshCw } from "lucide-react";
+import { Loader2, Search, RefreshCw, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const BUCKETS = ["media", "page-media"] as const;
 type Bucket = (typeof BUCKETS)[number];
@@ -43,6 +44,9 @@ export default function MediaPicker({ open, onOpenChange, onSelect, imagesOnly =
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const load = async () => {
     setLoading(true);
@@ -60,6 +64,31 @@ export default function MediaPicker({ open, onOpenChange, onSelect, imagesOnly =
     if (open) load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, bucket]);
+
+  const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    let ok = 0, fail = 0;
+    let lastUrl = "";
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) { fail++; continue; }
+      const ext = file.name.split(".").pop();
+      const safe = file.name.replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9-_]/g, "-").slice(0, 60);
+      const path = `${Date.now()}-${safe}.${ext}`;
+      const { error } = await supabase.storage.from(bucket).upload(path, file, { cacheControl: "3600", upsert: false });
+      if (error) fail++;
+      else { ok++; lastUrl = supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl; }
+    }
+    setUploading(false);
+    if (inputRef.current) inputRef.current.value = "";
+    toast({ title: fail === 0 ? "Geüpload" : "Deels gelukt", description: `${ok} toegevoegd${fail ? `, ${fail} mislukt` : ""}.` });
+    await load();
+    if (ok === 1 && lastUrl) {
+      onSelect(lastUrl);
+      onOpenChange(false);
+    }
+  };
 
   const visible = items.filter((i) => !search || i.path.toLowerCase().includes(search.toLowerCase()));
 
@@ -82,6 +111,10 @@ export default function MediaPicker({ open, onOpenChange, onSelect, imagesOnly =
           </div>
           <Button variant="outline" size="icon" onClick={load} disabled={loading}>
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          </Button>
+          <input ref={inputRef} type="file" accept="image/*" multiple onChange={onUpload} className="hidden" id="mp-upload" />
+          <Button variant="default" size="sm" disabled={uploading} onClick={() => inputRef.current?.click()}>
+            <Upload className="h-4 w-4 mr-2" /> {uploading ? "Uploaden..." : "Upload"}
           </Button>
         </div>
         <div className="flex-1 overflow-y-auto">
