@@ -6,6 +6,15 @@ import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
 import SearchBlock from "@/components/page-builder/SearchBlock";
+import USPGrid from "@/components/sections/USPGrid";
+import ReviewsBlock from "@/components/sections/ReviewsBlock";
+import LaagdrempeligBlock from "@/components/sections/LaagdrempeligBlock";
+import PriceIndication from "@/components/sections/PriceIndication";
+import DemoForm from "@/components/sections/DemoForm";
+import KlantcasesBlock from "@/components/page-builder/KlantcasesBlock";
+import { BRANCHES } from "@/lib/brancheContent";
+import { Helmet } from "react-helmet-async";
+import { ArrowRight } from "lucide-react";
 
 const features = [
   {
@@ -40,6 +49,20 @@ const features = [
 
 const Index = () => (
   <Layout>
+    <Helmet>
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Loyaltygroup B.V.",
+          url: "https://www.loyaltygroup.nl",
+          logo: "https://www.loyaltygroup.nl/logo.jpg",
+          areaServed: "NL",
+          description:
+            "Loyaltygroup B.V. ontwikkelt in eigen huis volledig op maat gemaakte spaarsystemen en loyaliteitsplatformen voor gemeenten, retail, horeca, zorg en winkeliersverenigingen.",
+        })}
+      </script>
+    </Helmet>
       <PageContent pageKey="index">
     {/* Hero — clean */}
     <section className="relative overflow-hidden bg-hero py-24 md:py-36">
@@ -87,6 +110,39 @@ const Index = () => (
       </div>
     </section>
 
+    {/* Branche-selector */}
+    <section className="py-16 md:py-20 bg-background">
+      <div className="container">
+        <div className="max-w-2xl mx-auto text-center mb-10">
+          <span className="accent-bar mx-auto mb-5" />
+          <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-3">
+            Voor welke branche zoekt u een loyaliteitsoplossing?
+          </h2>
+          <p className="text-muted-foreground">
+            Onze aanpak verschilt per sector. Kies hieronder uw branche voor een pagina met
+            herkenbare uitdagingen, kansen en concrete oplossingen.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {BRANCHES.map((b) => (
+            <Link
+              key={b.slug}
+              to={`/branches/${b.slug}`}
+              className="group rounded-2xl border border-border bg-tile p-5 hover:shadow-soft hover:border-primary/40 transition-all flex flex-col items-center text-center"
+            >
+              <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                <b.icon className="h-5 w-5" />
+              </div>
+              <h3 className="font-display font-semibold text-sm mb-1">{b.label}</h3>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                Bekijk <ArrowRight className="h-3 w-3" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+
     {/* Features */}
     <section className="py-20 md:py-28 relative bg-mist border-y border-border">
       <div className="container">
@@ -121,6 +177,45 @@ const Index = () => (
       </div>
     </section>
 
+    {/* USP-band */}
+    <USPGrid />
+
+    {/* Laagdrempelig + veel mogelijkheden */}
+    <LaagdrempeligBlock />
+
+    {/* Klantcases */}
+    <section className="py-20 md:py-24 bg-mist border-y border-border">
+      <div className="container max-w-2xl mb-10">
+        <span className="accent-bar mb-5" />
+        <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-3">
+          Klanten die ons inmiddels jaren vertrouwen
+        </h2>
+        <p className="text-muted-foreground">
+          Een greep uit organisaties waarvoor wij loyaliteitsoplossingen ontwikkelden en
+          dagelijks beheren — van gemeenten tot landelijke ketens.
+        </p>
+      </div>
+      <KlantcasesBlock
+        view="short"
+        mode="latest"
+        selectedIds={[]}
+        limit={6}
+        columns={3}
+        showBranche
+        showCategory
+        title=""
+        titleAlign="left"
+        showFilter={false}
+        maxRows={2}
+      />
+    </section>
+
+    {/* Reviews */}
+    <ReviewsBlock />
+
+    {/* Prijs-kwaliteit */}
+    <PriceIndication />
+
     {/* CTA */}
     <section className="py-20 md:py-28 relative bg-background">
       <div className="container">
@@ -146,6 +241,10 @@ const Index = () => (
         </div>
       </div>
     </section>
+
+    {/* Demo formulier onderaan */}
+    <DemoForm source="homepage" />
+
     </PageContent>
   </Layout>
 );

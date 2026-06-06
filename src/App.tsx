@@ -13,6 +13,8 @@ import Support from "./pages/Support";
 import OverOns from "./pages/OverOns";
 import Contact from "./pages/Contact";
 import Demo from "./pages/Demo";
+import Branches from "./pages/Branches";
+import Branche from "./pages/Branche";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import AdminActivate from "./pages/AdminActivate";
@@ -47,6 +49,8 @@ const App = () => (
             <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/demo" element={<Demo />} />
+            <Route path="/branches" element={<Branches />} />
+            <Route path="/branches/:slug" element={<Branche />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/activeren" element={<AdminActivate />} />
             <Route path="/admin" element={<Admin />} />

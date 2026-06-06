@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Mail, Phone, Download, Shield, FileIcon } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
+import DemoCTA from "@/components/sections/DemoCTA";
 
 const remoteSupport = [
   {
@@ -177,6 +178,11 @@ Download AnyDesk of TeamViewer op verzoek van de helpdesk medewerker om dit moge
           <Link to="/contact"><Button size="lg">Naar contactformulier</Button></Link>
         </div>
       </section>
+
+      <DemoCTA
+        title="Nog geen klant? Plan vrijblijvend een demo"
+        text="Wilt u eerst zien hoe wij werken voordat u beslist? Wij laten u in 30 minuten kennismaken met het Loyalty-platform en onze manier van samenwerken."
+      />
     </PageContent>
   </Layout>
 );

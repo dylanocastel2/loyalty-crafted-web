@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import BlockRenderer from "@/components/page-builder/BlockRenderer";
 import { Block } from "@/components/page-builder/blockSchema";
+import USPGrid from "@/components/sections/USPGrid";
+import DemoCTA from "@/components/sections/DemoCTA";
 
 const values = [
   { icon: Code, tKey: "oo_inhouse_title", dKey: "oo_inhouse_desc", title: "In-house Ontwikkeling", desc: "Al onze systemen worden volledig in eigen huis ontwikkeld door ons ervaren team. Geen outsourcing, volledige controle over kwaliteit." },
@@ -61,6 +63,8 @@ const OverOns = () => {
           <EditableText page="over-ons" contentKey="about_p1" defaultValue="Loyaltygroup B.V. is een Nederlands softwarebedrijf gespecialiseerd in het ontwikkelen van spaarsystemen en loyaliteitsprogramma's. Wij werken voor zowel gemeenten als commerciële organisaties." as="p" className="text-muted-foreground leading-relaxed mb-4" multiline />
           <EditableText page="over-ons" contentKey="about_p2" defaultValue="Wat ons onderscheidt is dat wij alles in eigen huis ontwikkelen. Ons team van ervaren ontwikkelaars bouwt elk systeem volledig op maat, zonder gebruik te maken van standaard templates of externe partijen." as="p" className="text-muted-foreground leading-relaxed mb-4" multiline />
           <EditableText page="over-ons" contentKey="about_p3" defaultValue="Dankzij onze flexibele aanpak en diepgaande technische kennis kunnen wij snel inspelen op veranderende wensen en nieuwe mogelijkheden bieden die standaardoplossingen niet kunnen leveren." as="p" className="text-muted-foreground leading-relaxed" multiline />
+          <EditableText page="over-ons" contentKey="about_p4" defaultValue="Het Loyalty-platform draait inmiddels al jaren bij gemeenten, retailketens, horecazaken, zorgorganisaties en winkeliersverenigingen door heel Nederland. Onze opdrachtgevers waarderen vooral de combinatie van een doorontwikkeld standaardplatform met écht maatwerk in eigen huisstijl — en de korte lijnen met de mensen die het systeem dagelijks beheren." as="p" className="text-muted-foreground leading-relaxed mt-4" multiline />
+          <EditableText page="over-ons" contentKey="about_p5" defaultValue="Wij geloven in betrouwbare software, in transparante samenwerking en in een eerlijke prijs-kwaliteitsverhouding. Geen verkooppraatjes, geen ondoorzichtige licentiestructuren — wel een team dat met u meedenkt vanaf de eerste demo tot jaren na de livegang." as="p" className="text-muted-foreground leading-relaxed mt-4" multiline />
         </div>
 
         <EditableText page="over-ons" contentKey="values_title" defaultValue="Onze Waarden" as="h2" className="text-2xl font-bold text-center mb-8" />
@@ -75,6 +79,8 @@ const OverOns = () => {
         </div>
       </div>
     </section>
+    <USPGrid />
+    <DemoCTA variant="gradient" />
     <PageBuilderSlot pageKey="over-ons" position="after" />
     </Layout>
   );
