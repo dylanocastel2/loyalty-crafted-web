@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { BRANCHES } from "@/lib/brancheContent";
 import DemoCTA from "@/components/sections/DemoCTA";
 import USPGrid from "@/components/sections/USPGrid";
+import PageContent from "@/components/page-builder/PageContent";
 
 const Branches = () => (
   <Layout>
@@ -35,6 +36,7 @@ const Branches = () => (
       </script>
     </Helmet>
 
+    <PageContent pageKey="branches">
     <section className="relative overflow-hidden bg-hero py-20 md:py-28">
       <div className="absolute inset-0 dot-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)]" />
       <div className="container relative z-10 max-w-4xl text-center">
@@ -91,6 +93,7 @@ const Branches = () => (
     />
 
     <DemoCTA variant="gradient" />
+    </PageContent>
   </Layout>
 );
 
