@@ -9,6 +9,7 @@ import DemoForm from "@/components/sections/DemoForm";
 import PriceIndication from "@/components/sections/PriceIndication";
 import ReviewsBlock from "@/components/sections/ReviewsBlock";
 import KlantcasesBlock from "@/components/page-builder/KlantcasesBlock";
+import PageContent from "@/components/page-builder/PageContent";
 
 const Branche = () => {
   const { slug = "" } = useParams<{ slug: string }>();
@@ -51,6 +52,7 @@ const Branche = () => {
         </script>
       </Helmet>
 
+      <PageContent pageKey={`branche-${data.slug}`}>
       {/* Branche-switcher */}
       <div className="border-b border-border bg-mist">
         <div className="container py-3 flex flex-wrap items-center gap-2">
@@ -250,6 +252,7 @@ const Branche = () => {
       />
 
       <DemoCTA variant="gradient" />
+      </PageContent>
     </Layout>
   );
 };
