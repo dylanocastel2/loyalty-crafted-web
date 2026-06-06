@@ -10,7 +10,6 @@ import DemoCTA from "@/components/sections/DemoCTA";
 import PriceIndication from "@/components/sections/PriceIndication";
 import DemoForm from "@/components/sections/DemoForm";
 import { BRANCHES } from "@/lib/brancheContent";
-import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 const benefits = [
