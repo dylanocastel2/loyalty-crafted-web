@@ -5,6 +5,11 @@ import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
+import USPGrid from "@/components/sections/USPGrid";
+import DemoCTA from "@/components/sections/DemoCTA";
+import PriceIndication from "@/components/sections/PriceIndication";
+import DemoForm from "@/components/sections/DemoForm";
+import KlantcasesBlock from "@/components/page-builder/KlantcasesBlock";
 
 const benefits = [
   { icon: CreditCard, tKey: "gem_stadspas_title", dKey: "gem_stadspas_desc", title: "Stadspas", desc: "Digitale stadspas voor inwoners met kortingen bij lokale ondernemers." },
@@ -48,6 +53,19 @@ const Gemeenten = () => (
         <EditableButton page="gemeenten" contentKey="cta_btn" defaultValue="Contact opnemen" to="/contact" variant="secondary" />
       </div>
     </section>
+
+    <section className="py-16 md:py-20 bg-background">
+      <KlantcasesBlock view="short" mode="latest" selectedIds={[]} limit={3} columns={3}
+        showBranche showCategory title="Gemeenten die met ons werken" titleAlign="left"
+        showFilter={false} maxRows={1} />
+    </section>
+
+    <USPGrid title="Waarom gemeenten voor Loyaltygroup kiezen"
+      subtitle="Eigen ontwikkeling, maatwerk in uw huisstijl en korte lijnen — precies wat een gemeentelijk project nodig heeft." />
+    <PriceIndication variant="branche" brancheLabel="gemeenten" />
+    <DemoForm source="gemeenten" brancheDefault="Gemeenten" />
+    <DemoCTA variant="gradient" />
+
     </PageContent>
   </Layout>
 );

@@ -5,6 +5,13 @@ import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
+import USPGrid from "@/components/sections/USPGrid";
+import DemoCTA from "@/components/sections/DemoCTA";
+import PriceIndication from "@/components/sections/PriceIndication";
+import DemoForm from "@/components/sections/DemoForm";
+import { BRANCHES } from "@/lib/brancheContent";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 const benefits = [
   { icon: TrendingUp, tKey: "com_binding_title", dKey: "com_binding_desc", title: "Klantenbinding", desc: "Verhoog klantloyaliteit met een persoonlijk spaarprogramma." },
@@ -48,6 +55,36 @@ const Commercieel = () => (
         <EditableButton page="commercieel" contentKey="cta_btn" defaultValue="Neem contact op" to="/contact" variant="secondary" />
       </div>
     </section>
+
+    <section className="py-16 md:py-20 bg-background">
+      <div className="container max-w-3xl text-center">
+        <span className="accent-bar mx-auto mb-5" />
+        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight mb-3">
+          Werkt u in een specifieke branche?
+        </h2>
+        <p className="text-muted-foreground mb-8">
+          We hebben aparte oplossingen uitgewerkt per sector — met voorbeelden, functionaliteiten en
+          klantcases die voor u herkenbaar zijn.
+        </p>
+        <div className="flex flex-wrap gap-2 justify-center">
+          {BRANCHES.filter((b) => b.slug !== "gemeenten").map((b) => (
+            <Link
+              key={b.slug}
+              to={`/branches/${b.slug}`}
+              className="inline-flex items-center gap-1 text-sm px-4 py-2 rounded-full border border-border bg-tile hover:border-primary hover:text-primary transition-colors"
+            >
+              {b.label} <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <USPGrid />
+    <PriceIndication />
+    <DemoForm source="commercieel" />
+    <DemoCTA variant="gradient" />
+
     </PageContent>
   </Layout>
 );

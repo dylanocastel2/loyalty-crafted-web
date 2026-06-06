@@ -11,6 +11,7 @@ import PageContent from "@/components/page-builder/PageContent";
 import SocialIcons from "@/components/SocialIcons";
 import FormAttachments, { type FormAttachment } from "@/components/FormAttachments";
 import { supabase } from "@/integrations/supabase/client";
+import DemoCTA from "@/components/sections/DemoCTA";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -128,6 +129,11 @@ const Contact = () => {
         </div>
       </section>
       </PageContent>
+      <DemoCTA
+        title="Liever direct een demo plannen?"
+        text="Vraag vrijblijvend een online demo van 30 minuten aan en ontdek of Loyaltygroup bij uw organisatie past."
+        variant="gradient"
+      />
     </Layout>
   );
 };

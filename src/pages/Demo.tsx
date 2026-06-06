@@ -11,6 +11,8 @@ import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
 import FormAttachments, { type FormAttachment } from "@/components/FormAttachments";
 import { supabase } from "@/integrations/supabase/client";
+import USPGrid from "@/components/sections/USPGrid";
+import PriceIndication from "@/components/sections/PriceIndication";
 
 const Demo = () => {
   const { toast } = useToast();
@@ -152,6 +154,12 @@ const Demo = () => {
         </div>
       </section>
       </PageContent>
+      <USPGrid
+        title="Wat Loyaltygroup onderscheidt"
+        subtitle="Acht redenen waarom klanten ons jaar na jaar verlengen."
+        compact
+      />
+      <PriceIndication />
     </Layout>
   );
 };

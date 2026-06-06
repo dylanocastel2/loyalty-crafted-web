@@ -3,6 +3,11 @@ import Layout from "@/components/layout/Layout";
 import EditableText from "@/components/EditableText";
 import EditableButton from "@/components/EditableButton";
 import PageContent from "@/components/page-builder/PageContent";
+import USPGrid from "@/components/sections/USPGrid";
+import DemoCTA from "@/components/sections/DemoCTA";
+import LaagdrempeligBlock from "@/components/sections/LaagdrempeligBlock";
+import PriceIndication from "@/components/sections/PriceIndication";
+import DemoForm from "@/components/sections/DemoForm";
 
 const highlights = [
   { icon: Database, tKey: "ss_hl_pakketten_title", dKey: "ss_hl_pakketten_desc", title: "Complete Pakketten", desc: "Al onze spaaroplossingen werken in combinatie met het Loyalty Spaarsysteem." },
@@ -134,6 +139,12 @@ const Spaarsysteem = () => (
         </div>
       </div>
     </section>
+
+    <LaagdrempeligBlock />
+    <USPGrid />
+    <PriceIndication />
+    <DemoForm source="spaarsysteem" />
+    <DemoCTA variant="gradient" />
 
     </PageContent>
   </Layout>
