@@ -8,7 +8,7 @@ import logoLg from "@/assets/logo-lg.png";
 
 const baseNavItems = [
   { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
-  { label: "GEMEENTEN", path: "/gemeenten" },
+  { label: "BRANCHES", path: "/branches" },
   { label: "KLANTCASES", path: "/klantcases" },
   { label: "SUPPORT", path: "/support" },
   { label: "OVER ONS", path: "/over-ons" },
