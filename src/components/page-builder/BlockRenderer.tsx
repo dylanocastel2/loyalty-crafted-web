@@ -266,12 +266,20 @@ const BlockRenderer = ({ block }: Props) => {
         : {};
       const noBg = !p.bgImage && p.bgColor === "none";
       const titleAlign = p.titleAlign || "center";
+      const overlayEnabled = p.bgImage && p.overlayEnabled !== false;
+      const overlayColor = p.overlayColor || "#000000";
+      const overlayOpacity = p.overlayOpacity ?? 50;
       return (
         <section
           className={`relative py-20 md:py-32 ${!p.bgImage && !noBg ? bgColorClass(p.bgColor || "primary") : ""}`}
           style={bg}
         >
-          {p.bgImage && <div className="absolute inset-0 bg-black/50" />}
+          {overlayEnabled && (
+            <div
+              className="absolute inset-0"
+              style={{ backgroundColor: overlayColor, opacity: overlayOpacity / 100 }}
+            />
+          )}
           <div className={`container relative ${alignClass(titleAlign)} ${isLight && !noBg ? "text-primary-foreground" : "text-foreground"}`}>
             <RT as="h1" className="text-4xl md:text-6xl font-bold leading-tight mb-4" html={p.title} />
             {p.subtitle && <RT as="p" className={`text-lg md:text-xl leading-relaxed mb-8 opacity-90 max-w-2xl whitespace-pre-wrap ${titleAlignWrapClass(titleAlign)}`} html={p.subtitle} />}

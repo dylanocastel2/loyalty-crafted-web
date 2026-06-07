@@ -361,6 +361,43 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Achtergrondafbeelding (optioneel)">
               <FileUpload onUpload={(url) => set("bgImage", url || "")} currentUrl={p.bgImage} folder="page-media" />
             </Field>
+            {p.bgImage && (
+              <>
+                <Field label="Overlay (kleur over foto)">
+                  <Select value={p.overlayEnabled !== false ? "on" : "off"} onValueChange={(v) => set("overlayEnabled", v === "on")}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="on">Aan</SelectItem>
+                      <SelectItem value="off">Uit</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                {p.overlayEnabled !== false && (
+                  <>
+                    <Field label="Overlay kleur">
+                      <Select value={p.overlayColor || "#000000"} onValueChange={(v) => set("overlayColor", v)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="#000000">Zwart</SelectItem>
+                          <SelectItem value="#ffffff">Wit</SelectItem>
+                          <SelectItem value="#0784b6">Primair (blauw)</SelectItem>
+                          <SelectItem value="#08abd8">Secundair (aqua)</SelectItem>
+                          <SelectItem value="#1e293b">Donkerblauw</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field label="Overlay opacity (%)">
+                      <NumberInput
+                        min={0}
+                        max={100}
+                        value={p.overlayOpacity ?? 50}
+                        onChange={(v) => set("overlayOpacity", v ?? 50)}
+                      />
+                    </Field>
+                  </>
+                )}
+              </>
+            )}
             <Field label="Achtergrondkleur (zonder afbeelding)">
               <Select value={p.bgColor || "primary"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>

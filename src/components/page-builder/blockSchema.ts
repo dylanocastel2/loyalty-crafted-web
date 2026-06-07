@@ -56,7 +56,7 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "divider", label: "Scheidingslijn", category: "Basis", icon: "Minus", defaultProps: {} },
 
   // Layout
-  { type: "hero", label: "Hero sectie", category: "Layout", icon: "LayoutTemplate", defaultProps: { title: "Welkom", subtitle: "Een korte beschrijving", bgImage: "", bgColor: "primary", ctaLabel: "Lees meer", ctaLink: "/", textColor: "light" } },
+  { type: "hero", label: "Hero sectie", category: "Layout", icon: "LayoutTemplate", defaultProps: { title: "Welkom", subtitle: "Een korte beschrijving", bgImage: "", bgColor: "primary", ctaLabel: "Lees meer", ctaLink: "/", textColor: "light", overlayEnabled: true, overlayColor: "#000000", overlayOpacity: 50 } },
   { type: "two_columns", label: "Twee kolommen", category: "Layout", icon: "Columns2", defaultProps: { left: "Linkerkolom inhoud", right: "Rechterkolom inhoud" } },
   { type: "three_columns", label: "Drie kolommen", category: "Layout", icon: "Columns3", defaultProps: { col1: "Kolom 1", col2: "Kolom 2", col3: "Kolom 3" } },
   { type: "container", label: "Achtergrondblok", category: "Layout", icon: "Square", defaultProps: { content: "Inhoud van het blok", bgColor: "muted", padding: "large" } },
