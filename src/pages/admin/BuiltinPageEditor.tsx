@@ -244,6 +244,32 @@ const BuiltinPageEditor = () => {
               <TabsTrigger value="after">Extra onder ({afterBlocks.length})</TabsTrigger>
               <TabsTrigger value="seo">SEO</TabsTrigger>
             </TabsList>
+            {!hasPagePreset(builtin.key) && !fullIsSaved && (
+              <div className="my-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2 text-xs flex items-start gap-3">
+                <div className="flex-1">
+                  <p className="font-semibold text-foreground mb-0.5">
+                    Bewerk de bestaande inhoud direct op de pagina
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Deze pagina heeft een dynamische sjabloon. Open de live pagina en klik
+                    op het <span className="font-medium">potlood-icoon</span> dat verschijnt
+                    naast elke tekst om titels, paragrafen, lijsten en kaarten aan te passen.
+                    Gebruik de tabs "Extra boven" en "Extra onder" hieronder om losse blokken
+                    toe te voegen, of bouw onder "Volledige pagina" een eigen variant die de
+                    standaard vervangt.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={() => window.open(builtin.path, "_blank")}
+                  className="flex-shrink-0"
+                >
+                  <ExternalLink className="h-3.5 w-3.5 mr-1" />
+                  Open pagina om in te bewerken
+                </Button>
+              </div>
+            )}
             {tab === "full" && (
               <div className="flex items-center justify-between gap-3 py-1.5 flex-wrap">
                 <p className="text-[11px] text-muted-foreground max-w-2xl">
