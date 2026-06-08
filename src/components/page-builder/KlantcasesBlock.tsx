@@ -16,7 +16,7 @@ interface KlantcaseItem {
 
 interface Props {
   view: "short" | "detailed";
-  mode: "selected" | "latest";
+  mode: "selected" | "latest" | "filter";
   selectedIds: string[];
   limit: number;
   columns: number;
@@ -28,6 +28,7 @@ interface Props {
   maxRows?: number;
   filterOptions?: string[];
   showAll?: boolean;
+  filterSector?: string;
 }
 
 const DEFAULT_SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
@@ -44,7 +45,7 @@ const matchesSector = (c: KlantcaseItem, sector: string, allOptions: string[]) =
 
 import { toRenderHtml } from "./RichText";
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions, showAll }: Props) => {
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions, showAll, filterSector }: Props) => {
   const sectorOptions = (filterOptions && filterOptions.length ? filterOptions : DEFAULT_SECTOR_OPTIONS).filter((s) => s && s.trim().length > 0);
   const tAlign = titleAlign === "left" ? "text-left" : titleAlign === "right" ? "text-right" : "text-center";
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
@@ -59,6 +60,8 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       let query = supabase.from("klantcases").select("*").eq("published", true);
       if (mode === "selected" && selectedIds?.length) {
         query = query.in("id", selectedIds);
+      } else if (mode === "filter") {
+        query = query.order("created_at", { ascending: false });
       } else {
         query = query.order("created_at", { ascending: false });
         if (!showAll) query = query.limit(limit || 3);
@@ -69,12 +72,16 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       if (mode === "selected" && selectedIds?.length) {
         list = selectedIds.map((id) => list.find((c) => c.id === id)).filter(Boolean) as KlantcaseItem[];
       }
+      if (mode === "filter" && filterSector) {
+        list = list.filter((c) => matchesSector(c, filterSector, sectorOptions));
+        if (!showAll) list = list.slice(0, limit || 3);
+      }
       setCases(list);
       setLoading(false);
     };
     fetch();
     return () => { active = false; };
-  }, [mode, JSON.stringify(selectedIds), limit, showAll]);
+  }, [mode, JSON.stringify(selectedIds), limit, showAll, filterSector, JSON.stringify(sectorOptions)]);
 
   if (loading) return <div className="container py-8 text-center text-sm text-muted-foreground">Klantcases laden...</div>;
   if (!cases.length) return <div className="container py-8 text-center text-sm text-muted-foreground">Geen klantcases gevonden.</div>;
