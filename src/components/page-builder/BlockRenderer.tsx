@@ -680,6 +680,7 @@ const BlockRenderer = ({ block }: Props) => {
             maxRows={p.maxRows || 0}
             filterOptions={Array.isArray(p.filterOptions) ? p.filterOptions : undefined}
             showAll={p.showAll === true}
+            filterSector={p.filterSector}
           />
         </section>
       );
