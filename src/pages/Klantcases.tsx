@@ -83,35 +83,26 @@ const Klantcases = () => {
 
       <section className="py-16 md:py-24">
         <div className="container">
-          <div className="flex flex-col gap-4 mb-8">
-            <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 mb-8">
+            <Button
+              variant={selectedBranche === "all" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedBranche("all")}
+              className="rounded-full"
+            >
+              Alle
+            </Button>
+            {sectorOptions.map((s) => (
               <Button
-                variant={selectedBranche === "all" ? "default" : "outline"}
+                key={s}
+                variant={selectedBranche === s ? "default" : "outline"}
                 size="sm"
-                onClick={() => setSelectedBranche("all")}
+                onClick={() => setSelectedBranche(s)}
                 className="rounded-full"
               >
-                Alle
+                {s}
               </Button>
-              {sectorOptions.map((s) => (
-                <Button
-                  key={s}
-                  variant={selectedBranche === s ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedBranche(s)}
-                  className="rounded-full"
-                >
-                  {s}
-                </Button>
-              ))}
-            </div>
-            {isAdmin && (
-              <Link to="/klantcases/nieuw" className="self-end">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" /> Maak klantcase
-                </Button>
-              </Link>
-            )}
+            ))}
           </div>
           {loading ? (
             <p className="text-center text-muted-foreground">Laden...</p>
