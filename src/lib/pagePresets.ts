@@ -1,4 +1,5 @@
 import { Block, BlockType } from "@/components/page-builder/blockSchema";
+import { getBranche } from "./brancheContent";
 
 const b = (type: BlockType, props: Record<string, any>, children?: Block[][]): Block => ({
   id: crypto.randomUUID(),
@@ -7,11 +8,96 @@ const b = (type: BlockType, props: Record<string, any>, children?: Block[][]): B
   ...(children ? { children } : {}),
 });
 
+const buildBrancheBlocks = (slug: string): Block[] | null => {
+  const data = getBranche(slug);
+  if (!data) return null;
+  const label = data.label;
+  const labelLower = label.toLowerCase();
+
+  return [
+    b("hero", {
+      title: data.heroTitle,
+      subtitle: data.heroSubtitle,
+      bgColor: "muted",
+      textColor: "dark",
+      ctaLabel: "Plan een demo",
+      ctaLink: "/demo",
+    }),
+    b("row", { columns: 2, gap: 32, padding: "medium", verticalAlign: "start", bgColor: "background" }, [
+      [
+        b("heading", { text: "Herkenbare uitdagingen", level: 2, align: "left" }),
+        b("feature_list", { items: data.problems.map((p) => ({ title: p, description: "" })) }),
+      ],
+      [
+        b("heading", { text: "Kansen met een loyaliteitsplatform", level: 2, align: "left" }),
+        b("feature_list", { items: data.opportunities.map((p) => ({ title: p, description: "" })) }),
+      ],
+    ]),
+    b("container", { content: "", bgColor: "muted", padding: "small" }),
+    b("heading", { text: `Hoe loyaliteit waarde toevoegt in ${labelLower}`, level: 2, align: "left", marginTop: 32 }),
+    b("paragraph", { text: data.loyaltyValue, align: "left" }),
+    b("row", { columns: 3, gap: 20, padding: "medium" },
+      data.scenarios.map((s) => [
+        b("heading", { text: s.title, level: 3, align: "left" }),
+        b("paragraph", { text: s.text, align: "left" }),
+      ]),
+    ),
+    b("heading", { text: "Functionaliteiten die ertoe doen", level: 2, align: "left", marginTop: 32 }),
+    b("paragraph", {
+      text: `Een greep uit de modules die we voor ${labelLower} doorgaans inzetten — we voegen alleen toe wat u écht gebruikt.`,
+      align: "left",
+    }),
+    b("row", { columns: 3, gap: 20, padding: "medium" },
+      data.features.map((f) => [
+        b("icon_card", { icon: "Sparkles", title: f.title, description: f.desc, iconColor: "primary" }),
+      ]),
+    ),
+    b("heading", { text: "Maatwerk in uw huisstijl, gebouwd op een bewezen standaard", level: 2, align: "left", marginTop: 32 }),
+    b("paragraph", {
+      text: "U start niet bij nul. Loyaltygroup levert een uitontwikkeld standaardplatform en voegt daar exact die functionaliteit, vormgeving en koppelingen aan toe die uw organisatie nodig heeft. Het resultaat: snel live, en tóch een oplossing die zich volledig naar uw merk en processen voegt.",
+      align: "left",
+    }),
+    b("row", { columns: 2, gap: 20, padding: "medium" },
+      [
+        data.whyUs.slice(0, Math.ceil(data.whyUs.length / 2)).flatMap((w) => [
+          b("icon_card", { icon: "Check", title: w.title, description: w.desc, iconColor: "primary" }),
+        ]),
+        data.whyUs.slice(Math.ceil(data.whyUs.length / 2)).flatMap((w) => [
+          b("icon_card", { icon: "Check", title: w.title, description: w.desc, iconColor: "primary" }),
+        ]),
+      ],
+    ),
+    b("klantcases", {
+      view: "short",
+      mode: "latest",
+      selectedIds: [],
+      limit: 6,
+      columns: 3,
+      showBranche: true,
+      showCategory: true,
+      title: `Klantcases uit ${labelLower}`,
+      bgColor: "background",
+      padding: "medium",
+      showFilter: false,
+    }),
+    b("cta_banner", {
+      title: `Klaar voor loyaliteit in ${labelLower}?`,
+      subtitle: "Plan een vrijblijvende demo of vraag een prijsindicatie aan.",
+      ctaLabel: "Plan een demo",
+      ctaLink: "/demo",
+    }),
+  ];
+};
+
 /**
  * Returns a starting blocks-array that mirrors the current static design of a built-in page.
  * Used by the admin "Volledige pagina" tab so editors can see and edit existing content.
  */
 export const getDefaultPageBlocks = (pageKey: string): Block[] => {
+  if (pageKey.startsWith("branche-")) {
+    const blocks = buildBrancheBlocks(pageKey.slice("branche-".length));
+    if (blocks) return blocks;
+  }
   switch (pageKey) {
     case "index":
       return [
