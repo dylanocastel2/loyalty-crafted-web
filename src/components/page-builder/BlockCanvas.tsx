@@ -3,7 +3,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, v
 import { CSS } from "@dnd-kit/utilities";
 import { Block, BlockType, createBlock, getBlockMeta, safeUUID } from "./blockSchema";
 import BlockRenderer from "./BlockRenderer";
-import { GripVertical, Trash2, Copy, Plus, ClipboardCopy, ClipboardPaste } from "lucide-react";
+import { GripVertical, Trash2, Copy, Plus, ClipboardCopy, ClipboardPaste, ArrowUp, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
@@ -64,6 +64,26 @@ const findBlockPath = (
 };
 
 const cloneBlocks = (b: Block[]): Block[] => JSON.parse(JSON.stringify(b));
+
+const moveBlockById = (blocks: Block[], id: string, dir: -1 | 1): Block[] => {
+  const next = cloneBlocks(blocks);
+  const helper = (arr: Block[]): boolean => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].id === id) {
+        const j = i + dir;
+        if (j < 0 || j >= arr.length) return true;
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+        return true;
+      }
+      if (arr[i].children) for (const col of arr[i].children!) if (helper(col)) return true;
+    }
+    return false;
+  };
+  helper(next);
+  return next;
+};
 
 const removeBlockById = (blocks: Block[], id: string): Block[] => {
   const next = cloneBlocks(blocks);
@@ -179,10 +199,14 @@ interface ItemActionsProps {
   onDelete: () => void;
   onDuplicate: () => void;
   onCopy: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
   attributes: any;
   listeners: any;
 }
-const ItemHeader = ({ block, onDelete, onDuplicate, onCopy, attributes, listeners, isSelected }: ItemActionsProps & { isSelected: boolean }) => {
+const ItemHeader = ({ block, onDelete, onDuplicate, onCopy, onMoveUp, onMoveDown, canMoveUp, canMoveDown, attributes, listeners, isSelected }: ItemActionsProps & { isSelected: boolean }) => {
   const meta = getBlockMeta(block.type);
   return (
     <div className={`flex items-center justify-between px-3 py-1.5 border-b text-xs ${isSelected ? "bg-primary/10" : "bg-muted/40"}`}>
@@ -193,6 +217,12 @@ const ItemHeader = ({ block, onDelete, onDuplicate, onCopy, attributes, listener
         <span className="font-medium">{meta?.label || block.type}</span>
       </div>
       <div className="flex items-center gap-1">
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omhoog" disabled={!canMoveUp} onClick={(e) => { e.stopPropagation(); onMoveUp(); }}>
+          <ArrowUp className="h-3 w-3" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omlaag" disabled={!canMoveDown} onClick={(e) => { e.stopPropagation(); onMoveDown(); }}>
+          <ArrowDown className="h-3 w-3" />
+        </Button>
         <Button variant="ghost" size="icon" className="h-6 w-6" title="Kopieer naar klembord (voor plakken op andere pagina)" onClick={(e) => { e.stopPropagation(); onCopy(); }}>
           <ClipboardCopy className="h-3 w-3" />
         </Button>
