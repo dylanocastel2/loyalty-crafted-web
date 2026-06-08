@@ -245,13 +245,16 @@ interface SortableItemProps {
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   onCopy: (id: string) => void;
+  onMove: (id: string, dir: -1 | 1) => void;
+  index: number;
+  total: number;
   onAddToColumn: (rowId: string, col: number, type: BlockType) => void;
   onPasteToColumn: (rowId: string, col: number) => void;
   hasClipboard: boolean;
 }
 
 const SortableItem = (props: SortableItemProps) => {
-  const { block, isSelected, selectedId, onSelect, onDelete, onDuplicate, onCopy, onAddToColumn, onPasteToColumn, hasClipboard } = props;
+  const { block, isSelected, selectedId, onSelect, onDelete, onDuplicate, onCopy, onMove, index, total, onAddToColumn, onPasteToColumn, hasClipboard } = props;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -272,7 +275,19 @@ const SortableItem = (props: SortableItemProps) => {
         isSelected ? "border-primary shadow-md" : "border-border hover:border-primary/40"
       }`}
     >
-      <ItemHeader block={block} onDelete={() => onDelete(block.id)} onDuplicate={() => onDuplicate(block.id)} onCopy={() => onCopy(block.id)} attributes={attributes} listeners={listeners} isSelected={isSelected} />
+      <ItemHeader
+        block={block}
+        onDelete={() => onDelete(block.id)}
+        onDuplicate={() => onDuplicate(block.id)}
+        onCopy={() => onCopy(block.id)}
+        onMoveUp={() => onMove(block.id, -1)}
+        onMoveDown={() => onMove(block.id, 1)}
+        canMoveUp={index > 0}
+        canMoveDown={index < total - 1}
+        attributes={attributes}
+        listeners={listeners}
+        isSelected={isSelected}
+      />
       {isRow ? (
         <div className="p-3">
           <div className={`grid gap-3`} style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
@@ -287,6 +302,7 @@ const SortableItem = (props: SortableItemProps) => {
                 onDelete={onDelete}
                 onDuplicate={onDuplicate}
                 onCopy={onCopy}
+                onMove={onMove}
                 onAddToColumn={onAddToColumn}
                 onPasteToColumn={onPasteToColumn}
                 hasClipboard={hasClipboard}
@@ -312,14 +328,14 @@ const QUICK_ADD: { type: BlockType; label: string }[] = [
   { type: "stat", label: "Statistiek" },
 ];
 
-const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelete, onDuplicate, onCopy, onAddToColumn, onPasteToColumn, hasClipboard }: any) => {
+const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelete, onDuplicate, onCopy, onMove, onAddToColumn, onPasteToColumn, hasClipboard }: any) => {
   const { setNodeRef, isOver } = useDroppable({ id: `col:${rowId}:${colIndex}` });
   const [pickerOpen, setPickerOpen] = useState(false);
   return (
     <div ref={setNodeRef} className={`min-h-[80px] rounded border-2 border-dashed p-2 transition-colors ${isOver ? "border-primary bg-primary/5" : "border-border/50"}`}>
       <SortableContext items={items.map((b: Block) => b.id)} strategy={verticalListSortingStrategy}>
         <div className="space-y-2">
-          {items.map((b: Block) => (
+          {items.map((b: Block, idx: number) => (
             <SortableItem
               key={b.id}
               block={b}
@@ -329,6 +345,9 @@ const ColumnDroppable = ({ rowId, colIndex, items, selectedId, onSelect, onDelet
               onDelete={onDelete}
               onDuplicate={onDuplicate}
               onCopy={onCopy}
+              onMove={onMove}
+              index={idx}
+              total={items.length}
               onAddToColumn={onAddToColumn}
               onPasteToColumn={onPasteToColumn}
               hasClipboard={hasClipboard}
@@ -477,7 +496,7 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
                 </Button>
               </div>
             )}
-            {blocks.map((block) => (
+            {blocks.map((block, idx) => (
               <SortableItem
                 key={block.id}
                 block={block}
@@ -487,6 +506,9 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
                 onDelete={(id) => onChange(removeBlockById(blocks, id))}
                 onDuplicate={(id) => onChange(duplicateBlockById(blocks, id))}
                 onCopy={handleCopy}
+                onMove={(id, dir) => onChange(moveBlockById(blocks, id, dir))}
+                index={idx}
+                total={blocks.length}
                 onAddToColumn={(rowId, col, type) => {
                   const block = createBlock(type);
                   onChange(addBlockToContainer(blocks, { kind: "column", rowId, col }, block));
