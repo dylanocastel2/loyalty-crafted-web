@@ -321,25 +321,35 @@ const Admin = () => {
             </div>
           </div>
 
-          {editCase && (
-            <div className="bg-card border rounded-lg p-6 mb-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Titel</Label><Input value={editCase.title || ""} onChange={(e) => setEditCase({ ...editCase, title: e.target.value })} /></div>
-                <div><Label>Categorie</Label><Input value={editCase.category || ""} onChange={(e) => setEditCase({ ...editCase, category: e.target.value })} /></div>
-                <div><Label>Branche</Label><Input value={(editCase as any).branche || ""} onChange={(e) => setEditCase({ ...editCase, branche: e.target.value } as any)} placeholder="Bijv. Horeca, Retail, Overheid" /></div>
-              </div>
-              <div><Label>Beschrijving</Label><Textarea value={editCase.description || ""} onChange={(e) => setEditCase({ ...editCase, description: e.target.value })} rows={3} /></div>
-              <div><Label>Afbeelding (in detail pagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, image_url: url || null })} currentUrl={editCase.image_url || undefined} folder="klantcases" /></div>
-              <div><Label>Headerfoto (overzichtspagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, header_image_url: url } as any)} currentUrl={(editCase as any).header_image_url || undefined} folder="klantcases/headers" /></div>
-              <div className="flex items-center gap-2"><Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} /><Label>Gepubliceerd</Label></div>
-              <div><Label>Video URL (YouTube/Vimeo)</Label><Input value={(editCase as any).video_url || ""} onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)} placeholder="https://www.youtube.com/watch?v=..." /></div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><Label>Knoptekst (CTA)</Label><Input value={(editCase as any).cta_label || ""} onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)} placeholder="Bijv. Bezoek website" /></div>
-                <div><Label>Knop-URL</Label><Input value={(editCase as any).cta_url || ""} onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)} placeholder="https://..." /></div>
-              </div>
-              <div className="flex gap-2"><Button onClick={saveCase}>Opslaan</Button><Button variant="outline" onClick={() => setEditCase(null)}>Annuleren</Button></div>
-            </div>
-          )}
+          <Dialog open={!!editCase} onOpenChange={(open) => { if (!open) setEditCase(null); }}>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>{editCase?.id ? "Klantcase bewerken" : "Nieuwe klantcase"}</DialogTitle>
+              </DialogHeader>
+              {editCase && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><Label>Titel</Label><Input value={editCase.title || ""} onChange={(e) => setEditCase({ ...editCase, title: e.target.value })} /></div>
+                    <div><Label>Categorie</Label><Input value={editCase.category || ""} onChange={(e) => setEditCase({ ...editCase, category: e.target.value })} /></div>
+                    <div><Label>Branche</Label><Input value={(editCase as any).branche || ""} onChange={(e) => setEditCase({ ...editCase, branche: e.target.value } as any)} placeholder="Bijv. Horeca, Retail, Overheid" /></div>
+                  </div>
+                  <div><Label>Beschrijving</Label><Textarea value={editCase.description || ""} onChange={(e) => setEditCase({ ...editCase, description: e.target.value })} rows={3} /></div>
+                  <div><Label>Afbeelding (in detail pagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, image_url: url || null })} currentUrl={editCase.image_url || undefined} folder="klantcases" /></div>
+                  <div><Label>Headerfoto (overzichtspagina)</Label><FileUpload onUpload={(url) => setEditCase({ ...editCase, header_image_url: url } as any)} currentUrl={(editCase as any).header_image_url || undefined} folder="klantcases/headers" /></div>
+                  <div className="flex items-center gap-2"><Switch checked={editCase.published ?? false} onCheckedChange={(v) => setEditCase({ ...editCase, published: v })} /><Label>Gepubliceerd</Label></div>
+                  <div><Label>Video URL (YouTube/Vimeo)</Label><Input value={(editCase as any).video_url || ""} onChange={(e) => setEditCase({ ...editCase, video_url: e.target.value } as any)} placeholder="https://www.youtube.com/watch?v=..." /></div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><Label>Knoptekst (CTA)</Label><Input value={(editCase as any).cta_label || ""} onChange={(e) => setEditCase({ ...editCase, cta_label: e.target.value } as any)} placeholder="Bijv. Bezoek website" /></div>
+                    <div><Label>Knop-URL</Label><Input value={(editCase as any).cta_url || ""} onChange={(e) => setEditCase({ ...editCase, cta_url: e.target.value } as any)} placeholder="https://..." /></div>
+                  </div>
+                </div>
+              )}
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setEditCase(null)}>Annuleren</Button>
+                <Button onClick={saveCase}>Opslaan</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
 
           <div className="space-y-3">
             {cases.map((c) => (
