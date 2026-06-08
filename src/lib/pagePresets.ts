@@ -449,6 +449,7 @@ export const getDefaultPageBlocks = (pageKey: string): Block[] => {
 };
 
 export const hasPagePreset = (pageKey: string): boolean =>
+  pageKey.startsWith("branche-") ? !!getBranche(pageKey.slice("branche-".length)) :
   [
     "index",
     "over-ons",
