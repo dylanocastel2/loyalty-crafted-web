@@ -86,7 +86,7 @@ const PageContent = ({ pageKey, children }: Props) => {
       <>
         {seoTags}
         {fullBlocks.map((b) => (
-          <BlockRenderer key={b.id} block={b} />
+          <BlockRenderer key={b.id} block={b} pageKey={pageKey} />
         ))}
       </>
     );
