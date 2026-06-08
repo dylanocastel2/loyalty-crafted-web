@@ -236,16 +236,13 @@ const BlockRenderer = ({ block }: Props) => {
 
     case "button":
       return (
-        <section className={`container py-3 flex ${p.align === "center" ? "justify-center" : p.align === "right" ? "justify-end" : "justify-start"}`}>
-          {p.link?.startsWith("http") ? (
-            <a href={p.link} target="_blank" rel="noopener noreferrer">
-              <Button variant={p.variant || "default"} size="lg">{p.label}</Button>
-            </a>
-          ) : (
-            <Link to={p.link || "/"}>
-              <Button variant={p.variant || "default"} size="lg">{p.label}</Button>
-            </Link>
-          )}
+        <section className={`container py-3`}>
+          <CtaGroup
+            primary={{ label: p.label, link: p.link, variant: p.variant }}
+            extras={p.extraCtas}
+            layout={p.ctaLayout}
+            align={p.align || "left"}
+          />
         </section>
       );
 
@@ -448,9 +445,14 @@ const BlockRenderer = ({ block }: Props) => {
       );
 
     case "cta_banner":
+      {
+        const hasCustomBg = p.bgColor && p.bgColor !== "gradient-primary";
+        const bgCls = !hasCustomBg
+          ? "bg-gradient-to-br from-primary to-secondary text-primary-foreground"
+          : bgColorClass(p.bgColor);
       return (
-        <section className="bg-gradient-to-br from-primary to-secondary py-16">
-          <div className={`container ${alignClass(p.titleAlign || "center")} text-primary-foreground`}>
+        <section className={`${bgCls} py-16`}>
+          <div className={`container ${alignClass(p.titleAlign || "center")}`}>
             <RT as="h2" className="text-3xl font-bold leading-tight mb-3" html={p.title} />
             {p.subtitle && <RT as="p" className="mb-6 opacity-90 leading-relaxed whitespace-pre-wrap" html={p.subtitle} />}
             <CtaGroup
@@ -464,6 +466,7 @@ const BlockRenderer = ({ block }: Props) => {
           </div>
         </section>
       );
+      }
 
     case "contact_form":
       return (
