@@ -27,6 +27,7 @@ interface Props {
   showFilter?: boolean;
   maxRows?: number;
   filterOptions?: string[];
+  showAll?: boolean;
 }
 
 const DEFAULT_SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
@@ -43,7 +44,7 @@ const matchesSector = (c: KlantcaseItem, sector: string, allOptions: string[]) =
 
 import { toRenderHtml } from "./RichText";
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions }: Props) => {
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions, showAll }: Props) => {
   const sectorOptions = (filterOptions && filterOptions.length ? filterOptions : DEFAULT_SECTOR_OPTIONS).filter((s) => s && s.trim().length > 0);
   const tAlign = titleAlign === "left" ? "text-left" : titleAlign === "right" ? "text-right" : "text-center";
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
@@ -59,7 +60,8 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       if (mode === "selected" && selectedIds?.length) {
         query = query.in("id", selectedIds);
       } else {
-        query = query.order("created_at", { ascending: false }).limit(limit || 3);
+        query = query.order("created_at", { ascending: false });
+        if (!showAll) query = query.limit(limit || 3);
       }
       const { data } = await query;
       if (!active) return;
@@ -72,7 +74,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
     };
     fetch();
     return () => { active = false; };
-  }, [mode, JSON.stringify(selectedIds), limit]);
+  }, [mode, JSON.stringify(selectedIds), limit, showAll]);
 
   if (loading) return <div className="container py-8 text-center text-sm text-muted-foreground">Klantcases laden...</div>;
   if (!cases.length) return <div className="container py-8 text-center text-sm text-muted-foreground">Geen klantcases gevonden.</div>;
