@@ -343,6 +343,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Select>
             </Field>
             <Field label="Uitlijning">{alignSelect}</Field>
+            {ctaEditor(true)}
           </>
         );
 
@@ -635,6 +636,20 @@ const BlockInspector = ({ block, onChange }: Props) => {
             <Field label="Titel"><RichText value={p.title || ""} onChange={(v) => set("title", v)} singleLine /></Field>
             <Field label="Subtitel"><RichText value={p.subtitle || ""} onChange={(v) => set("subtitle", v)} rows={2} /></Field>
             <Field label="Titel uitlijning">{titleAlignSelect("center")}</Field>
+            <Field label="Achtergrondkleur">
+              <Select value={p.bgColor || "gradient-primary"} onValueChange={(v) => set("bgColor", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gradient-primary">Verloop (primair → secundair)</SelectItem>
+                  <SelectItem value="primary">Primair</SelectItem>
+                  <SelectItem value="secondary">Secundair</SelectItem>
+                  <SelectItem value="gradient">Verloop</SelectItem>
+                  <SelectItem value="muted">Licht grijs</SelectItem>
+                  <SelectItem value="card">Wit</SelectItem>
+                  <SelectItem value="background">Geen</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
             <Field label="Knoptekst"><Input value={p.ctaLabel || ""} onChange={(e) => set("ctaLabel", e.target.value)} /></Field>
             <Field label="Knop link (kies pagina)">
               <PagePicker value={p.ctaLink || ""} onChange={(v) => set("ctaLink", v)} />
