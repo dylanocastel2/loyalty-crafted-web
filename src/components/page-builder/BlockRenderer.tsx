@@ -692,6 +692,7 @@ const BlockRenderer = ({ block, pageKey }: Props) => {
             titleAlign={p.titleAlign}
             showFilter={p.showFilter === true}
             maxRows={p.maxRows || 0}
+            filterOptions={Array.isArray(p.filterOptions) ? p.filterOptions : undefined}
           />
         </section>
       );
