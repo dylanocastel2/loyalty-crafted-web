@@ -930,6 +930,56 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+            <Field label="Toon sectorfilters">
+              <Select value={p.showFilter === true ? "yes" : "no"} onValueChange={(v) => set("showFilter", v === "yes")}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="yes">Ja</SelectItem>
+                  <SelectItem value="no">Nee</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            {p.showFilter === true && (
+              <Field label="Filteropties (sectoren)">
+                <div className="space-y-2">
+                  {((p.filterOptions as string[]) || []).map((opt, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <Input
+                        value={opt}
+                        onChange={(e) => {
+                          const next = [...((p.filterOptions as string[]) || [])];
+                          next[idx] = e.target.value;
+                          set("filterOptions", next);
+                        }}
+                        placeholder="Bijv. Gemeenten"
+                      />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          const next = [...((p.filterOptions as string[]) || [])];
+                          next.splice(idx, 1);
+                          set("filterOptions", next);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const next = [...((p.filterOptions as string[]) || []), ""];
+                      set("filterOptions", next);
+                    }}
+                  >
+                    <Plus className="h-3 w-3 mr-1" /> Filter toevoegen
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Een case matcht een filter als de branche of categorie het label bevat. "Overig" toont cases die geen van de andere filters matchen.</p>
+                </div>
+              </Field>
+            )}
             <Field label="Achtergrondkleur">
               <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
