@@ -90,12 +90,10 @@ const CtaGroup = ({
 
 interface Props {
   block: Block;
-  pageKey?: string;
 }
 
-const BlockRenderer = ({ block, pageKey }: Props) => {
+const BlockRenderer = ({ block }: Props) => {
   const p = block.props;
-  const { isAdmin } = useAuth();
   const isMobile = useIsMobile();
   const mTop = isMobile && p.marginTopMobile != null ? p.marginTopMobile : p.marginTop;
   const mBottom = isMobile && p.marginBottomMobile != null ? p.marginBottomMobile : p.marginBottom;
