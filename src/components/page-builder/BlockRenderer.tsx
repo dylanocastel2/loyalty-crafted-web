@@ -1,6 +1,8 @@
 import { Block } from "./blockSchema";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Plus } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -90,10 +92,12 @@ const CtaGroup = ({
 
 interface Props {
   block: Block;
+  pageKey?: string;
 }
 
-const BlockRenderer = ({ block }: Props) => {
+const BlockRenderer = ({ block, pageKey }: Props) => {
   const p = block.props;
+  const { isAdmin } = useAuth();
   const isMobile = useIsMobile();
   const mTop = isMobile && p.marginTopMobile != null ? p.marginTopMobile : p.marginTop;
   const mBottom = isMobile && p.marginBottomMobile != null ? p.marginBottomMobile : p.marginBottom;
@@ -129,10 +133,20 @@ const BlockRenderer = ({ block }: Props) => {
       const hHasCustomMw = typeof p.customMaxWidth === "number" && p.customMaxWidth > 0;
       const hAlignWrap = p.align === "center" ? "mx-auto" : p.align === "right" ? "ml-auto" : "";
       const hStyle: React.CSSProperties | undefined = hHasCustomMw ? { maxWidth: `${p.customMaxWidth}px` } : undefined;
+      const showAdminBtn = isAdmin && pageKey === "klantcases";
       return (
         <section className={`${bgColorClass(p.bgColor)} ${p.bgColor && p.bgColor !== "background" ? paddingClass(p.padding) : "py-4"}`}>
           <div className="container">
-            <RT as={Tag} className={`font-bold ${sizeClass} ${alignClass(p.align)} ${hHasCustomMw ? `w-full ${hAlignWrap}` : ""}`} html={p.text} style={hStyle} />
+            <div className={`flex items-center gap-4 ${p.align === "center" ? "justify-center" : p.align === "right" ? "justify-end" : "justify-start"}`}>
+              <RT as={Tag} className={`font-bold ${sizeClass} ${alignClass(p.align)} ${hHasCustomMw ? `w-full ${hAlignWrap}` : ""}`} html={p.text} style={hStyle} />
+              {showAdminBtn && (
+                <Link to="/klantcases/nieuw">
+                  <Button size="sm" className="shrink-0">
+                    <Plus className="h-4 w-4 mr-2" /> Klantcase maken
+                  </Button>
+                </Link>
+              )}
+            </div>
           </div>
         </section>
       );
