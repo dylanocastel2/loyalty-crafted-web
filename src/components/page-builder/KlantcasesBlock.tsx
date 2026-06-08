@@ -28,7 +28,7 @@ interface Props {
   maxRows?: number;
   filterOptions?: string[];
   showAll?: boolean;
-  filterSector?: string;
+  filterSector?: string | string[];
 }
 
 const DEFAULT_SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
@@ -46,7 +46,16 @@ const matchesSector = (c: KlantcaseItem, sector: string, allOptions: string[]) =
 import { toRenderHtml } from "./RichText";
 
 const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions, showAll, filterSector }: Props) => {
-  const sectorOptions = (filterOptions && filterOptions.length ? filterOptions : DEFAULT_SECTOR_OPTIONS).filter((s) => s && s.trim().length > 0);
+  const filterSectors: string[] = Array.isArray(filterSector)
+    ? filterSector.filter((s) => !!s)
+    : filterSector
+    ? [filterSector]
+    : [];
+  const baseSectorOptions = (filterOptions && filterOptions.length ? filterOptions : DEFAULT_SECTOR_OPTIONS).filter((s) => s && s.trim().length > 0);
+  // When in filter mode, the visible filter bar should only show the chosen sectors
+  const sectorOptions = mode === "filter" && filterSectors.length > 0 ? filterSectors : baseSectorOptions;
+  // Hide the filter bar automatically when only a single sector is selected in filter mode
+  const effectiveShowFilter = mode === "filter" ? showFilter && filterSectors.length > 1 : showFilter;
   const tAlign = titleAlign === "left" ? "text-left" : titleAlign === "right" ? "text-right" : "text-center";
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,8 +81,8 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       if (mode === "selected" && selectedIds?.length) {
         list = selectedIds.map((id) => list.find((c) => c.id === id)).filter(Boolean) as KlantcaseItem[];
       }
-      if (mode === "filter" && filterSector) {
-        list = list.filter((c) => matchesSector(c, filterSector, sectorOptions));
+      if (mode === "filter" && filterSectors.length > 0) {
+        list = list.filter((c) => filterSectors.some((s) => matchesSector(c, s, baseSectorOptions)));
         if (!showAll) list = list.slice(0, limit || 3);
       }
       setCases(list);
@@ -81,14 +90,14 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
     };
     fetch();
     return () => { active = false; };
-  }, [mode, JSON.stringify(selectedIds), limit, showAll, filterSector, JSON.stringify(sectorOptions)]);
+  }, [mode, JSON.stringify(selectedIds), limit, showAll, JSON.stringify(filterSectors), JSON.stringify(baseSectorOptions)]);
 
   if (loading) return <div className="container py-8 text-center text-sm text-muted-foreground">Klantcases laden...</div>;
   if (!cases.length) return <div className="container py-8 text-center text-sm text-muted-foreground">Geen klantcases gevonden.</div>;
 
   const visibleCases =
-    showFilter && activeSector !== "all"
-      ? cases.filter((c) => matchesSector(c, activeSector, sectorOptions))
+    effectiveShowFilter && activeSector !== "all"
+      ? cases.filter((c) => matchesSector(c, activeSector, baseSectorOptions))
       : cases;
 
   const cols = Math.max(1, Math.min(4, columns || 3));
@@ -109,7 +118,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
     </div>
   ) : null;
 
-  const filterBar = showFilter ? (
+  const filterBar = effectiveShowFilter ? (
     <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
       <Button
         variant={activeSector === "all" ? "default" : "outline"}

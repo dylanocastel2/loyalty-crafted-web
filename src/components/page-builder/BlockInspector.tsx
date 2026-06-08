@@ -887,17 +887,39 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             ) : (p.mode === "filter") ? (
               <>
-                <Field label="Filter (sector)">
-                  <Select value={p.filterSector || ""} onValueChange={(v) => set("filterSector", v)}>
-                    <SelectTrigger><SelectValue placeholder="Kies een sector" /></SelectTrigger>
-                    <SelectContent>
-                      {(((p.filterOptions as string[]) && (p.filterOptions as string[]).length ? (p.filterOptions as string[]) : ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"]) as string[])
-                        .filter((s) => s && s.trim().length > 0)
-                        .map((s) => (
-                          <SelectItem key={s} value={s}>{s}</SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                <Field label="Filter (sectoren)">
+                  <div className="space-y-1.5 rounded-md border bg-background p-2">
+                    {(((p.filterOptions as string[]) && (p.filterOptions as string[]).length
+                      ? (p.filterOptions as string[])
+                      : ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"]) as string[])
+                      .filter((s) => s && s.trim().length > 0)
+                      .map((s) => {
+                        const current: string[] = Array.isArray(p.filterSector)
+                          ? p.filterSector
+                          : p.filterSector
+                          ? [p.filterSector]
+                          : [];
+                        const checked = current.includes(s);
+                        return (
+                          <label key={s} className="flex items-center gap-2 text-sm cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => {
+                                const next = e.target.checked
+                                  ? [...current, s]
+                                  : current.filter((x) => x !== s);
+                                set("filterSector", next);
+                              }}
+                            />
+                            <span>{s}</span>
+                          </label>
+                        );
+                      })}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Bij één gekozen sector worden de filterknoppen op de pagina automatisch verborgen.
+                  </p>
                 </Field>
                 {p.showAll !== true && (
                   <Field label="Aantal cases">
