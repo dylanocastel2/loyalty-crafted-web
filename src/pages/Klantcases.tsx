@@ -67,6 +67,15 @@ const Klantcases = () => {
       <PageContent pageKey="klantcases">
       <section className="py-16 md:py-24 pb-0">
         <div className="container text-center relative">
+          {isAdmin && (
+            <div className="absolute right-0 top-0 hidden md:block">
+              <Link to="/klantcases/nieuw">
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-2" /> Klantcase maken
+                </Button>
+              </Link>
+            </div>
+          )}
           <EditableText page="klantcases" contentKey="hero_title" defaultValue="Klantcases" as="h1" className="text-3xl md:text-5xl font-bold mb-4" />
           <EditableText page="klantcases" contentKey="hero_subtitle" defaultValue="Ontdek hoe wij organisaties helpen met op maat gemaakte loyaliteitsoplossingen." as="p" className="text-lg text-muted-foreground max-w-2xl mx-auto" multiline />
         </div>
