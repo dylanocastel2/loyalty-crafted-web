@@ -877,6 +877,7 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 <SelectContent>
                   <SelectItem value="selected">Handmatig kiezen</SelectItem>
                   <SelectItem value="latest">Automatisch (nieuwste)</SelectItem>
+                  <SelectItem value="filter">Sorteer op filter</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
@@ -884,6 +885,36 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Field label="Kies klantcases">
                 <KlantcasePicker value={p.selectedIds || []} onChange={(ids) => set("selectedIds", ids)} />
               </Field>
+            ) : (p.mode === "filter") ? (
+              <>
+                <Field label="Filter (sector)">
+                  <Select value={p.filterSector || ""} onValueChange={(v) => set("filterSector", v)}>
+                    <SelectTrigger><SelectValue placeholder="Kies een sector" /></SelectTrigger>
+                    <SelectContent>
+                      {(((p.filterOptions as string[]) && (p.filterOptions as string[]).length ? (p.filterOptions as string[]) : ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"]) as string[])
+                        .filter((s) => s && s.trim().length > 0)
+                        .map((s) => (
+                          <SelectItem key={s} value={s}>{s}</SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+                {p.showAll !== true && (
+                  <Field label="Aantal cases">
+                    <NumberInput min={1} max={12} value={p.limit ?? 3} onChange={(v) => set("limit", v ?? 3)} />
+                  </Field>
+                )}
+                <Field label="Toon alle cases">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={p.showAll === true}
+                      onChange={(e) => set("showAll", e.target.checked)}
+                    />
+                    <span>Alle matchende cases tonen (overschrijft aantal)</span>
+                  </label>
+                </Field>
+              </>
             ) : (
               <>
                 {p.showAll !== true && (
