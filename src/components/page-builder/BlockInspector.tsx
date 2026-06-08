@@ -886,9 +886,11 @@ const BlockInspector = ({ block, onChange }: Props) => {
               </Field>
             ) : (
               <>
-                <Field label="Aantal cases">
-                  <NumberInput min={1} max={12} value={p.limit ?? 3} onChange={(v) => set("limit", v ?? 3)} disabled={p.showAll === true} />
-                </Field>
+                {p.showAll !== true && (
+                  <Field label="Aantal cases">
+                    <NumberInput min={1} max={12} value={p.limit ?? 3} onChange={(v) => set("limit", v ?? 3)} />
+                  </Field>
+                )}
                 <Field label="Toon alle cases">
                   <label className="flex items-center gap-2 text-sm">
                     <input
