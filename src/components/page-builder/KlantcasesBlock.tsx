@@ -26,14 +26,15 @@ interface Props {
   titleAlign?: string;
   showFilter?: boolean;
   maxRows?: number;
+  filterOptions?: string[];
 }
 
-const SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
+const DEFAULT_SECTOR_OPTIONS = ["Gemeenten", "Horeca", "Zorg", "Retail", "Overig"];
 
-const matchesSector = (c: KlantcaseItem, sector: string) => {
+const matchesSector = (c: KlantcaseItem, sector: string, allOptions: string[]) => {
   const haystack = `${c.branche ?? ""} ${c.category ?? ""}`.toLowerCase();
   if (sector === "Overig") {
-    return !SECTOR_OPTIONS.filter((s) => s !== "Overig").some((s) =>
+    return !allOptions.filter((s) => s !== "Overig").some((s) =>
       haystack.includes(s.toLowerCase())
     );
   }
@@ -42,7 +43,8 @@ const matchesSector = (c: KlantcaseItem, sector: string) => {
 
 import { toRenderHtml } from "./RichText";
 
-const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows }: Props) => {
+const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche, showCategory, title, titleAlign, showFilter, maxRows, filterOptions }: Props) => {
+  const sectorOptions = (filterOptions && filterOptions.length ? filterOptions : DEFAULT_SECTOR_OPTIONS).filter((s) => s && s.trim().length > 0);
   const tAlign = titleAlign === "left" ? "text-left" : titleAlign === "right" ? "text-right" : "text-center";
   const [cases, setCases] = useState<KlantcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +79,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
 
   const visibleCases =
     showFilter && activeSector !== "all"
-      ? cases.filter((c) => matchesSector(c, activeSector))
+      ? cases.filter((c) => matchesSector(c, activeSector, sectorOptions))
       : cases;
 
   const cols = Math.max(1, Math.min(4, columns || 3));
@@ -108,7 +110,7 @@ const KlantcasesBlock = ({ view, mode, selectedIds, limit, columns, showBranche,
       >
         Alle
       </Button>
-      {SECTOR_OPTIONS.map((s) => (
+      {sectorOptions.map((s) => (
         <Button
           key={s}
           variant={activeSector === s ? "default" : "outline"}
