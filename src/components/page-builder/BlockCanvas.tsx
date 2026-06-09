@@ -217,19 +217,19 @@ const ItemHeader = ({ block, onDelete, onDuplicate, onCopy, onMoveUp, onMoveDown
         <span className="font-medium">{meta?.label || block.type}</span>
       </div>
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omhoog" disabled={!canMoveUp} onClick={(e) => { e.stopPropagation(); onMoveUp(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omhoog" disabled={!canMoveUp} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onMoveUp(); }}>
           <ArrowUp className="h-3 w-3" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omlaag" disabled={!canMoveDown} onClick={(e) => { e.stopPropagation(); onMoveDown(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Omlaag" disabled={!canMoveDown} onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onMoveDown(); }}>
           <ArrowDown className="h-3 w-3" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-6 w-6" title="Kopieer naar klembord (voor plakken op andere pagina)" onClick={(e) => { e.stopPropagation(); onCopy(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Kopieer naar klembord (voor plakken op andere pagina)" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onCopy(); }}>
           <ClipboardCopy className="h-3 w-3" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-6 w-6" title="Dupliceren" onClick={(e) => { e.stopPropagation(); onDuplicate(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6" title="Dupliceren" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onDuplicate(); }}>
           <Copy className="h-3 w-3" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
+        <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive" onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.stopPropagation(); onDelete(); }}>
           <Trash2 className="h-3 w-3" />
         </Button>
       </div>
@@ -433,6 +433,9 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
     if (!over || active.id === over.id) return;
     const activeId = String(active.id);
     const overId = String(over.id);
+
+    // If the dragged block no longer exists (e.g. it was deleted during the drag), bail out
+    if (!getById(blocks, activeId)) return;
 
     // Reorder within same siblings array
     const activeSibs = getSiblings(blocks, activeId);
