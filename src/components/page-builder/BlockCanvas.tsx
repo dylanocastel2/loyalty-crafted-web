@@ -434,6 +434,9 @@ const BlockCanvas = ({ blocks, selectedId, onSelect, onChange }: Props) => {
     const activeId = String(active.id);
     const overId = String(over.id);
 
+    // If the dragged block no longer exists (e.g. it was deleted during the drag), bail out
+    if (!getById(blocks, activeId)) return;
+
     // Reorder within same siblings array
     const activeSibs = getSiblings(blocks, activeId);
     const overSibs = overId.startsWith("col:") ? null : getSiblings(blocks, overId);
