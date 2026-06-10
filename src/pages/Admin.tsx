@@ -228,7 +228,7 @@ const Admin = () => {
       .from("page_content")
       .select("key,content")
       .eq("page", "settings")
-      .in("key", ["notify_email", "notify_enabled"]);
+      .in("key", ["notify_email", "notify_enabled", "admin_navigation"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
     const raw = map["notify_email"] || "";
     setNotifyEmails(
@@ -238,6 +238,12 @@ const Admin = () => {
         .filter(Boolean)
     );
     setNotifyEnabled(map["notify_enabled"] === "true");
+    try {
+      const nav: NavSettings = map["admin_navigation"] ? JSON.parse(map["admin_navigation"]) : null;
+      if (nav?.groups) setNavSettings(nav);
+    } catch {
+      // ignore
+    }
   };
 
   const saveSettings = async () => {
