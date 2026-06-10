@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,17 @@ export type CmsSection =
   | "socials"
   | "instellingen";
 
+export interface NavSettings {
+  groups: {
+    label: string;
+    items: {
+      key: CmsSection;
+      label: string;
+      hidden?: boolean;
+    }[];
+  }[];
+}
+
 type Item = {
   key: CmsSection;
   label: string;
@@ -49,40 +60,86 @@ interface Props {
   title?: string;
 }
 
+const ICON_MAP: Record<CmsSection, typeof LayoutDashboard> = {
+  dashboard: LayoutDashboard,
+  pages: FileText,
+  media: ImageIcon,
+  klantcases: Briefcase,
+  aanvragen: Mail,
+  popup: MessageSquare,
+  analytics: BarChart3,
+  heatmap: Flame,
+  footer: Layers,
+  socials: Share2,
+  instellingen: SettingsIcon,
+};
+
+const DEFAULT_GROUPS: Group[] = [
+  {
+    label: "Overzicht",
+    items: [{ key: "dashboard", label: "Dashboard", icon: LayoutDashboard }],
+  },
+  {
+    label: "Inhoud",
+    items: [
+      { key: "pages", label: "Pagina-bouwer", icon: FileText },
+      { key: "media", label: "Mediabibliotheek", icon: ImageIcon },
+      { key: "klantcases", label: "Klantcases", icon: Briefcase },
+    ],
+  },
+  {
+    label: "Bezoekers",
+    items: [
+      { key: "aanvragen", label: "Aanvragen", icon: Mail },
+      { key: "popup", label: "Pop-up", icon: MessageSquare },
+      { key: "analytics", label: "Analytics", icon: BarChart3 },
+      { key: "heatmap", label: "Heatmap", icon: Flame },
+    ],
+  },
+  {
+    label: "Site",
+    items: [
+      { key: "footer", label: "Footer", icon: Layers },
+      { key: "socials", label: "Social media", icon: Share2 },
+      { key: "instellingen", label: "Instellingen", icon: SettingsIcon },
+    ],
+  },
+];
+
 export default function CmsShell({ active, onSelect, unreadCount = 0, children, title }: Props) {
   const navigate = useNavigate();
+  const [groups, setGroups] = useState<Group[]>(DEFAULT_GROUPS);
 
-  const groups: Group[] = [
-    {
-      label: "Overzicht",
-      items: [{ key: "dashboard", label: "Dashboard", icon: LayoutDashboard }],
-    },
-    {
-      label: "Inhoud",
-      items: [
-        { key: "pages", label: "Pagina-bouwer", icon: FileText },
-        { key: "media", label: "Mediabibliotheek", icon: ImageIcon },
-        { key: "klantcases", label: "Klantcases", icon: Briefcase },
-      ],
-    },
-    {
-      label: "Bezoekers",
-      items: [
-        { key: "aanvragen", label: "Aanvragen", icon: Mail, badge: unreadCount },
-        { key: "popup", label: "Pop-up", icon: MessageSquare },
-        { key: "analytics", label: "Analytics", icon: BarChart3 },
-        { key: "heatmap", label: "Heatmap", icon: Flame },
-      ],
-    },
-    {
-      label: "Site",
-      items: [
-        { key: "footer", label: "Footer", icon: Layers },
-        { key: "socials", label: "Social media", icon: Share2 },
-        { key: "instellingen", label: "Instellingen", icon: SettingsIcon },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const load = async () => {
+      const { data } = await supabase
+        .from("page_content")
+        .select("content")
+        .eq("page", "settings")
+        .eq("key", "admin_navigation")
+        .maybeSingle();
+      try {
+        const parsed: NavSettings = data?.content ? JSON.parse(data.content) : null;
+        if (parsed?.groups) {
+          const merged: Group[] = parsed.groups.map((g) => ({
+            label: g.label,
+            items: g.items
+              .filter((i) => !i.hidden)
+              .map((i) => ({
+                key: i.key,
+                label: i.label,
+                icon: ICON_MAP[i.key] || LayoutDashboard,
+                badge: i.key === "aanvragen" ? unreadCount : undefined,
+              })),
+          })).filter((g) => g.items.length > 0);
+          if (merged.length > 0) setGroups(merged);
+        }
+      } catch {
+        // ignore parse errors
+      }
+    };
+    load();
+  }, [unreadCount]);
 
   const activeLabel =
     groups.flatMap((g) => g.items).find((i) => i.key === active)?.label ?? "CMS";
