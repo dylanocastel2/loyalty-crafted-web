@@ -618,6 +618,88 @@ const Admin = () => {
           {myRole === "admin" && (
             <div className="bg-card border rounded-lg p-6 space-y-4">
               <div className="flex items-center gap-2">
+                <LayoutDashboard className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Navigatiebalk</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">Pas groepen en items in de admin sidebar aan. Verberg items of wijzig de weergavenamen.</p>
+              <div className="space-y-4">
+                {navSettings.groups.map((group, gi) => (
+                  <div key={gi} className="border rounded-md p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        className="h-8 text-sm font-semibold"
+                        value={group.label}
+                        onChange={(e) => {
+                          const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, label: e.target.value } : g) };
+                          setNavSettings(next);
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      {group.items.map((item, ii) => (
+                        <div key={ii} className="flex items-center gap-2">
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                          <Input
+                            className="h-8 text-sm flex-1"
+                            value={item.label}
+                            onChange={(e) => {
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items: g.items.map((it, j) => j === ii ? { ...it, label: e.target.value } : it) } : g) };
+                              setNavSettings(next);
+                            }}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items: g.items.map((it, j) => j === ii ? { ...it, hidden: !it.hidden } : it) } : g) };
+                              setNavSettings(next);
+                            }}
+                            title={item.hidden ? "Tonen" : "Verbergen"}
+                          >
+                            {item.hidden ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={ii === 0}
+                            onClick={() => {
+                              const items = [...group.items];
+                              [items[ii - 1], items[ii]] = [items[ii], items[ii - 1]];
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items } : g) };
+                              setNavSettings(next);
+                            }}
+                          >
+                            <ArrowUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={ii === group.items.length - 1}
+                            onClick={() => {
+                              const items = [...group.items];
+                              [items[ii], items[ii + 1]] = [items[ii + 1], items[ii]];
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items } : g) };
+                              setNavSettings(next);
+                            }}
+                          >
+                            <ArrowDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button size="sm" onClick={saveNavSettings} disabled={savingNav}>{savingNav ? "Opslaan..." : "Navigatie opslaan"}</Button>
+            </div>
+          )}
+
+          {myRole === "admin" && (
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
                 <Shield className="h-5 w-5 text-primary" />
                 <h2 className="text-xl font-bold">Beheerders</h2>
               </div>
