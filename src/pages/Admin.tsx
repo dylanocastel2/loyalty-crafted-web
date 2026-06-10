@@ -293,6 +293,20 @@ const Admin = () => {
     toast({ title: "Navigatie opgeslagen", description: "De sidebar is bijgewerkt. Herlaad de pagina om de wijzigingen te zien." });
   };
 
+  const saveSiteNav = async () => {
+    setSavingSiteNav(true);
+    const { error } = await supabase.from("page_content").upsert(
+      { page: "settings", key: "site_navigation", content: JSON.stringify({ items: siteNav }) },
+      { onConflict: "page,key" }
+    );
+    setSavingSiteNav(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Menubalk opgeslagen", description: "De site-menubalk is bijgewerkt." });
+  };
+
   const addNotifyEmail = () => {
     const v = newNotifyEmail.trim();
     if (!v) return;
