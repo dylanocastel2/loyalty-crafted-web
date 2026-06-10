@@ -77,6 +77,18 @@ const Admin = () => {
   });
   const [savingNav, setSavingNav] = useState(false);
 
+  type SiteNavItem = { label: string; path: string; hidden?: boolean };
+  const defaultSiteNav: SiteNavItem[] = [
+    { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
+    { label: "BRANCHES", path: "/branches" },
+    { label: "KLANTCASES", path: "/klantcases" },
+    { label: "SUPPORT", path: "/support" },
+    { label: "OVER ONS", path: "/over-ons" },
+    { label: "CONTACT", path: "/contact" },
+  ];
+  const [siteNav, setSiteNav] = useState<SiteNavItem[]>(defaultSiteNav);
+  const [savingSiteNav, setSavingSiteNav] = useState(false);
+
   useEffect(() => {
     checkAuth();
   }, []);
