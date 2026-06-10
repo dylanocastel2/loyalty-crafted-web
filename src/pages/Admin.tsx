@@ -651,6 +651,67 @@ const Admin = () => {
             <div className="bg-card border rounded-lg p-6 space-y-4">
               <div className="flex items-center gap-2">
                 <LayoutDashboard className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Site menubalk</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">Pas de menu-items op de openbare site aan. Wijzig labels, paden, volgorde of verberg items. Pagina's uit de pagina-bouwer met "Toon in menu" worden automatisch toegevoegd.</p>
+              <div className="space-y-2">
+                {siteNav.map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 border rounded-md p-2">
+                    <GripVertical className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                      className="h-8 text-sm flex-1"
+                      placeholder="Label"
+                      value={item.label}
+                      onChange={(e) => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, label: e.target.value } : it))}
+                    />
+                    <Input
+                      className="h-8 text-sm flex-1"
+                      placeholder="/pad"
+                      value={item.path}
+                      onChange={(e) => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, path: e.target.value } : it))}
+                    />
+                    <Button variant="ghost" size="icon" className="h-8 w-8"
+                      onClick={() => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, hidden: !it.hidden } : it))}
+                      title={item.hidden ? "Tonen" : "Verbergen"}>
+                      {item.hidden ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={i === 0}
+                      onClick={() => {
+                        const arr = [...siteNav];
+                        [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+                        setSiteNav(arr);
+                      }}>
+                      <ArrowUp className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={i === siteNav.length - 1}
+                      onClick={() => {
+                        const arr = [...siteNav];
+                        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                        setSiteNav(arr);
+                      }}>
+                      <ArrowDown className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"
+                      onClick={() => setSiteNav(siteNav.filter((_, j) => j !== i))}
+                      title="Verwijderen">
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setSiteNav([...siteNav, { label: "NIEUW", path: "/" }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Item toevoegen
+                </Button>
+                <Button size="sm" onClick={saveSiteNav} disabled={savingSiteNav}>{savingSiteNav ? "Opslaan..." : "Menubalk opslaan"}</Button>
+              </div>
+            </div>
+          )}
+
+          {myRole === "admin" && (
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <LayoutDashboard className="h-5 w-5 text-primary" />
                 <h2 className="text-xl font-bold">Navigatiebalk</h2>
               </div>
               <p className="text-sm text-muted-foreground">Pas groepen en items in de admin sidebar aan. Verberg items of wijzig de weergavenamen.</p>
