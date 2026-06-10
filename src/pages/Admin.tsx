@@ -77,6 +77,18 @@ const Admin = () => {
   });
   const [savingNav, setSavingNav] = useState(false);
 
+  type SiteNavItem = { label: string; path: string; hidden?: boolean };
+  const defaultSiteNav: SiteNavItem[] = [
+    { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
+    { label: "BRANCHES", path: "/branches" },
+    { label: "KLANTCASES", path: "/klantcases" },
+    { label: "SUPPORT", path: "/support" },
+    { label: "OVER ONS", path: "/over-ons" },
+    { label: "CONTACT", path: "/contact" },
+  ];
+  const [siteNav, setSiteNav] = useState<SiteNavItem[]>(defaultSiteNav);
+  const [savingSiteNav, setSavingSiteNav] = useState(false);
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -228,7 +240,7 @@ const Admin = () => {
       .from("page_content")
       .select("key,content")
       .eq("page", "settings")
-      .in("key", ["notify_email", "notify_enabled", "admin_navigation"]);
+      .in("key", ["notify_email", "notify_enabled", "admin_navigation", "site_navigation"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
     const raw = map["notify_email"] || "";
     setNotifyEmails(
@@ -241,6 +253,12 @@ const Admin = () => {
     try {
       const nav: NavSettings = map["admin_navigation"] ? JSON.parse(map["admin_navigation"]) : null;
       if (nav?.groups) setNavSettings(nav);
+    } catch {
+      // ignore
+    }
+    try {
+      const sn = map["site_navigation"] ? JSON.parse(map["site_navigation"]) : null;
+      if (Array.isArray(sn?.items)) setSiteNav(sn.items);
     } catch {
       // ignore
     }
@@ -273,6 +291,20 @@ const Admin = () => {
       return;
     }
     toast({ title: "Navigatie opgeslagen", description: "De sidebar is bijgewerkt. Herlaad de pagina om de wijzigingen te zien." });
+  };
+
+  const saveSiteNav = async () => {
+    setSavingSiteNav(true);
+    const { error } = await supabase.from("page_content").upsert(
+      { page: "settings", key: "site_navigation", content: JSON.stringify({ items: siteNav }) },
+      { onConflict: "page,key" }
+    );
+    setSavingSiteNav(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Menubalk opgeslagen", description: "De site-menubalk is bijgewerkt." });
   };
 
   const addNotifyEmail = () => {
@@ -614,6 +646,67 @@ const Admin = () => {
             </div>
             <Button size="sm" onClick={saveSettings} disabled={savingSettings}>{savingSettings ? "Opslaan..." : "Instellingen opslaan"}</Button>
           </div>
+
+          {myRole === "admin" && (
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <LayoutDashboard className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Site menubalk</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">Pas de menu-items op de openbare site aan. Wijzig labels, paden, volgorde of verberg items. Pagina's uit de pagina-bouwer met "Toon in menu" worden automatisch toegevoegd.</p>
+              <div className="space-y-2">
+                {siteNav.map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 border rounded-md p-2">
+                    <GripVertical className="h-4 w-4 text-muted-foreground" />
+                    <Input
+                      className="h-8 text-sm flex-1"
+                      placeholder="Label"
+                      value={item.label}
+                      onChange={(e) => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, label: e.target.value } : it))}
+                    />
+                    <Input
+                      className="h-8 text-sm flex-1"
+                      placeholder="/pad"
+                      value={item.path}
+                      onChange={(e) => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, path: e.target.value } : it))}
+                    />
+                    <Button variant="ghost" size="icon" className="h-8 w-8"
+                      onClick={() => setSiteNav(siteNav.map((it, j) => j === i ? { ...it, hidden: !it.hidden } : it))}
+                      title={item.hidden ? "Tonen" : "Verbergen"}>
+                      {item.hidden ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={i === 0}
+                      onClick={() => {
+                        const arr = [...siteNav];
+                        [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+                        setSiteNav(arr);
+                      }}>
+                      <ArrowUp className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" disabled={i === siteNav.length - 1}
+                      onClick={() => {
+                        const arr = [...siteNav];
+                        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                        setSiteNav(arr);
+                      }}>
+                      <ArrowDown className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8"
+                      onClick={() => setSiteNav(siteNav.filter((_, j) => j !== i))}
+                      title="Verwijderen">
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setSiteNav([...siteNav, { label: "NIEUW", path: "/" }])}>
+                  <Plus className="h-4 w-4 mr-1" /> Item toevoegen
+                </Button>
+                <Button size="sm" onClick={saveSiteNav} disabled={savingSiteNav}>{savingSiteNav ? "Opslaan..." : "Menubalk opslaan"}</Button>
+              </div>
+            </div>
+          )}
 
           {myRole === "admin" && (
             <div className="bg-card border rounded-lg p-6 space-y-4">

@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import logoLg from "@/assets/logo-lg.png";
 
-const baseNavItems = [
+const defaultNavItems = [
   { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
   { label: "BRANCHES", path: "/branches" },
   { label: "KLANTCASES", path: "/klantcases" },
@@ -18,24 +18,45 @@ const baseNavItems = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [customItems, setCustomItems] = useState<{ label: string; path: string }[]>([]);
+  const [baseNavItems, setBaseNavItems] = useState<{ label: string; path: string }[]>(defaultNavItems);
   const location = useLocation();
   const { isAdmin, signOut } = useAuth();
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase
-        .from("custom_pages")
-        .select("title, slug, menu_label, menu_order")
-        .eq("published", true)
-        .eq("show_in_menu", true)
-        .order("menu_order", { ascending: true });
-      if (data) {
+      const [pagesRes, navRes] = await Promise.all([
+        supabase
+          .from("custom_pages")
+          .select("title, slug, menu_label, menu_order")
+          .eq("published", true)
+          .eq("show_in_menu", true)
+          .order("menu_order", { ascending: true }),
+        supabase
+          .from("page_content")
+          .select("content")
+          .eq("page", "settings")
+          .eq("key", "site_navigation")
+          .maybeSingle(),
+      ]);
+      if (pagesRes.data) {
         setCustomItems(
-          data.map((p) => ({
+          pagesRes.data.map((p) => ({
             label: (p.menu_label || p.title).toUpperCase(),
             path: `/p/${p.slug}`,
           }))
         );
+      }
+      try {
+        const parsed = navRes.data?.content ? JSON.parse(navRes.data.content) : null;
+        if (Array.isArray(parsed?.items)) {
+          setBaseNavItems(
+            parsed.items
+              .filter((it: any) => it && !it.hidden && it.label && it.path)
+              .map((it: any) => ({ label: String(it.label), path: String(it.path) }))
+          );
+        }
+      } catch {
+        // keep defaults
       }
     };
     fetch();
