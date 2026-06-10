@@ -240,7 +240,7 @@ const Admin = () => {
       .from("page_content")
       .select("key,content")
       .eq("page", "settings")
-      .in("key", ["notify_email", "notify_enabled", "admin_navigation"]);
+      .in("key", ["notify_email", "notify_enabled", "admin_navigation", "site_navigation"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
     const raw = map["notify_email"] || "";
     setNotifyEmails(
@@ -253,6 +253,12 @@ const Admin = () => {
     try {
       const nav: NavSettings = map["admin_navigation"] ? JSON.parse(map["admin_navigation"]) : null;
       if (nav?.groups) setNavSettings(nav);
+    } catch {
+      // ignore
+    }
+    try {
+      const sn = map["site_navigation"] ? JSON.parse(map["site_navigation"]) : null;
+      if (Array.isArray(sn?.items)) setSiteNav(sn.items);
     } catch {
       // ignore
     }
