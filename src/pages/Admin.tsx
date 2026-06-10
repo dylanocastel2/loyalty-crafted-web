@@ -67,6 +67,15 @@ const Admin = () => {
   const [newNotifyEmail, setNewNotifyEmail] = useState("");
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [navSettings, setNavSettings] = useState<NavSettings>({
+    groups: [
+      { label: "Overzicht", items: [{ key: "dashboard", label: "Dashboard" }] },
+      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
+      { label: "Bezoekers", items: [{ key: "aanvragen", label: "Aanvragen" }, { key: "popup", label: "Pop-up" }, { key: "analytics", label: "Analytics" }, { key: "heatmap", label: "Heatmap" }] },
+      { label: "Site", items: [{ key: "footer", label: "Footer" }, { key: "socials", label: "Social media" }, { key: "instellingen", label: "Instellingen" }] },
+    ],
+  });
+  const [savingNav, setSavingNav] = useState(false);
 
   useEffect(() => {
     checkAuth();
