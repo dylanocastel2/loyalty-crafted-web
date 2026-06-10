@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check, X, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check, X, FileText, Eye, EyeOff, GripVertical, ArrowUp, ArrowDown, LayoutDashboard } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
@@ -16,7 +16,7 @@ import FooterEditor from "@/components/admin/FooterEditor";
 import PopupEditor from "@/components/admin/PopupEditor";
 import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
 import HeatmapPanel from "@/components/admin/HeatmapPanel";
-import CmsShell, { CmsSection } from "@/components/admin/CmsShell";
+import CmsShell, { CmsSection, type NavSettings } from "@/components/admin/CmsShell";
 import DashboardPanel from "@/components/admin/DashboardPanel";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import PagesPanel from "@/components/admin/PagesPanel";
@@ -67,6 +67,15 @@ const Admin = () => {
   const [newNotifyEmail, setNewNotifyEmail] = useState("");
   const [notifyEnabled, setNotifyEnabled] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [navSettings, setNavSettings] = useState<NavSettings>({
+    groups: [
+      { label: "Overzicht", items: [{ key: "dashboard", label: "Dashboard" }] },
+      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
+      { label: "Bezoekers", items: [{ key: "aanvragen", label: "Aanvragen" }, { key: "popup", label: "Pop-up" }, { key: "analytics", label: "Analytics" }, { key: "heatmap", label: "Heatmap" }] },
+      { label: "Site", items: [{ key: "footer", label: "Footer" }, { key: "socials", label: "Social media" }, { key: "instellingen", label: "Instellingen" }] },
+    ],
+  });
+  const [savingNav, setSavingNav] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -219,7 +228,7 @@ const Admin = () => {
       .from("page_content")
       .select("key,content")
       .eq("page", "settings")
-      .in("key", ["notify_email", "notify_enabled"]);
+      .in("key", ["notify_email", "notify_enabled", "admin_navigation"]);
     const map = Object.fromEntries((data || []).map((r) => [r.key, r.content]));
     const raw = map["notify_email"] || "";
     setNotifyEmails(
@@ -229,6 +238,12 @@ const Admin = () => {
         .filter(Boolean)
     );
     setNotifyEnabled(map["notify_enabled"] === "true");
+    try {
+      const nav: NavSettings = map["admin_navigation"] ? JSON.parse(map["admin_navigation"]) : null;
+      if (nav?.groups) setNavSettings(nav);
+    } catch {
+      // ignore
+    }
   };
 
   const saveSettings = async () => {
@@ -244,6 +259,20 @@ const Admin = () => {
       return;
     }
     toast({ title: "Instellingen opgeslagen" });
+  };
+
+  const saveNavSettings = async () => {
+    setSavingNav(true);
+    const { error } = await supabase.from("page_content").upsert(
+      { page: "settings", key: "admin_navigation", content: JSON.stringify(navSettings) },
+      { onConflict: "page,key" }
+    );
+    setSavingNav(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Navigatie opgeslagen", description: "De sidebar is bijgewerkt. Herlaad de pagina om de wijzigingen te zien." });
   };
 
   const addNotifyEmail = () => {
@@ -585,6 +614,88 @@ const Admin = () => {
             </div>
             <Button size="sm" onClick={saveSettings} disabled={savingSettings}>{savingSettings ? "Opslaan..." : "Instellingen opslaan"}</Button>
           </div>
+
+          {myRole === "admin" && (
+            <div className="bg-card border rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2">
+                <LayoutDashboard className="h-5 w-5 text-primary" />
+                <h2 className="text-xl font-bold">Navigatiebalk</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">Pas groepen en items in de admin sidebar aan. Verberg items of wijzig de weergavenamen.</p>
+              <div className="space-y-4">
+                {navSettings.groups.map((group, gi) => (
+                  <div key={gi} className="border rounded-md p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        className="h-8 text-sm font-semibold"
+                        value={group.label}
+                        onChange={(e) => {
+                          const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, label: e.target.value } : g) };
+                          setNavSettings(next);
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      {group.items.map((item, ii) => (
+                        <div key={ii} className="flex items-center gap-2">
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                          <Input
+                            className="h-8 text-sm flex-1"
+                            value={item.label}
+                            onChange={(e) => {
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items: g.items.map((it, j) => j === ii ? { ...it, label: e.target.value } : it) } : g) };
+                              setNavSettings(next);
+                            }}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => {
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items: g.items.map((it, j) => j === ii ? { ...it, hidden: !it.hidden } : it) } : g) };
+                              setNavSettings(next);
+                            }}
+                            title={item.hidden ? "Tonen" : "Verbergen"}
+                          >
+                            {item.hidden ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={ii === 0}
+                            onClick={() => {
+                              const items = [...group.items];
+                              [items[ii - 1], items[ii]] = [items[ii], items[ii - 1]];
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items } : g) };
+                              setNavSettings(next);
+                            }}
+                          >
+                            <ArrowUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={ii === group.items.length - 1}
+                            onClick={() => {
+                              const items = [...group.items];
+                              [items[ii], items[ii + 1]] = [items[ii + 1], items[ii]];
+                              const next = { ...navSettings, groups: navSettings.groups.map((g, i) => i === gi ? { ...g, items } : g) };
+                              setNavSettings(next);
+                            }}
+                          >
+                            <ArrowDown className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Button size="sm" onClick={saveNavSettings} disabled={savingNav}>{savingNav ? "Opslaan..." : "Navigatie opslaan"}</Button>
+            </div>
+          )}
 
           {myRole === "admin" && (
             <div className="bg-card border rounded-lg p-6 space-y-4">
