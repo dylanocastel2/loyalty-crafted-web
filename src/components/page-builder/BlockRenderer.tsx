@@ -685,7 +685,6 @@ const BlockRenderer = ({ block }: Props) => {
           </section>
         );
       }
-      const loop = [...logos, ...logos];
       const duration = `${Math.max(8, p.speed || 30)}s`;
       const h = `${p.height || 60}px`;
       return (
@@ -694,23 +693,14 @@ const BlockRenderer = ({ block }: Props) => {
             {p.title && (
               <RT as="h3" className={`${alignClass(p.titleAlign || "center")} text-xs md:text-sm font-semibold tracking-[0.2em] uppercase text-muted-foreground mb-8`} html={p.title} />
             )}
-            <div className="marquee-mask overflow-hidden">
-              <div
-                className="flex w-max animate-marquee items-center gap-12"
-                style={{ ["--marquee-duration" as any]: duration }}
-              >
-                {loop.map((src, i) => (
-                  <img
-                    key={i}
-                    src={src}
-                    alt=""
-                    style={{ height: h, width: `calc(${h} * 2.4)` }}
-                    className={`object-contain shrink-0 ${p.grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
-                    loading="lazy"
-                  />
-                ))}
-              </div>
-            </div>
+            <LogoMarquee
+              logos={logos}
+              duration={duration}
+              height={h}
+              grayscale={!!p.grayscale}
+              pauseOnHover={p.pauseOnHover !== false}
+              showPauseButton={p.showPauseButton !== false}
+            />
           </div>
         </section>
       );
