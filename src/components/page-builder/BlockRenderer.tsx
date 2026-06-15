@@ -12,9 +12,59 @@ import * as Icons from "lucide-react";
 import KlantcasesBlock from "./KlantcasesBlock";
 import SearchBlock from "./SearchBlock";
 import CustomFormBlock from "./CustomFormBlock";
-import { Download, FileIcon } from "lucide-react";
+import { Download, FileIcon, Pause, Play } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toRenderHtml } from "./RichText";
+import { useState } from "react";
+
+const LogoMarquee = ({
+  logos,
+  duration,
+  height,
+  grayscale,
+  pauseOnHover,
+  showPauseButton,
+}: {
+  logos: string[];
+  duration: string;
+  height: string;
+  grayscale: boolean;
+  pauseOnHover: boolean;
+  showPauseButton: boolean;
+}) => {
+  const [paused, setPaused] = useState(false);
+  const loop = [...logos, ...logos];
+  return (
+    <div className={`relative marquee-mask overflow-hidden ${pauseOnHover ? "marquee-hover-pause" : ""}`}>
+      <div
+        className={`flex w-max animate-marquee items-center gap-12 ${paused ? "is-paused" : ""}`}
+        style={{ ["--marquee-duration" as any]: duration }}
+      >
+        {loop.map((src, i) => (
+          <img
+            key={i}
+            src={src}
+            alt=""
+            style={{ height, width: `calc(${height} * 2.4)` }}
+            className={`object-contain shrink-0 ${grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
+            loading="lazy"
+            draggable={false}
+          />
+        ))}
+      </div>
+      {showPauseButton && (
+        <button
+          type="button"
+          onClick={() => setPaused((v) => !v)}
+          aria-label={paused ? "Logobalk afspelen" : "Logobalk pauzeren"}
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-10 rounded-full bg-background/80 hover:bg-background text-foreground border shadow-soft p-2 transition"
+        >
+          {paused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+        </button>
+      )}
+    </div>
+  );
+};
 
 const LIST_CLASSES =
   "[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-2 [&_li]:my-0.5";
