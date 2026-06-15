@@ -30,6 +30,7 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
 );
 
 const BlockInspector = ({ block, onChange }: Props) => {
+  const { toast } = useToast();
   if (!block) {
     return (
       <div className="text-center text-muted-foreground text-sm py-12">
