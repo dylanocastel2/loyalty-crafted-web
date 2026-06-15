@@ -850,8 +850,59 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </SelectContent>
               </Select>
             </Field>
+            <div className="flex items-center justify-between border rounded-md px-3 py-2">
+              <Label className="text-xs font-medium">Pauzeren bij hover</Label>
+              <Switch checked={p.pauseOnHover !== false} onCheckedChange={(v) => set("pauseOnHover", v)} />
+            </div>
+            <div className="flex items-center justify-between border rounded-md px-3 py-2">
+              <Label className="text-xs font-medium">Pauze-knop tonen</Label>
+              <Switch checked={p.showPauseButton !== false} onCheckedChange={(v) => set("showPauseButton", v)} />
+            </div>
             <div className="space-y-2 pt-2 border-t">
               <Label className="text-xs font-medium">Logo's</Label>
+              <div className="border-2 border-dashed rounded-md p-3 text-center">
+                <input
+                  id={`marquee-bulk-${block.id}`}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={async (e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (!files.length) return;
+                    const uploaded: string[] = [];
+                    for (const file of files) {
+                      if (!file.type.startsWith("image/")) continue;
+                      if (file.size > 5 * 1024 * 1024) {
+                        toast({ title: `${file.name} te groot`, description: "Max 5MB", variant: "destructive" });
+                        continue;
+                      }
+                      const ext = file.name.split(".").pop();
+                      const path = `page-media/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                      const { error } = await supabase.storage.from("media").upload(path, file);
+                      if (error) {
+                        toast({ title: "Upload mislukt", description: error.message, variant: "destructive" });
+                        continue;
+                      }
+                      uploaded.push(supabase.storage.from("media").getPublicUrl(path).data.publicUrl);
+                    }
+                    if (uploaded.length) {
+                      set("logos", [...(p.logos || []), ...uploaded]);
+                      toast({ title: `${uploaded.length} logo${uploaded.length > 1 ? "'s" : ""} toegevoegd` });
+                    }
+                    (e.target as HTMLInputElement).value = "";
+                  }}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={() => document.getElementById(`marquee-bulk-${block.id}`)?.click()}
+                >
+                  <Plus className="h-3 w-3 mr-1" /> Upload meerdere logo's tegelijk
+                </Button>
+                <p className="text-[11px] text-muted-foreground mt-1">PNG/JPG/SVG — max 5MB per bestand</p>
+              </div>
               {(p.logos || []).map((img: string, i: number) => (
                 <div key={i} className="border rounded p-3 space-y-2">
                   <div className="flex justify-between items-center">
