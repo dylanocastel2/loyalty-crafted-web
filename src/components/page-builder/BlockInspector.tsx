@@ -12,6 +12,9 @@ import PagePicker from "./PagePicker";
 import KlantcasePicker from "./KlantcasePicker";
 import RichText from "./RichText";
 import IconPicker from "./IconPicker";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 
 interface Props {
