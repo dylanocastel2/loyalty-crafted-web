@@ -887,7 +887,10 @@ const BlockInspector = ({ block, onChange }: Props) => {
                       uploaded.push(supabase.storage.from("media").getPublicUrl(path).data.publicUrl);
                     }
                     if (uploaded.length) {
-                      set("logos", [...(p.logos || []), ...uploaded]);
+                      const current = (p.logos || []).map((l: any) =>
+                        typeof l === "string" ? { url: l, link: "" } : l
+                      );
+                      set("logos", [...current, ...uploaded.map((url) => ({ url, link: "" }))]);
                       toast({ title: `${uploaded.length} logo${uploaded.length > 1 ? "'s" : ""} toegevoegd` });
                     }
                     (e.target as HTMLInputElement).value = "";
@@ -903,24 +906,40 @@ const BlockInspector = ({ block, onChange }: Props) => {
                 </Button>
                 <p className="text-[11px] text-muted-foreground mt-1">PNG/JPG/SVG — max 5MB per bestand</p>
               </div>
-              {(p.logos || []).map((img: string, i: number) => (
-                <div key={i} className="border rounded p-3 space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold">Logo {i + 1}</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("logos", i)}><Trash2 className="h-3 w-3" /></Button>
+              {(p.logos || []).map((logo: any, i: number) => {
+                const normalized = typeof logo === "string" ? { url: logo, link: "" } : logo;
+                return (
+                  <div key={i} className="border rounded p-3 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-semibold">Logo {i + 1}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeItem("logos", i)}><Trash2 className="h-3 w-3" /></Button>
+                    </div>
+                    <FileUpload
+                      onUpload={(url) => {
+                        const arr = [...(p.logos || [])].map((l: any) =>
+                          typeof l === "string" ? { url: l, link: "" } : { ...l }
+                        );
+                        arr[i] = { ...arr[i], url: url || "" };
+                        set("logos", arr);
+                      }}
+                      currentUrl={normalized.url}
+                      folder="page-media"
+                    />
+                    <Input
+                      value={normalized.link || ""}
+                      placeholder="Link (bv. https://example.com)"
+                      onChange={(e) => {
+                        const arr = [...(p.logos || [])].map((l: any) =>
+                          typeof l === "string" ? { url: l, link: "" } : { ...l }
+                        );
+                        arr[i] = { ...arr[i], link: e.target.value };
+                        set("logos", arr);
+                      }}
+                    />
                   </div>
-                  <FileUpload
-                    onUpload={(url) => {
-                      const arr = [...(p.logos || [])];
-                      arr[i] = url || "";
-                      set("logos", arr);
-                    }}
-                    currentUrl={img}
-                    folder="page-media"
-                  />
-                </div>
-              ))}
-              <Button variant="outline" size="sm" onClick={() => addItem("logos", "")}><Plus className="h-3 w-3 mr-1" /> Voeg logo toe</Button>
+                );
+              })}
+              <Button variant="outline" size="sm" onClick={() => addItem("logos", { url: "", link: "" })}><Plus className="h-3 w-3 mr-1" /> Voeg logo toe</Button>
             </div>
           </>
         );
