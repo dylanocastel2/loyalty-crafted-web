@@ -75,7 +75,7 @@ export const BLOCK_META: BlockMeta[] = [
   { type: "accordion", label: "Accordeon", category: "Geavanceerd", icon: "ChevronsUpDown", defaultProps: { items: [{ title: "Item 1", content: "Inhoud 1" }, { title: "Item 2", content: "Inhoud 2" }] } },
   { type: "tabs", label: "Tabbladen", category: "Geavanceerd", icon: "LayoutGrid", defaultProps: { items: [{ label: "Tab 1", content: "Inhoud 1" }, { label: "Tab 2", content: "Inhoud 2" }] } },
   { type: "image_carousel", label: "Afbeeldingen carrousel", category: "Geavanceerd", icon: "GalleryHorizontal", defaultProps: { images: [] } },
-  { type: "logo_marquee", label: "Logobalk (bewegend)", category: "Content", icon: "GalleryHorizontalEnd", defaultProps: { title: "Met deze partijen werken we", logos: [], speed: 30, bgColor: "muted", grayscale: true, height: 60 } },
+  { type: "logo_marquee", label: "Logobalk (bewegend)", category: "Content", icon: "GalleryHorizontalEnd", defaultProps: { title: "Met deze partijen werken we", logos: [], speed: 30, bgColor: "muted", grayscale: true, height: 60, pauseOnHover: true, showPauseButton: true } },
   { type: "icon_card", label: "Icoon-kaart", category: "Content", icon: "Square", defaultProps: { icon: "Star", title: "Titel", description: "Korte beschrijving", iconColor: "primary" } },
   { type: "stat", label: "Statistiek", category: "Content", icon: "BarChart3", defaultProps: { value: "100+", label: "Klanten" } },
   { type: "custom_html", label: "Custom HTML", category: "Geavanceerd", icon: "Code", defaultProps: { html: "<p>Custom HTML</p>" } },
