@@ -25,7 +25,7 @@ const LogoMarquee = ({
   pauseOnHover,
   showPauseButton,
 }: {
-  logos: string[];
+  logos: (string | { url: string; link?: string })[];
   duration: string;
   height: string;
   grayscale: boolean;
@@ -33,24 +33,43 @@ const LogoMarquee = ({
   showPauseButton: boolean;
 }) => {
   const [paused, setPaused] = useState(false);
-  const loop = [...logos, ...logos];
+  const normalized = logos.map((l) =>
+    typeof l === "string" ? { url: l, link: "" } : l
+  );
+  const loop = [...normalized, ...normalized];
   return (
     <div className={`relative marquee-mask overflow-hidden ${pauseOnHover ? "marquee-hover-pause" : ""}`}>
       <div
         className={`flex w-max animate-marquee items-center gap-12 ${paused ? "is-paused" : ""}`}
         style={{ ["--marquee-duration" as any]: duration }}
       >
-        {loop.map((src, i) => (
-          <img
-            key={i}
-            src={src}
-            alt=""
-            style={{ height, width: `calc(${height} * 2.4)` }}
-            className={`object-contain shrink-0 ${grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
-            loading="lazy"
-            draggable={false}
-          />
-        ))}
+        {loop.map((logo, i) => {
+          const img = (
+            <img
+              key={i}
+              src={logo.url}
+              alt=""
+              style={{ height, width: `calc(${height} * 2.4)` }}
+              className={`object-contain shrink-0 ${grayscale ? "grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition" : ""}`}
+              loading="lazy"
+              draggable={false}
+            />
+          );
+          if (logo.link) {
+            return (
+              <a
+                key={i}
+                href={logo.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0"
+              >
+                {img}
+              </a>
+            );
+          }
+          return img;
+        })}
       </div>
       {showPauseButton && (
         <button
