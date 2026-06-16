@@ -1264,9 +1264,12 @@ const BlockInspector = ({ block, onChange }: Props) => {
                   </Field>
                   <Field label="Titel"><RichText value={it.title || ""} onChange={(v) => setItem("items", i, "title", v)} singleLine /></Field>
                   <Field label="Beschrijving"><RichText value={it.description || ""} onChange={(v) => setItem("items", i, "description", v)} rows={4} /></Field>
+                  <Field label="Link (optioneel)">
+                    <PagePicker value={it.link || ""} onChange={(v) => setItem("items", i, "link", v)} />
+                  </Field>
                 </div>
               ))}
-              <Button variant="outline" size="sm" onClick={() => addItem("items", { image: "", title: "Nieuwe kaart", description: "" })}><Plus className="h-3 w-3 mr-1" /> Kaart toevoegen</Button>
+              <Button variant="outline" size="sm" onClick={() => addItem("items", { image: "", title: "Nieuwe kaart", description: "", link: "" })}><Plus className="h-3 w-3 mr-1" /> Kaart toevoegen</Button>
             </div>
             <Field label="Achtergrondkleur">
               <Select value={p.bgColor || "background"} onValueChange={(v) => set("bgColor", v)}>
