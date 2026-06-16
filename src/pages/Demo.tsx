@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, CheckCircle2 } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import PageContent from "@/components/page-builder/PageContent";
 import FormAttachments, { type FormAttachment } from "@/components/FormAttachments";
@@ -20,6 +20,7 @@ const Demo = () => {
   const [type, setType] = useState<string>("");
   const [branche, setBranche] = useState<string>("");
   const [attachments, setAttachments] = useState<FormAttachment[]>([]);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,6 +58,7 @@ const Demo = () => {
     setType("");
     setBranche("");
     setAttachments([]);
+    setSubmitted(true);
   };
 
   return (
@@ -74,6 +76,18 @@ const Demo = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
               <EditableText page="demo" contentKey="form_title" defaultValue="Vul het formulier in" as="h2" className="text-2xl font-bold mb-6" />
+              {submitted ? (
+                <div className="rounded-xl border bg-card p-8 text-center shadow-sm flex flex-col items-center justify-center min-h-[400px]">
+                  <CheckCircle2 className="h-12 w-12 text-primary mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">Demo aangevraagd</h3>
+                  <p className="text-muted-foreground mb-6 max-w-sm">
+                    Bedankt voor uw aanvraag. Wij nemen binnen 24 uur contact met u op.
+                  </p>
+                  <Button variant="outline" onClick={() => setSubmitted(false)}>
+                    Nieuwe aanvraag indienen
+                  </Button>
+                </div>
+              ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -131,6 +145,7 @@ const Demo = () => {
                   {loading ? "Verzenden..." : "Demo aanvragen"}
                 </Button>
               </form>
+              )}
             </div>
 
             <div className="bg-accent rounded-lg p-8">
