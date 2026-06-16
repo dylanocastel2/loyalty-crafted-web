@@ -24,6 +24,7 @@ const DemoForm = ({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [branche, setBranche] = useState(brancheDefault || "");
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -82,6 +83,7 @@ const DemoForm = ({
     });
     form.reset();
     setBranche(brancheDefault || "");
+    setSubmitted(true);
   };
 
   return (
@@ -107,6 +109,18 @@ const DemoForm = ({
             </ul>
           </div>
 
+          {submitted ? (
+            <div className="rounded-2xl border border-border bg-tile p-8 md:p-10 text-center shadow-soft flex flex-col items-center justify-center min-h-[420px]">
+              <CheckCircle2 className="h-12 w-12 text-primary mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Bedankt, uw aanvraag is verstuurd</h3>
+              <p className="text-muted-foreground mb-6 max-w-sm">
+                We nemen binnen één werkdag contact met u op om een passend moment in te plannen.
+              </p>
+              <Button variant="outline" onClick={() => setSubmitted(false)} className="rounded-full">
+                Nieuwe aanvraag indienen
+              </Button>
+            </div>
+          ) : (
           <form
             onSubmit={handleSubmit}
             className="rounded-2xl border border-border bg-tile p-6 md:p-8 space-y-4 shadow-soft"
@@ -165,6 +179,7 @@ const DemoForm = ({
               We gebruiken uw gegevens uitsluitend om contact met u op te nemen over uw aanvraag.
             </p>
           </form>
+          )}
         </div>
       </div>
     </section>
