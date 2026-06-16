@@ -794,7 +794,7 @@ const BlockRenderer = ({ block }: Props) => {
     }
 
     case "image_cards": {
-      const items: Array<{ image?: string; title?: string; description?: string }> = p.items || [];
+      const items: Array<{ image?: string; title?: string; description?: string; link?: string }> = p.items || [];
       const cols = p.columns || 3;
       const colClass = cols === 1 ? "grid-cols-1" : cols === 2 ? "grid-cols-1 sm:grid-cols-2" : cols === 4 ? "grid-cols-2 md:grid-cols-4" : "grid-cols-1 md:grid-cols-3";
       return (
@@ -803,19 +803,29 @@ const BlockRenderer = ({ block }: Props) => {
             {p.title && <RT as="h2" className={`text-2xl md:text-3xl font-bold leading-tight mb-4 ${alignClass(p.titleAlign || "center")}`} html={p.title} />}
             {p.subtitle && <RT as="p" className={`text-muted-foreground leading-relaxed max-w-2xl mb-12 whitespace-pre-wrap ${alignClass(p.titleAlign || "center")} ${titleAlignWrapClass(p.titleAlign || "center")}`} html={p.subtitle} />}
             <div className={`grid ${colClass} gap-8`}>
-              {items.map((it, i) => (
-                <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
-                  {it.image ? (
-                    <img src={it.image} alt={it.title || ""} className="w-full h-48 object-cover" loading="lazy" />
-                  ) : (
-                    <div className="w-full h-48 bg-muted flex items-center justify-center text-sm text-muted-foreground">Voeg een afbeelding toe</div>
-                  )}
-                  <div className="p-6">
-                    {it.title && <RT as="h3" className="font-bold text-lg leading-snug mb-2 uppercase tracking-wider" html={it.title} />}
-                    {it.description && <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={it.description} />}
+              {items.map((it, i) => {
+                const card = (
+                  <div key={i} className="rounded-lg overflow-hidden border bg-card hover:shadow-lg transition-shadow">
+                    {it.image ? (
+                      <img src={it.image} alt={it.title || ""} className="w-full h-48 object-cover" loading="lazy" />
+                    ) : (
+                      <div className="w-full h-48 bg-muted flex items-center justify-center text-sm text-muted-foreground">Voeg een afbeelding toe</div>
+                    )}
+                    <div className="p-6">
+                      {it.title && <RT as="h3" className="font-bold text-lg leading-snug mb-2 uppercase tracking-wider" html={it.title} />}
+                      {it.description && <RT as="p" className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed" html={it.description} />}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+                if (it.link) {
+                  return (
+                    <CtaLink key={i} to={it.link}>
+                      {card}
+                    </CtaLink>
+                  );
+                }
+                return card;
+              })}
             </div>
           </div>
         </section>
