@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import SocialIcons from "@/components/SocialIcons";
 import { useFooterConfig, FooterItem, FooterConfig } from "@/hooks/useFooterConfig";
+import logoLg from "@/assets/lg-logo-wit.png.asset.json";
 
 const isExternal = (url: string) => /^https?:\/\//i.test(url) || url.startsWith("mailto:") || url.startsWith("tel:");
 
