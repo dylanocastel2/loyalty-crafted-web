@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Pencil, Trash2, ExternalLink, Mail, Shield, Check, X, FileText, Eye, EyeOff, GripVertical, ArrowUp, ArrowDown, LayoutDashboard } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
+import { emitSiteLogoUpdate } from "@/hooks/useSiteLogo";
 import type { Database } from "@/integrations/supabase/types";
 import { SOCIAL_OPTIONS, SocialLink, SocialPlatform } from "@/hooks/useSocials";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -88,6 +89,8 @@ const Admin = () => {
   ];
   const [siteNav, setSiteNav] = useState<SiteNavItem[]>(defaultSiteNav);
   const [savingSiteNav, setSavingSiteNav] = useState(false);
+  const [siteLogo, setSiteLogo] = useState<string>("");
+  const [savingLogo, setSavingLogo] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -262,6 +265,29 @@ const Admin = () => {
     } catch {
       // ignore
     }
+    const { data: logoRow } = await supabase
+      .from("page_content")
+      .select("content")
+      .eq("page", "settings")
+      .eq("key", "site_logo")
+      .maybeSingle();
+    setSiteLogo((logoRow?.content || "").trim());
+  };
+
+  const saveSiteLogo = async (url: string) => {
+    setSavingLogo(true);
+    const { error } = await supabase.from("page_content").upsert(
+      { page: "settings", key: "site_logo", content: url || "" },
+      { onConflict: "page,key" }
+    );
+    setSavingLogo(false);
+    if (error) {
+      toast({ title: "Opslaan mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setSiteLogo(url);
+    emitSiteLogoUpdate(url);
+    toast({ title: url ? "Logo bijgewerkt" : "Logo verwijderd" });
   };
 
   const saveSettings = async () => {
