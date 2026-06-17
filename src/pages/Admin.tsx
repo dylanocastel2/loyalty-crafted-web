@@ -628,6 +628,44 @@ const Admin = () => {
         <div className="space-y-6">
           <div className="bg-card border rounded-lg p-6 space-y-4">
             <div className="flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Sitelogo</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Dit logo wordt gebruikt in de menubalk bovenaan de site, in de footer en in het admin-paneel.
+              Vierkante PNG of SVG met transparante achtergrond werkt het beste.
+            </p>
+            <div className="flex items-start gap-6 flex-wrap">
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">Huidig logo</Label>
+                <div className="h-20 w-20 rounded-lg border bg-muted/40 grid place-items-center overflow-hidden">
+                  {siteLogo ? (
+                    <img src={siteLogo} alt="Sitelogo" className="h-full w-full object-contain" />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Standaard</span>
+                  )}
+                </div>
+                {siteLogo && (
+                  <Button variant="ghost" size="sm" disabled={savingLogo} onClick={() => saveSiteLogo("")}>
+                    <Trash2 className="h-4 w-4 mr-1" /> Terug naar standaard
+                  </Button>
+                )}
+              </div>
+              <div className="flex-1 min-w-[260px]">
+                <Label className="text-xs text-muted-foreground">Nieuw logo uploaden</Label>
+                <div className="mt-2">
+                  <FileUpload
+                    folder="branding"
+                    currentUrl={siteLogo || undefined}
+                    onUpload={(url) => { if (url) saveSiteLogo(url); }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-card border rounded-lg p-6 space-y-4">
+            <div className="flex items-center gap-2">
               <Mail className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-bold">Notificaties</h2>
             </div>
