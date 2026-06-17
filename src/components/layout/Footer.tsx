@@ -61,8 +61,7 @@ const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
       <div className={`container relative py-16 grid grid-cols-1 ${gridColsClass} gap-10`}>
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-white">L</div>
-            <span className="font-display font-bold text-foreground text-lg">Loyalty<span className="text-primary">group</span></span>
+            <img src={logoLg.url} alt="Loyaltygroup logo" className="h-9 w-auto object-contain" />
           </div>
           <p className="text-sm leading-relaxed">{config.brandText}</p>
           {config.showSocials && <SocialIcons className="mt-5" />}
