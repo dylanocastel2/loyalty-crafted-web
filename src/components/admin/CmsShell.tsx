@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSiteLogo } from "@/hooks/useSiteLogo";
 
 export type CmsSection =
   | "dashboard"
@@ -109,6 +110,7 @@ const DEFAULT_GROUPS: Group[] = [
 export default function CmsShell({ active, onSelect, unreadCount = 0, children, title }: Props) {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<Group[]>(DEFAULT_GROUPS);
+  const { url: siteLogo } = useSiteLogo("/logo.jpg");
 
   useEffect(() => {
     const load = async () => {
@@ -154,7 +156,7 @@ export default function CmsShell({ active, onSelect, unreadCount = 0, children, 
       <aside className="w-64 shrink-0 border-r bg-card flex flex-col sticky top-0 h-screen">
         <div className="px-5 py-4 border-b">
           <Link to="/admin" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Loyaltygroup" className="h-8 w-8 rounded object-cover" />
+            <img src={siteLogo || "/logo.jpg"} alt="Loyaltygroup" className="h-8 w-8 rounded object-cover" />
             <div className="leading-tight">
               <div className="font-bold text-sm">Loyaltygroup</div>
               <div className="text-[11px] text-muted-foreground">CMS</div>
