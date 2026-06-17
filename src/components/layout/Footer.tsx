@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import SocialIcons from "@/components/SocialIcons";
 import { useFooterConfig, FooterItem, FooterConfig } from "@/hooks/useFooterConfig";
+import { useSiteLogo } from "@/hooks/useSiteLogo";
 
 const isExternal = (url: string) => /^https?:\/\//i.test(url) || url.startsWith("mailto:") || url.startsWith("tel:");
 
@@ -39,6 +40,7 @@ const renderItem = (item: FooterItem, idx: number, linkStyle?: React.CSSProperti
 const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
   const { config: fetched } = useFooterConfig();
   const config = configOverride ?? fetched;
+  const { url: siteLogo } = useSiteLogo();
   const cols = config.columns?.length || 0;
   const gridColsClass = cols >= 4 ? "md:grid-cols-5" : cols === 3 ? "md:grid-cols-4" : cols === 2 ? "md:grid-cols-3" : cols === 1 ? "md:grid-cols-2" : "md:grid-cols-1";
   const copyright = (config.copyright || "").replace("{year}", String(new Date().getFullYear()));
@@ -60,7 +62,11 @@ const Footer = ({ configOverride }: { configOverride?: FooterConfig } = {}) => {
       <div className={`container relative py-16 grid grid-cols-1 ${gridColsClass} gap-10`}>
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-white">L</div>
+            {siteLogo ? (
+              <img src={siteLogo} alt="Loyaltygroup logo" className="h-9 w-9 rounded-lg object-contain bg-white" />
+            ) : (
+              <div className="h-9 w-9 rounded-lg bg-gradient-aqua grid place-items-center font-display font-bold text-white">L</div>
+            )}
             <span className="font-display font-bold text-foreground text-lg">Loyalty<span className="text-primary">group</span></span>
           </div>
           <p className="text-sm leading-relaxed">{config.brandText}</p>
