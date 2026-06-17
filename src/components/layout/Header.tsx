@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import logoLg from "@/assets/logo-lg.png";
+import { useSiteLogo } from "@/hooks/useSiteLogo";
 
 const defaultNavItems = [
   { label: "SPAARSYSTEEM", path: "/spaarsysteem" },
@@ -21,6 +22,7 @@ const Header = () => {
   const [baseNavItems, setBaseNavItems] = useState<{ label: string; path: string }[]>(defaultNavItems);
   const location = useLocation();
   const { isAdmin, signOut } = useAuth();
+  const { url: siteLogo } = useSiteLogo(logoLg);
 
   useEffect(() => {
     const fetch = async () => {
@@ -85,7 +87,7 @@ const Header = () => {
       <header className="sticky top-0 z-50 glass-primary">
         <div className="container relative flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group" aria-label="Naar homepage">
-            <img src={logoLg} alt="Loyaltygroup logo" className="h-9 w-9 rounded-lg object-contain" />
+            <img src={siteLogo || logoLg} alt="Loyaltygroup logo" className="h-9 w-9 rounded-lg object-contain bg-white/10" />
             <span className="text-white font-display font-bold tracking-tight text-base hidden sm:inline">
               Loyalty<span className="text-white/80">group</span>
             </span>
