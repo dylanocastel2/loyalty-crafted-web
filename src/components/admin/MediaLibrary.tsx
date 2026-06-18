@@ -179,6 +179,8 @@ export default function MediaLibrary() {
     }
     await navigator.clipboard.writeText(url);
     toast({ title: isPrivate(bucket) ? "Tijdelijke URL gekopieerd (1 uur geldig)" : "URL gekopieerd", description: url });
+  };
+
   const downloadFile = async (name: string) => {
     const url = await resolveUrl(bucket, name);
     if (!url) {
