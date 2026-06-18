@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2, Download } from "lucide-react";
 
 const BUCKETS = ["media", "page-media", "form-uploads"] as const;
 type Bucket = (typeof BUCKETS)[number];
@@ -181,6 +181,20 @@ export default function MediaLibrary() {
     toast({ title: isPrivate(bucket) ? "Tijdelijke URL gekopieerd (1 uur geldig)" : "URL gekopieerd", description: url });
   };
 
+  const downloadFile = async (name: string) => {
+    const url = await resolveUrl(bucket, name);
+    if (!url) {
+      toast({ title: "URL ophalen mislukt", variant: "destructive" });
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name.split("/").pop() || name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
   const filtered = files.filter((f) => {
     if (!f.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === "all") return true;
@@ -267,6 +281,9 @@ export default function MediaLibrary() {
                   <div className="flex gap-1 pt-1">
                     <Button variant="ghost" size="icon" className="h-7 w-7" title="URL kopiëren" onClick={() => copyUrl(f.name)}>
                       <Copy className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Downloaden" onClick={() => downloadFile(f.name)}>
+                      <Download className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="icon" className="h-7 w-7" title="Verwijderen" onClick={() => remove(f.name)}>
                       <Trash2 className="h-3.5 w-3.5 text-destructive" />
