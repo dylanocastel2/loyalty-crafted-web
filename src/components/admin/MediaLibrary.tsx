@@ -179,6 +179,18 @@ export default function MediaLibrary() {
     }
     await navigator.clipboard.writeText(url);
     toast({ title: isPrivate(bucket) ? "Tijdelijke URL gekopieerd (1 uur geldig)" : "URL gekopieerd", description: url });
+  const downloadFile = async (name: string) => {
+    const url = await resolveUrl(bucket, name);
+    if (!url) {
+      toast({ title: "URL ophalen mislukt", variant: "destructive" });
+      return;
+    }
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name.split("/").pop() || name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const filtered = files.filter((f) => {
