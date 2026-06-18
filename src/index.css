@@ -276,8 +276,10 @@
 .animate-marquee.is-paused {
   animation-play-state: paused;
 }
-.marquee-hover-pause:hover .animate-marquee {
-  animation-play-state: paused;
+@media (hover: hover) {
+  .marquee-hover-pause:hover .animate-marquee {
+    animation-play-state: paused;
+  }
 }
 .marquee-mask {
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
