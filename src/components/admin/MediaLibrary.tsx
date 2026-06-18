@@ -187,12 +187,21 @@ export default function MediaLibrary() {
       toast({ title: "URL ophalen mislukt", variant: "destructive" });
       return;
     }
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = name.split("/").pop() || name;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Netwerkresponse was niet ok");
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = name.split("/").pop() || name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch {
+      toast({ title: "Download mislukt", variant: "destructive" });
+    }
   };
 
   const filtered = files.filter((f) => {
