@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2 } from "lucide-react";
+import { Upload, Trash2, Copy, FileIcon, Search, RefreshCw, CheckCircle2, Download } from "lucide-react";
 
 const BUCKETS = ["media", "page-media", "form-uploads"] as const;
 type Bucket = (typeof BUCKETS)[number];
