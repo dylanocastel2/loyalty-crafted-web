@@ -39,6 +39,27 @@ function formatBytes(b?: number) {
   return `${(b / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+async function listRecursive(bucket: Bucket, prefix = ""): Promise<FileRow[]> {
+  const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+    limit: 1000,
+    sortBy: { column: "created_at", order: "desc" },
+  });
+  if (error || !data) return [];
+  const out: FileRow[] = [];
+  for (const item of data) {
+    if (!item.name || item.name === ".emptyFolderPlaceholder") continue;
+    const full = prefix ? `${prefix}/${item.name}` : item.name;
+    const isFolder = (item as { id: string | null }).id === null && !(item as { metadata: unknown }).metadata;
+    if (isFolder) {
+      const sub = await listRecursive(bucket, full);
+      out.push(...sub);
+    } else {
+      out.push({ ...(item as FileRow), name: full });
+    }
+  }
+  return out;
+}
+
 export default function MediaLibrary() {
   const { toast } = useToast();
   const [bucket, setBucket] = useState<Bucket>("media");
@@ -53,15 +74,12 @@ export default function MediaLibrary() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.storage.from(bucket).list("", {
-      limit: 1000,
-      sortBy: { column: "created_at", order: "desc" },
-    });
-    if (error) {
-      toast({ title: "Laden mislukt", description: error.message, variant: "destructive" });
+    try {
+      const rows = await listRecursive(bucket);
+      setFiles(rows);
+    } catch (e) {
+      toast({ title: "Laden mislukt", description: (e as Error).message, variant: "destructive" });
       setFiles([]);
-    } else {
-      setFiles((data as FileRow[]).filter((f) => f.name && f.name !== ".emptyFolderPlaceholder"));
     }
     setLoading(false);
   };
