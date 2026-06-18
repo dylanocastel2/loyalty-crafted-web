@@ -282,6 +282,9 @@ export default function MediaLibrary() {
                     <Button variant="ghost" size="icon" className="h-7 w-7" title="URL kopiëren" onClick={() => copyUrl(f.name)}>
                       <Copy className="h-3.5 w-3.5" />
                     </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Downloaden" onClick={() => downloadFile(f.name)}>
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
                     <Button variant="ghost" size="icon" className="h-7 w-7" title="Verwijderen" onClick={() => remove(f.name)}>
                       <Trash2 className="h-3.5 w-3.5 text-destructive" />
                     </Button>
