@@ -138,6 +138,7 @@ Deno.serve(async (req) => {
     }
 
     const headerLines = [
+      `From: Loyaltygroup <sales@loyaltygroup.nl>`,
       `To: ${to}`,
       `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(mailSubject)))}?=`,
       email ? `Reply-To: ${email}` : "",
@@ -221,6 +222,7 @@ Deno.serve(async (req) => {
           ${confirmOutroHtml}
         `;
         const confirmRfc = [
+          `From: Loyaltygroup <sales@loyaltygroup.nl>`,
           `To: ${email}`,
           `Subject: =?UTF-8?B?${btoa(unescape(encodeURIComponent(confirmSubject)))}?=`,
           "MIME-Version: 1.0",
