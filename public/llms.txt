@@ -1,0 +1,22 @@
+# Loyaltygroup
+
+> Loyaltygroup levert sinds 2003 gebruiksvriendelijke CRM, spaarsystemen en stadspassen voor bedrijven en gemeenten naar wens.
+
+Loyaltygroup B.V. is een Nederlands softwarebedrijf gespecialiseerd in maatwerk loyaliteitsoplossingen. Wij ontwikkelen spaarsystemen, digitale spaarpassen, stadspassen, cadeaukaarten en CRM-tools voor zowel commerciële organisaties als gemeenten. Alles wordt in eigen huis ontwikkeld en volledig op maat ingericht.
+
+## Pages
+
+- [/](/): Homepage met overzicht van diensten, klantcases en demo-aanvraag.
+- [/gemeenten](/gemeenten): Oplossingen voor gemeenten — stadspassen, minimaregelingen en lokaal economisch beleid.
+- [/commercieel](/commercieel): Commerciële loyaliteitsoplossingen voor MKB, ketens en franchises.
+- [/spaarsysteem](/spaarsysteem): Overzicht van spaarproducten zoals online spaarsysteem, digitale spaarpas, klantenkaart, apps, cadeaukaarten en kassakoppelingen.
+- [/klantcases](/klantcases): Portfolio met gerealiseerde projecten en klantverhalen.
+- [/branches](/branches): Overzicht van branches en sectoren waarin Loyaltygroup actief is.
+- [/over-ons](/over-ons): Over het bedrijf, de aanpak en het team.
+- [/support](/support): Ondersteuning en veelgestelde vragen.
+- [/contact](/contact): Contactgegevens en contactformulier.
+- [/demo](/demo): Demo aanvragen van een spaarsysteem of stadspas.
+
+## Optional
+
+- [/p/:slug](/p/): Dynamische landingspagina's voor specifieke campagnes of branches.
