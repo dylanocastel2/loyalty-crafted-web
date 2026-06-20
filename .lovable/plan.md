@@ -1,93 +1,94 @@
-# Plan: Loyaltygroup content- en conversie-uitbreiding
+## Doel
 
-Doel: van een functionele site naar een vertrouwenwekkende, inhoudelijk rijke B2B-site die prospects ervan overtuigt om een demo te plannen — zonder bestaande teksten weg te gooien.
+Niets meer hardcoded in `src/lib/*` of in JSX van pagina's. Alle content komt uit Supabase en is bewerkbaar via het admin paneel.
 
-## 1. Nieuwe & uitgebreide pagina's
+## Aanpak in 5 fases
 
-**Branche-overzicht** — `/branches`
-- Hero met branche-keuze (kaarten: Gemeenten, Horeca, Retail, Zorg, Winkeliersverenigingen/Centrummanagement) — zelfde patroon als homepage-audience-selector
-- Korte uitleg waarom Loyaltygroup per branche relevant is
-- CTA: plan een demo + vraag prijsindicatie
+### Fase 1 — Database voorbereiden
 
-**Branchepagina's** — `/branches/:slug` (5 pagina's, elk volledig uitgeschreven)
-- `gemeenten` (vervangt huidige /gemeenten waar zinvol, behoudt bestaande tekst)
-- `horeca`
-- `retail`
-- `zorg`
-- `winkeliersverenigingen`
+Eén migratie met:
 
-Elke branchepagina bevat:
-1. Branchegerichte hero: herkenbare problemen + kansen, in tone-of-voice van die sector
-2. Sectie "Hoe loyaliteit waarde toevoegt in [branche]" — concreet, met scenario's
-3. Relevante functionaliteiten (3–6 met icoon + uitleg)
-4. Sectie "Waarom Loyaltygroup voor [branche]" — USP's vertaald naar die markt
-5. Klantcases-blok gefilterd op die branche (gebruikt bestaand KlantcasesBlock)
-6. Maatwerk-bewijssectie: "standaardproduct + maatwerk in jouw huisstijl"
-7. Reviewblok (placeholder-quotes voor admin)
-8. Prijs-kwaliteit blok ("vanaf-indicatie op aanvraag")
-9. Demo-CTA + contactformulier met "Plan een demo"
+- **`page_presets`** tabel — voor de 462 regels uit `pagePresets.ts` (templates voor nieuwe pagina's). Velden: `key`, `name`, `description`, `blocks` (jsonb), `sort_order`.
+- **`branches`** tabel — voor de 299 regels uit `brancheContent.ts`. Velden: `slug` (uniek), `name`, `icon`, `hero_title`, `hero_subtitle`, `intro`, `usps` (jsonb), `cases` (jsonb), `cta_title`, `cta_text`, `sort_order`, `published`.
+- **`navigation_items`** tabel — voor het hoofdmenu. Velden: `label`, `path`, `parent_id`, `sort_order`, `published`.
+- **Uitbreiding `custom_pages`** — `is_homepage` boolean + unieke index, zodat één pagina als homepage gemarkeerd kan worden en op `/` getoond wordt.
 
-## 2. Homepage-uitbreidingen (bestaande content blijft)
+RLS: publiek leesbaar (alleen `published=true`), schrijven alleen voor admins via `has_role`. GRANTs voor `anon`, `authenticated`, `service_role`.
 
-- USP-band onder hero (8 USP's compact): eigen softwareontwikkeling, maatwerk, betrouwbaarheid, korte lijnen, veel mogelijkheden, prijs-kwaliteit, integraties, flexibiliteit
-- Social proof: reviewquotes-carrousel (placeholders) + bestaand klantcases-blok prominenter
-- Sectie "Veel mogelijkheden, laagdrempelig in gebruik" met 2-koloms layout
-- Sectie "Waarom organisaties voor Loyaltygroup kiezen" met de 8 USP's uitgewerkt
-- Prijs-kwaliteit teaser (geen bedragen) met CTA "Vraag prijsindicatie"
-- Onderaan: demo-contactformulier (naam, organisatie, e-mail, telefoon, branche, gewenste demodatum, bericht) — gebruikt bestaande `contact_submissions` tabel + e-mailflow
+### Fase 2 — Content seeden
 
-## 3. Productpagina (Spaarsysteem) verdieping
+Alle huidige hardcoded waarden worden via een seed-migratie in de database gezet:
 
-- Diepere uitleg per onderdeel: Online Spaarsysteem, Digitale Spaarpas, Klantenkaart, Apps, Cadeaukaarten, API-koppelingen, Beheeromgeving
-- Per onderdeel: wat is het, voor wie, kernfuncties, voorbeeldscenario
-- Sectie "Standaardproduct + maatwerk" met visueel onderscheid
-- Sectie "Integraties & koppelingen"
-- Demo-CTA blok onderaan
+- 10 pagina's → `custom_pages` rijen met blokken die de huidige JSX één-op-één nabootsen (hero, USPs, reviews, CTA-blokken, etc.). Slugs: `home`, `commercieel`, `gemeenten`, `spaarsysteem`, `klantcases`, `support`, `over-ons`, `contact`, `demo`, `branches`.
+- `home` krijgt `is_homepage=true`.
+- Alle branches uit `brancheContent.ts` → `branches` rijen.
+- Alle 8 presets uit `pagePresets.ts` → `page_presets` rijen.
+- Menu uit `Header.tsx` → `navigation_items` rijen.
 
-## 4. Overige bestaande pagina's verrijken
+### Fase 3 — Builder uitbreiden met ontbrekende bloktypes
 
-- `/over-ons`: EEAT-versterking — eigen ontwikkeling, team, ervaring, betrouwbaarheid, korte lijnen. Behoudt bestaande tekst.
-- `/support`: helpdesk-USP uitwerken, responsetijden, contactkanalen
-- `/contact` & `/demo`: nadrukkelijke "Plan een demo" CTA en uitleg wat de prospect kan verwachten
+De huidige page-builder mist enkele bloktypes die de statische pagina's nodig hebben. Toe te voegen aan `blockSchema.ts` + `BlockRenderer.tsx`:
 
-## 5. Globale componenten
+- `usp-grid` — bewerkbare USPs (icon + titel + tekst, n items)
+- `reviews` — bewerkbare reviews-carousel
+- `price-indication` — prijsblok met velden
+- `demo-cta` — CTA met titel/tekst/knop
+- `laagdrempelig` — bestaand blok (al aanwezig, verifiëren)
+- `branche-grid` — toont alle branches uit `branches` tabel
+- `branche-detail` — rendert één branche o.b.v. URL-slug
 
-- **`DemoCTA` component** — herbruikbaar blok dat op elke pagina onderaan komt ("Plan vrijblijvend een demo")
-- **`USPGrid` component** — herbruikbare USP-tegels (8 USP's, korte uitleg per USP)
-- **`ReviewsBlock` component** — quotes-carrousel; werkt met `page_content` keys zodat admin via CMS kan vullen (jij levert quotes later)
-- **`PriceIndicationBlock`** — prijs-kwaliteit zonder bedragen + CTA prijsindicatie
-- **`HomepageDemoForm`** — uitgebreid formulier (naam, organisatie, e-mail, telefoon, branche, gewenste datum, bericht) → schrijft naar `contact_submissions`, triggert bestaande mail edge function
+### Fase 4 — Routing herzien
 
-## 6. SEO & EEAT
+`App.tsx` wordt drastisch ingekort:
 
-- Per (branche)pagina: unieke `<title>`, meta description, canonical, og-tags via bestaande SeoFields/`page_seo`
-- JSON-LD: `Organization` op homepage, `Service`/`Product` op spaarsysteem, `FAQPage` waar relevant, `BreadcrumbList` op branchepagina's
-- Semantische H1/H2/H3-structuur, alt-teksten, interne linking tussen branches ↔ klantcases ↔ spaarsysteem
-- E-E-A-T: auteurschap ("door het team van Loyaltygroup"), ervaring (jaren, aantal klanten geanonimiseerd), expertise (eigen ontwikkeling NL), betrouwbaarheid (helpdesk, korte lijnen)
+```text
+/                       → CustomPage (homepage, is_homepage=true)
+/branches/:slug         → CustomPage met branche-detail blok
+/klantcases/:id         → KlantcaseDetail (blijft, data al in DB)
+/klantcases/nieuw       → KlantcaseCreator (blijft)
+/admin/*                → bestaande admin-routes
+/:slug                  → CustomPage (catch-all op slug)
+*                       → NotFound
+```
 
-## 7. Content-aanpak
+`Header.tsx` haalt menu uit `navigation_items` ipv hardcoded array.
 
-- Volledig uitgeschreven Nederlandse content per sectie (geen lege placeholders behalve de reviewquotes die jij aanlevert — die krijgen duidelijk neutrale platform-quotes als CMS-default)
-- Tone: zakelijk, modern, overtuigend, niet wervend-overdreven
-- Bestaande teksten blijven; nieuwe content wordt eromheen en eronder toegevoegd
+### Fase 5 — Opruimen + admin
 
-## Technische opzet
+- Verwijderen: `src/pages/Index.tsx`, `Commercieel.tsx`, `Gemeenten.tsx`, `Spaarsysteem.tsx`, `Klantcases.tsx`, `Support.tsx`, `OverOns.tsx`, `Contact.tsx`, `Demo.tsx`, `Branches.tsx`, `Branche.tsx`.
+- Verwijderen: `src/lib/brancheContent.ts`, `src/lib/pagePresets.ts`, `src/lib/builtinPages.ts`.
+- `src/components/sections/*` — verwijderen óf omzetten naar pure render-componenten die het blok rendert (zonder eigen content).
+- `BuiltinPageEditor` verwijderen (niet meer nodig).
+- Nieuwe admin-panels:
+  - **Branches** — CRUD lijst voor `branches` tabel
+  - **Navigatie** — drag-en-drop menu editor voor `navigation_items`
+  - **Presets** — beheer van page templates
+- `PagesAdmin` — toon ook `is_homepage` toggle en alle nieuwe pagina's; presets-dropdown haalt uit DB ipv code.
 
-- Nieuwe route `/branches` en `/branches/:slug` in `App.tsx`
-- Branchecontent in `src/lib/brancheContent.ts` (typed object met hero/USP's/functionaliteiten/scenario per branche) → één React-component rendert op basis van slug
-- Header-nav krijgt "Branches" item (vervangt of plaatst naast Spaarsystemen)
-- Migration: nieuwe kolom `branche_slug` op `klantcases` (optioneel) **OF** filtering blijft via bestaande `branche` tekstkolom — kies de bestaande aanpak om migrationsdruk te beperken
-- Form-edge-function `send-contact-notification` wordt hergebruikt; nieuw onderwerp "Demo-aanvraag via homepage" / "Demo-aanvraag [branche]"
-- Geen wijziging aan auth/RLS
+## Risico's & mitigatie
 
-## Volgorde van uitvoeren
+- **Visuele drift**: blokken moeten exact dezelfde look geven als huidige JSX. Per pagina screenshot-vergelijking na migratie.
+- **SEO**: bestaande URL's blijven werken (alle huidige paden in seed). Meta-tags via bestaande `page_seo` tabel per slug.
+- **Downtime tijdens deploy**: seed-migratie draait vóór code-deploy, zodat data klaarstaat als nieuwe code live gaat.
+- **Klantcases-detailpagina** blijft hardcoded component (data komt al uit DB) — buiten scope.
 
-1. Globale componenten (DemoCTA, USPGrid, ReviewsBlock, PriceIndicationBlock, HomepageDemoForm) + brancheContent-data
-2. Routes + nav-update + `/branches` overzicht + branche-template
-3. Homepage uitbreidingen
-4. Spaarsysteem-pagina verdieping
-5. Bestaande pagina's (Over Ons, Support, Contact, Demo) verrijken + DemoCTA toevoegen
-6. SEO meta + JSON-LD per pagina
-7. Visuele check via preview op desktop + mobiel
+## Wat blijft hardcoded
 
-Akkoord? Dan begin ik bij stap 1. Dit wordt een aantal grote edits achter elkaar.
+- Admin-paneel UI (Admin.tsx, editors, dashboards) — dit is gereedschap, geen content
+- Layout-shell (Header logo-link, Footer copyright-fallback)
+- Auth-pagina's (AdminLogin, AdminActivate)
+- 404-pagina
+- Error states & loading skeletons
+- Component-styling (Tailwind classes)
+
+## Technische details
+
+- Bestaande `custom_pages.published` kolom wordt hergebruikt voor publieke zichtbaarheid.
+- Branches & navigatie krijgen aparte `useBranches()` / `useNavigation()` hooks die met React Query cachen.
+- Catch-all route `/:slug` mag pas ná alle specifieke routes staan, anders schaduwt het `/admin` etc.
+- Bij ontbrekende slug → 404 (huidige NotFound).
+- Seed gebruikt `ON CONFLICT DO NOTHING` op slug zodat re-runs veilig zijn.
+
+## Omvang
+
+~15-25 nieuwe/aangepaste bestanden, 1 grote migratie, 1 seed-migratie. Bouw in deze volgorde uit en test na elke fase voordat de volgende start.
