@@ -71,7 +71,7 @@ const Admin = () => {
   const [navSettings, setNavSettings] = useState<NavSettings>({
     groups: [
       { label: "Overzicht", items: [{ key: "dashboard", label: "Dashboard" }] },
-      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
+      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "branches", label: "Branches" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
       { label: "Bezoekers", items: [{ key: "aanvragen", label: "Aanvragen" }, { key: "popup", label: "Pop-up" }, { key: "analytics", label: "Analytics" }, { key: "heatmap", label: "Heatmap" }] },
       { label: "Site", items: [{ key: "footer", label: "Footer" }, { key: "socials", label: "Social media" }, { key: "instellingen", label: "Instellingen" }] },
     ],
