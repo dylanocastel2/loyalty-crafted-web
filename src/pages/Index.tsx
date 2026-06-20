@@ -127,14 +127,14 @@ const Index = () => {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {BRANCHES.map((b) => (
+          {branches.map((b) => (
             <Link
               key={b.slug}
               to={`/branches/${b.slug}`}
               className="group rounded-2xl border border-border bg-tile p-5 hover:shadow-soft hover:border-primary/40 transition-all flex flex-col items-center text-center"
             >
               <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary mb-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <b.icon className="h-5 w-5" />
+                <BrancheIcon name={b.icon} className="h-5 w-5" />
               </div>
               <h3 className="font-display font-semibold text-sm mb-1">{b.label}</h3>
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
