@@ -71,7 +71,7 @@ const BranchesPanel = () => {
 
   const fetchAll = async () => {
     const { data } = await supabase.from("branches").select("*").order("sort_order");
-    setRows((data || []) as Row[]);
+    setRows((data || []) as unknown as Row[]);
     setLoading(false);
   };
   useEffect(() => {
