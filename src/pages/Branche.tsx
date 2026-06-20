@@ -1,9 +1,10 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Check, Lightbulb, Target, Sparkles } from "lucide-react";
+import { Check, Lightbulb, Target, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { getBranche, BRANCHES } from "@/lib/brancheContent";
+import { useBranches, useBranche } from "@/hooks/useBranches";
+import BrancheIcon from "@/components/BrancheIcon";
 import DemoCTA from "@/components/sections/DemoCTA";
 import DemoForm from "@/components/sections/DemoForm";
 import PriceIndication from "@/components/sections/PriceIndication";
@@ -14,10 +15,13 @@ import EditableText from "@/components/EditableText";
 
 const Branche = () => {
   const { slug = "" } = useParams<{ slug: string }>();
-  const data = getBranche(slug);
+  const { branche: data, loading } = useBranche(slug);
+  const { branches } = useBranches();
+  if (loading) {
+    return <Layout><div className="container py-24 text-center text-muted-foreground">Laden...</div></Layout>;
+  }
   if (!data) return <Navigate to="/branches" replace />;
 
-  const Icon = data.icon;
   const canonical = `https://www.loyaltygroup.nl/branches/${data.slug}`;
   const pageKey = `branche-${data.slug}`;
 
