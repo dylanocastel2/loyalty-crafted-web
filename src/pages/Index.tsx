@@ -48,7 +48,9 @@ const features = [
   },
 ];
 
-const Index = () => (
+const Index = () => {
+  const { branches } = useBranches();
+  return (
   <Layout>
     <Helmet>
       <script type="application/ld+json">
@@ -248,6 +250,7 @@ const Index = () => (
 
     </PageContent>
   </Layout>
-);
+  );
+};
 
 export default Index;
