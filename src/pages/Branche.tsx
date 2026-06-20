@@ -63,7 +63,7 @@ const Branche = () => {
       <div className="border-b border-border bg-mist">
         <div className="container py-3 flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground mr-2">Andere branche:</span>
-          {BRANCHES.map((b) => (
+          {branches.map((b) => (
             <Link
               key={b.slug}
               to={`/branches/${b.slug}`}
@@ -84,7 +84,7 @@ const Branche = () => {
         <div className="absolute inset-0 dot-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)]" />
         <div className="container relative z-10 max-w-4xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 backdrop-blur px-4 py-1.5 text-xs font-medium text-muted-foreground mb-6 shadow-soft">
-            <Icon className="h-3.5 w-3.5 text-primary" />
+            <BrancheIcon name={data.icon} className="h-3.5 w-3.5 text-primary" />
             <EditableText page={pageKey} contentKey="hero_badge" defaultValue={data.label} as="span" />
           </div>
           <EditableText
