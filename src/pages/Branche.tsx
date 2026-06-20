@@ -1,9 +1,10 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Check, Lightbulb, Target, Sparkles } from "lucide-react";
+import { Check, Lightbulb, Target, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { getBranche, BRANCHES } from "@/lib/brancheContent";
+import { useBranches, useBranche } from "@/hooks/useBranches";
+import BrancheIcon from "@/components/BrancheIcon";
 import DemoCTA from "@/components/sections/DemoCTA";
 import DemoForm from "@/components/sections/DemoForm";
 import PriceIndication from "@/components/sections/PriceIndication";
@@ -14,10 +15,13 @@ import EditableText from "@/components/EditableText";
 
 const Branche = () => {
   const { slug = "" } = useParams<{ slug: string }>();
-  const data = getBranche(slug);
+  const { branche: data, loading } = useBranche(slug);
+  const { branches } = useBranches();
+  if (loading) {
+    return <Layout><div className="container py-24 text-center text-muted-foreground">Laden...</div></Layout>;
+  }
   if (!data) return <Navigate to="/branches" replace />;
 
-  const Icon = data.icon;
   const canonical = `https://www.loyaltygroup.nl/branches/${data.slug}`;
   const pageKey = `branche-${data.slug}`;
 
@@ -59,7 +63,7 @@ const Branche = () => {
       <div className="border-b border-border bg-mist">
         <div className="container py-3 flex flex-wrap items-center gap-2">
           <span className="text-xs text-muted-foreground mr-2">Andere branche:</span>
-          {BRANCHES.map((b) => (
+          {branches.map((b) => (
             <Link
               key={b.slug}
               to={`/branches/${b.slug}`}
@@ -80,7 +84,7 @@ const Branche = () => {
         <div className="absolute inset-0 dot-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_25%,transparent_70%)]" />
         <div className="container relative z-10 max-w-4xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 backdrop-blur px-4 py-1.5 text-xs font-medium text-muted-foreground mb-6 shadow-soft">
-            <Icon className="h-3.5 w-3.5 text-primary" />
+            <BrancheIcon name={data.icon} className="h-3.5 w-3.5 text-primary" />
             <EditableText page={pageKey} contentKey="hero_badge" defaultValue={data.label} as="span" />
           </div>
           <EditableText

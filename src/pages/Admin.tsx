@@ -20,6 +20,7 @@ import CmsShell, { CmsSection, type NavSettings } from "@/components/admin/CmsSh
 import DashboardPanel from "@/components/admin/DashboardPanel";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import PagesPanel from "@/components/admin/PagesPanel";
+import BranchesPanel from "@/components/admin/BranchesPanel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 type Submission = {
@@ -70,7 +71,7 @@ const Admin = () => {
   const [navSettings, setNavSettings] = useState<NavSettings>({
     groups: [
       { label: "Overzicht", items: [{ key: "dashboard", label: "Dashboard" }] },
-      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
+      { label: "Inhoud", items: [{ key: "pages", label: "Pagina-bouwer" }, { key: "branches", label: "Branches" }, { key: "media", label: "Mediabibliotheek" }, { key: "klantcases", label: "Klantcases" }] },
       { label: "Bezoekers", items: [{ key: "aanvragen", label: "Aanvragen" }, { key: "popup", label: "Pop-up" }, { key: "analytics", label: "Analytics" }, { key: "heatmap", label: "Heatmap" }] },
       { label: "Site", items: [{ key: "footer", label: "Footer" }, { key: "socials", label: "Social media" }, { key: "instellingen", label: "Instellingen" }] },
     ],
@@ -365,6 +366,8 @@ const Admin = () => {
       )}
 
       {section === "pages" && <PagesPanel />}
+
+      {section === "branches" && <BranchesPanel />}
 
       {section === "media" && <MediaLibrary />}
 

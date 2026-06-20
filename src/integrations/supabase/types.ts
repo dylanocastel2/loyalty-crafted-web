@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      branches: {
+        Row: {
+          created_at: string
+          features: Json
+          hero_subtitle: string
+          hero_title: string
+          icon: string
+          id: string
+          klantcase_filter: string
+          label: string
+          loyalty_value: string
+          meta_description: string | null
+          meta_title: string | null
+          opportunities: Json
+          problems: Json
+          published: boolean
+          scenarios: Json
+          short_desc: string
+          slug: string
+          sort_order: number
+          tone: string
+          updated_at: string
+          why_us: Json
+        }
+        Insert: {
+          created_at?: string
+          features?: Json
+          hero_subtitle?: string
+          hero_title?: string
+          icon?: string
+          id?: string
+          klantcase_filter?: string
+          label: string
+          loyalty_value?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          opportunities?: Json
+          problems?: Json
+          published?: boolean
+          scenarios?: Json
+          short_desc?: string
+          slug: string
+          sort_order?: number
+          tone?: string
+          updated_at?: string
+          why_us?: Json
+        }
+        Update: {
+          created_at?: string
+          features?: Json
+          hero_subtitle?: string
+          hero_title?: string
+          icon?: string
+          id?: string
+          klantcase_filter?: string
+          label?: string
+          loyalty_value?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          opportunities?: Json
+          problems?: Json
+          published?: boolean
+          scenarios?: Json
+          short_desc?: string
+          slug?: string
+          sort_order?: number
+          tone?: string
+          updated_at?: string
+          why_us?: Json
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           company: string | null
@@ -53,6 +125,7 @@ export type Database = {
           canonical_url: string | null
           created_at: string
           id: string
+          is_homepage: boolean
           menu_label: string | null
           menu_order: number
           meta_description: string | null
@@ -72,6 +145,7 @@ export type Database = {
           canonical_url?: string | null
           created_at?: string
           id?: string
+          is_homepage?: boolean
           menu_label?: string | null
           menu_order?: number
           meta_description?: string | null
@@ -91,6 +165,7 @@ export type Database = {
           canonical_url?: string | null
           created_at?: string
           id?: string
+          is_homepage?: boolean
           menu_label?: string | null
           menu_order?: number
           meta_description?: string | null
@@ -224,6 +299,47 @@ export type Database = {
         }
         Relationships: []
       }
+      navigation_items: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          parent_id: string | null
+          path: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          parent_id?: string | null
+          path: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          parent_id?: string | null
+          path?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "navigation_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "navigation_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_blocks: {
         Row: {
           blocks: Json
@@ -271,6 +387,39 @@ export type Database = {
           id?: string
           key?: string
           page?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      page_presets: {
+        Row: {
+          blocks: Json
+          created_at: string
+          description: string
+          id: string
+          key: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          blocks?: Json
+          created_at?: string
+          description?: string
+          id?: string
+          key: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          blocks?: Json
+          created_at?: string
+          description?: string
+          id?: string
+          key?: string
+          name?: string
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []
