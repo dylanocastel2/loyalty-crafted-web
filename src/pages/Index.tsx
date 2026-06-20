@@ -12,7 +12,8 @@ import LaagdrempeligBlock from "@/components/sections/LaagdrempeligBlock";
 import PriceIndication from "@/components/sections/PriceIndication";
 import DemoForm from "@/components/sections/DemoForm";
 import KlantcasesBlock from "@/components/page-builder/KlantcasesBlock";
-import { BRANCHES } from "@/lib/brancheContent";
+import { useBranches } from "@/hooks/useBranches";
+import BrancheIcon from "@/components/BrancheIcon";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight } from "lucide-react";
 
