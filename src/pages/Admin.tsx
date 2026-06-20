@@ -20,6 +20,7 @@ import CmsShell, { CmsSection, type NavSettings } from "@/components/admin/CmsSh
 import DashboardPanel from "@/components/admin/DashboardPanel";
 import MediaLibrary from "@/components/admin/MediaLibrary";
 import PagesPanel from "@/components/admin/PagesPanel";
+import BranchesPanel from "@/components/admin/BranchesPanel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 type Submission = {
