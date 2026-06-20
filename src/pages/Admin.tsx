@@ -367,6 +367,8 @@ const Admin = () => {
 
       {section === "pages" && <PagesPanel />}
 
+      {section === "branches" && <BranchesPanel />}
+
       {section === "media" && <MediaLibrary />}
 
       {section === "klantcases" && (
