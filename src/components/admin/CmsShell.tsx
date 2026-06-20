@@ -7,6 +7,7 @@ import {
   FileText,
   Image as ImageIcon,
   Briefcase,
+  Building2,
   Mail,
   MessageSquare,
   BarChart3,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 export type CmsSection =
   | "dashboard"
   | "pages"
+  | "branches"
   | "media"
   | "klantcases"
   | "aanvragen"
@@ -63,6 +65,7 @@ interface Props {
 const ICON_MAP: Record<CmsSection, typeof LayoutDashboard> = {
   dashboard: LayoutDashboard,
   pages: FileText,
+  branches: Building2,
   media: ImageIcon,
   klantcases: Briefcase,
   aanvragen: Mail,
@@ -83,6 +86,7 @@ const DEFAULT_GROUPS: Group[] = [
     label: "Inhoud",
     items: [
       { key: "pages", label: "Pagina-bouwer", icon: FileText },
+      { key: "branches", label: "Branches", icon: Building2 },
       { key: "media", label: "Mediabibliotheek", icon: ImageIcon },
       { key: "klantcases", label: "Klantcases", icon: Briefcase },
     ],
