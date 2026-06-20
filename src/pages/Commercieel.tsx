@@ -9,7 +9,7 @@ import USPGrid from "@/components/sections/USPGrid";
 import DemoCTA from "@/components/sections/DemoCTA";
 import PriceIndication from "@/components/sections/PriceIndication";
 import DemoForm from "@/components/sections/DemoForm";
-import { BRANCHES } from "@/lib/brancheContent";
+import { useBranches } from "@/hooks/useBranches";
 import { ArrowRight } from "lucide-react";
 
 const benefits = [
@@ -21,7 +21,9 @@ const benefits = [
   { icon: ShoppingBag, tKey: "com_omnichannel_title", dKey: "com_omnichannel_desc", title: "Omnichannel", desc: "Werkt in-store, online en via mobiele apps voor maximaal bereik." },
 ];
 
-const Commercieel = () => (
+const Commercieel = () => {
+  const { branches } = useBranches();
+  return (
   <Layout>
       <PageContent pageKey="commercieel">
     <section className="py-16 md:py-24">
@@ -66,7 +68,7 @@ const Commercieel = () => (
           klantcases die voor u herkenbaar zijn.
         </p>
         <div className="flex flex-wrap gap-2 justify-center">
-          {BRANCHES.filter((b) => b.slug !== "gemeenten").map((b) => (
+          {branches.filter((b) => b.slug !== "gemeenten").map((b) => (
             <Link
               key={b.slug}
               to={`/branches/${b.slug}`}
@@ -86,6 +88,7 @@ const Commercieel = () => (
 
     </PageContent>
   </Layout>
-);
+  );
+};
 
 export default Commercieel;
