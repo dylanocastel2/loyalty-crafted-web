@@ -3,13 +3,16 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight, Sparkles } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { BRANCHES } from "@/lib/brancheContent";
+import { useBranches } from "@/hooks/useBranches";
+import BrancheIcon from "@/components/BrancheIcon";
 import DemoCTA from "@/components/sections/DemoCTA";
 import USPGrid from "@/components/sections/USPGrid";
 import PageContent from "@/components/page-builder/PageContent";
 
-const Branches = () => (
-  <Layout>
+const Branches = () => {
+  const { branches } = useBranches();
+  return (
+    <Layout>
     <Helmet>
       <title>Spaarsystemen per branche | Loyaltygroup</title>
       <meta
@@ -26,7 +29,7 @@ const Branches = () => (
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ItemList",
-          itemListElement: BRANCHES.map((b, i) => ({
+          itemListElement: branches.map((b, i) => ({
             "@type": "ListItem",
             position: i + 1,
             name: b.label,
@@ -58,14 +61,14 @@ const Branches = () => (
     <section className="py-16 md:py-20 bg-background">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {BRANCHES.map((b) => (
+          {branches.map((b) => (
             <Link
               key={b.slug}
               to={`/branches/${b.slug}`}
               className="group rounded-2xl border border-border bg-tile p-7 hover:shadow-soft hover:border-primary/40 transition-all flex flex-col"
             >
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-primary mb-5 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                <b.icon className="h-6 w-6" />
+                <BrancheIcon name={b.icon} className="h-6 w-6" />
               </div>
               <h2 className="text-xl font-display font-semibold mb-2">{b.label}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">{b.shortDesc}</p>
@@ -95,6 +98,7 @@ const Branches = () => (
     <DemoCTA variant="gradient" />
     </PageContent>
   </Layout>
-);
+  );
+};
 
 export default Branches;
