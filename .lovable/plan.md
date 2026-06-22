@@ -1,94 +1,78 @@
 ## Doel
 
-Niets meer hardcoded in `src/lib/*` of in JSX van pagina's. Alle content komt uit Supabase en is bewerkbaar via het admin paneel.
+Alle publieke pagina's worden volledig database-gestuurd via `custom_pages` + de bestaande paginabouwer. De huidige look (lay-out, font, kleuren, blok-spacings) blijft 1-op-1 hetzelfde. Na deze migratie kun je iedere pagina aanpassen door alleen Supabase + de paginabouwer te gebruiken — geen code-wijzigingen meer nodig.
 
-## Aanpak in 5 fases
+## Aanpak per pagina
 
-### Fase 1 — Database voorbereiden
+1. Ik bouw elke statische pagina opnieuw op als rij blocks in de paginabouwer.
+2. Bestaande hardcoded secties (USPGrid, ReviewsBlock, PriceIndication, DemoCTA, Laagdrempelig, DemoForm, BrancheGrid) worden **nieuwe blok-types** in de paginabouwer met dezelfde JSX/styling — zodat het visueel identiek blijft maar via de bouwer is in te stellen.
+3. `custom_pages` krijgt een `is_homepage` flag (al aanwezig) zodat één page als `/` kan dienen.
+4. Routing in `App.tsx` wordt drastisch ingekort: alleen admin-routes, klantcase-detail/creator en alle overige paden gaan via `CustomPage` op basis van slug.
+5. De oude `src/pages/*.tsx` bestanden en `src/components/sections/*` blijven nog even staan tot de visuele check klaar is, en worden daarna verwijderd.
 
-Eén migratie met:
+## Nieuwe blok-types (presentational, niet bewerkbaar via tekst-velden — alleen instellingen)
 
-- **`page_presets`** tabel — voor de 462 regels uit `pagePresets.ts` (templates voor nieuwe pagina's). Velden: `key`, `name`, `description`, `blocks` (jsonb), `sort_order`.
-- **`branches`** tabel — voor de 299 regels uit `brancheContent.ts`. Velden: `slug` (uniek), `name`, `icon`, `hero_title`, `hero_subtitle`, `intro`, `usps` (jsonb), `cases` (jsonb), `cta_title`, `cta_text`, `sort_order`, `published`.
-- **`navigation_items`** tabel — voor het hoofdmenu. Velden: `label`, `path`, `parent_id`, `sort_order`, `published`.
-- **Uitbreiding `custom_pages`** — `is_homepage` boolean + unieke index, zodat één pagina als homepage gemarkeerd kan worden en op `/` getoond wordt.
+| Blok | Bron-bestand | Instellingen in bouwer |
+|---|---|---|
+| `usp_grid` | `USPGrid.tsx` | titel, USP-lijst (icon/title/desc), kolommen, achtergrond |
+| `reviews` | `ReviewsBlock.tsx` | titel, review-lijst, score |
+| `price_indication` | `PriceIndication.tsx` | titel, items, cta |
+| `demo_cta` | `DemoCTA.tsx` | variant (`gradient`/`muted`), titel, knoplabel, link |
+| `demo_form` | `DemoForm.tsx` | titel, intro |
+| `laagdrempelig` | `LaagdrempeligBlock.tsx` | titel, bullets |
+| `branche_grid` | uit `useBranches` | titel, filter, kolommen |
+| `branche_detail` | dynamic via `:slug` param | (rendert de geselecteerde branche-pagina) |
 
-RLS: publiek leesbaar (alleen `published=true`), schrijven alleen voor admins via `has_role`. GRANTs voor `anon`, `authenticated`, `service_role`.
+Voor `branche_detail` werkt het zo: één `custom_pages`-rij met slug `branche-template` bevat het block; de route `/branches/:slug` mount `CustomPage` met die template en het block leest de juiste branche uit `useBranche(slug)`.
 
-### Fase 2 — Content seeden
+## Database-werk
 
-Alle huidige hardcoded waarden worden via een seed-migratie in de database gezet:
+- **Seed `custom_pages`**: 1 rij per pagina met de juiste blocks-JSON. (Homepage, gemeenten, commercieel, spaarsysteem, klantcases-overzicht, support, over-ons, contact, demo, branches-overzicht, branche-template.)
+- **`navigation_items`** is al aanwezig — `Header.tsx` blijft die lezen.
+- Geen schema-wijziging nodig; alleen data-inserts.
 
-- 10 pagina's → `custom_pages` rijen met blokken die de huidige JSX één-op-één nabootsen (hero, USPs, reviews, CTA-blokken, etc.). Slugs: `home`, `commercieel`, `gemeenten`, `spaarsysteem`, `klantcases`, `support`, `over-ons`, `contact`, `demo`, `branches`.
-- `home` krijgt `is_homepage=true`.
-- Alle branches uit `brancheContent.ts` → `branches` rijen.
-- Alle 8 presets uit `pagePresets.ts` → `page_presets` rijen.
-- Menu uit `Header.tsx` → `navigation_items` rijen.
+## Routing-wijziging (App.tsx)
 
-### Fase 3 — Builder uitbreiden met ontbrekende bloktypes
-
-De huidige page-builder mist enkele bloktypes die de statische pagina's nodig hebben. Toe te voegen aan `blockSchema.ts` + `BlockRenderer.tsx`:
-
-- `usp-grid` — bewerkbare USPs (icon + titel + tekst, n items)
-- `reviews` — bewerkbare reviews-carousel
-- `price-indication` — prijsblok met velden
-- `demo-cta` — CTA met titel/tekst/knop
-- `laagdrempelig` — bestaand blok (al aanwezig, verifiëren)
-- `branche-grid` — toont alle branches uit `branches` tabel
-- `branche-detail` — rendert één branche o.b.v. URL-slug
-
-### Fase 4 — Routing herzien
-
-`App.tsx` wordt drastisch ingekort:
+Voor / na:
 
 ```text
-/                       → CustomPage (homepage, is_homepage=true)
-/branches/:slug         → CustomPage met branche-detail blok
-/klantcases/:id         → KlantcaseDetail (blijft, data al in DB)
-/klantcases/nieuw       → KlantcaseCreator (blijft)
-/admin/*                → bestaande admin-routes
-/:slug                  → CustomPage (catch-all op slug)
-*                       → NotFound
+voor:                                 na:
+/                  → Index            /                       → CustomPage (is_homepage=true)
+/gemeenten         → Gemeenten        /branches/:slug         → CustomPage (branche-template)
+/commercieel       → Commercieel      /klantcases/nieuw       → KlantcaseCreator (blijft)
+/spaarsysteem      → Spaarsysteem     /klantcases/:id         → KlantcaseDetail (blijft)
+/klantcases        → Klantcases       /admin/*                → admin pagina's (blijven)
+/over-ons          → OverOns          /:slug                  → CustomPage (catch-all)
+/contact           → Contact          *                       → NotFound
+...
 ```
 
-`Header.tsx` haalt menu uit `navigation_items` ipv hardcoded array.
+## Wat *niet* bewerkbaar wordt
 
-### Fase 5 — Opruimen + admin
-
-- Verwijderen: `src/pages/Index.tsx`, `Commercieel.tsx`, `Gemeenten.tsx`, `Spaarsysteem.tsx`, `Klantcases.tsx`, `Support.tsx`, `OverOns.tsx`, `Contact.tsx`, `Demo.tsx`, `Branches.tsx`, `Branche.tsx`.
-- Verwijderen: `src/lib/brancheContent.ts`, `src/lib/pagePresets.ts`, `src/lib/builtinPages.ts`.
-- `src/components/sections/*` — verwijderen óf omzetten naar pure render-componenten die het blok rendert (zonder eigen content).
-- `BuiltinPageEditor` verwijderen (niet meer nodig).
-- Nieuwe admin-panels:
-  - **Branches** — CRUD lijst voor `branches` tabel
-  - **Navigatie** — drag-en-drop menu editor voor `navigation_items`
-  - **Presets** — beheer van page templates
-- `PagesAdmin` — toon ook `is_homepage` toggle en alle nieuwe pagina's; presets-dropdown haalt uit DB ipv code.
+- `Header.tsx` zelf (logo, mobile-menu logica) — menu-items zijn al data.
+- `Footer.tsx` is al via `useFooterConfig`.
+- Admin-pagina's, login, 404.
+- Klantcase-detailpagina (`KlantcaseDetail.tsx`) — die leest al uit DB, layout is vast.
 
 ## Risico's & mitigatie
 
-- **Visuele drift**: blokken moeten exact dezelfde look geven als huidige JSX. Per pagina screenshot-vergelijking na migratie.
-- **SEO**: bestaande URL's blijven werken (alle huidige paden in seed). Meta-tags via bestaande `page_seo` tabel per slug.
-- **Downtime tijdens deploy**: seed-migratie draait vóór code-deploy, zodat data klaarstaat als nieuwe code live gaat.
-- **Klantcases-detailpagina** blijft hardcoded component (data komt al uit DB) — buiten scope.
+- **Visuele drift**: ik vergelijk per pagina (screenshot oud vs. nieuw) voordat ik de oude `.tsx` verwijder.
+- **SEO**: bestaande meta-tags per slug staan in `page_seo`; `CustomPage` leest meta uit `custom_pages` velden — ik kopieer beide bij seed.
+- **Downtime**: data eerst seeden, daarna routing omschakelen in dezelfde release.
 
-## Wat blijft hardcoded
+## Volgorde van uitvoering
 
-- Admin-paneel UI (Admin.tsx, editors, dashboards) — dit is gereedschap, geen content
-- Layout-shell (Header logo-link, Footer copyright-fallback)
-- Auth-pagina's (AdminLogin, AdminActivate)
-- 404-pagina
-- Error states & loading skeletons
-- Component-styling (Tailwind classes)
+1. Nieuwe blok-types toevoegen aan `blockSchema.ts`, `BlockRenderer.tsx` + inspector-velden (`BlockInspector.tsx`).
+2. Seed `custom_pages` met de 11 pagina's via één data-migratie (insert-tool).
+3. Visuele check per pagina via `/p/<slug>` (deze route bestaat al).
+4. Routing in `App.tsx` omschakelen — homepage + catch-all + branche-template.
+5. Oude `src/pages/*.tsx` en `src/components/sections/*` verwijderen, plus `BuiltinPageEditor` en `pagePresets.ts`.
+6. `PagesAdmin` krijgt knop "Stel in als homepage" (toggle `is_homepage`).
 
-## Technische details
+## Geschat werk
 
-- Bestaande `custom_pages.published` kolom wordt hergebruikt voor publieke zichtbaarheid.
-- Branches & navigatie krijgen aparte `useBranches()` / `useNavigation()` hooks die met React Query cachen.
-- Catch-all route `/:slug` mag pas ná alle specifieke routes staan, anders schaduwt het `/admin` etc.
-- Bij ontbrekende slug → 404 (huidige NotFound).
-- Seed gebruikt `ON CONFLICT DO NOTHING` op slug zodat re-runs veilig zijn.
+Groot. ~15-20 bestanden aanmaken/wijzigen, 1 grote data-seed-migratie. Ik werk in deze volgorde, lever na stap 3 een eerste visuele check zodat je goedkeuring kunt geven vóór routing-omschakeling (stap 4).
 
-## Omvang
+## Bevestiging
 
-~15-25 nieuwe/aangepaste bestanden, 1 grote migratie, 1 seed-migratie. Bouw in deze volgorde uit en test na elke fase voordat de volgende start.
+Akkoord = ik start met stap 1 (nieuwe blok-types). Of wil je een variant — bijvoorbeeld de bestaande secties als "smart blocks" laten zodat de teksten daarvan via `page_content` blijven, of juist alle teksten via blok-instellingen?
