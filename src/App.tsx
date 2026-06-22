@@ -45,7 +45,7 @@ const App = () => (
             <Route path="/klantcases/nieuw" element={<KlantcaseCreator />} />
             <Route path="/klantcases/:id" element={<KlantcaseDetail />} />
             <Route path="/support" element={<Support />} />
-            <Route path="/over-ons" element={<CustomPage slug="over-ons" />} />
+            <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/branches" element={<Branches />} />
