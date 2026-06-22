@@ -884,6 +884,47 @@ const BlockRenderer = ({ block }: Props) => {
       );
     }
 
+    case "usp_grid":
+      return <USPGrid title={p.title} subtitle={p.subtitle} compact={!!p.compact} />;
+
+    case "reviews":
+      return <ReviewsBlock page={p.page} title={p.title} subtitle={p.subtitle} />;
+
+    case "price_indication":
+      return <PriceIndication variant={p.variant} brancheLabel={p.brancheLabel} />;
+
+    case "demo_cta":
+      return (
+        <DemoCTA
+          title={p.title}
+          text={p.text}
+          primaryLabel={p.primaryLabel}
+          primaryTo={p.primaryTo}
+          secondaryLabel={p.secondaryLabel}
+          secondaryTo={p.secondaryTo}
+          variant={p.variant}
+        />
+      );
+
+    case "demo_form":
+      return (
+        <DemoForm
+          source={p.source}
+          brancheDefault={p.brancheDefault}
+          title={p.title}
+          subtitle={p.subtitle}
+        />
+      );
+
+    case "laagdrempelig":
+      return <LaagdrempeligBlock />;
+
+    case "branche_grid":
+      return <BrancheGridBlock title={p.title} subtitle={p.subtitle} />;
+
+    case "branche_detail":
+      return <BrancheDetailBlock />;
+
     default:
       return null;
   }
