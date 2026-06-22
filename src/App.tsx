@@ -11,6 +11,7 @@ import Spaarsysteem from "./pages/Spaarsysteem";
 import Klantcases from "./pages/Klantcases";
 import Support from "./pages/Support";
 import Contact from "./pages/Contact";
+import OverOns from "./pages/OverOns";
 import Demo from "./pages/Demo";
 import Branches from "./pages/Branches";
 import Branche from "./pages/Branche";
