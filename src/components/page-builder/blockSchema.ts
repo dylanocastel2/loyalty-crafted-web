@@ -28,7 +28,15 @@ export type BlockType =
   | "download_files"
   | "image_cards"
   | "search_bar"
-  | "custom_form";
+  | "custom_form"
+  | "usp_grid"
+  | "reviews"
+  | "price_indication"
+  | "demo_cta"
+  | "demo_form"
+  | "laagdrempelig"
+  | "branche_grid"
+  | "branche_detail";
 
 export interface Block {
   id: string;
@@ -101,6 +109,16 @@ export const BLOCK_META: BlockMeta[] = [
       { id: "bericht", label: "Bericht", type: "textarea", required: true, placeholder: "Vertel kort wat je nodig hebt", rows: 4 },
     ],
   } },
+
+  // Loyaltygroup-secties (visueel identiek aan de oude statische secties)
+  { type: "usp_grid", label: "USP-grid (8 redenen)", category: "Content", icon: "Grid3x3", defaultProps: { title: "Waarom organisaties voor Loyaltygroup kiezen", subtitle: "Acht concrete redenen waarom gemeenten, ketens en winkeliersverenigingen ons jaar na jaar verlengen.", compact: false } },
+  { type: "reviews", label: "Reviews (klantcitaten)", category: "Content", icon: "Quote", defaultProps: { page: "homepage", title: "Wat klanten over Loyaltygroup zeggen", subtitle: "Quotes worden door beheerders aangepast in het admin-paneel." } },
+  { type: "price_indication", label: "Prijsindicatie", category: "Content", icon: "Coins", defaultProps: { variant: "default", brancheLabel: "" } },
+  { type: "demo_cta", label: "Demo CTA-banner", category: "Content", icon: "Megaphone", defaultProps: { title: "Plan vrijblijvend een demo", text: "In 30 minuten laten we live zien wat een loyaliteitsplatform van Loyaltygroup voor uw organisatie kan betekenen. Geen verkoopverhaal, wel een eerlijk gesprek over mogelijkheden, planning en investering.", primaryLabel: "Plan een demo", primaryTo: "/demo", secondaryLabel: "Vraag prijsindicatie", secondaryTo: "/contact", variant: "tile" } },
+  { type: "demo_form", label: "Demo-formulier", category: "Content", icon: "Calendar", defaultProps: { source: "homepage", brancheDefault: "", title: "Plan direct een demo", subtitle: "Vul het formulier in en we nemen binnen één werkdag contact met u op om een passend moment in te plannen." } },
+  { type: "laagdrempelig", label: "Laagdrempelig-blok", category: "Content", icon: "Layers", defaultProps: {} },
+  { type: "branche_grid", label: "Branches grid", category: "Content", icon: "LayoutGrid", defaultProps: { title: "Onze oplossingen per branche", subtitle: "Kies uw branche voor een specifieke oplossing." } },
+  { type: "branche_detail", label: "Branche-detail (dynamisch)", category: "Geavanceerd", icon: "Building", defaultProps: {} },
 ];
 
 export const getBlockMeta = (type: BlockType): BlockMeta | undefined =>
