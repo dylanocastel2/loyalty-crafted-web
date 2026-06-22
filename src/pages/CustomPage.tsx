@@ -23,8 +23,13 @@ interface PageData {
   canonical_url: string | null;
 }
 
-const CustomPage = () => {
-  const { slug } = useParams<{ slug: string }>();
+interface CustomPageProps {
+  slug?: string;
+}
+
+const CustomPage = ({ slug: slugProp }: CustomPageProps = {}) => {
+  const params = useParams<{ slug: string }>();
+  const slug = slugProp ?? params.slug;
   const { isAdmin, loading: authLoading } = useAuth();
   const [page, setPage] = useState<PageData | null>(null);
   const [loading, setLoading] = useState(true);
