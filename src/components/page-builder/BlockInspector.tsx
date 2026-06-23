@@ -498,9 +498,26 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Geen</SelectItem>
                   <SelectItem value="small">Klein</SelectItem>
                   <SelectItem value="medium">Gemiddeld</SelectItem>
                   <SelectItem value="large">Groot</SelectItem>
+                  <SelectItem value="xlarge">Extra groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Max. breedte inhoud">
+              <Select value={p.maxWidth || "none"} onValueChange={(v) => set("maxWidth", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Standaard (container)</SelectItem>
+                  <SelectItem value="2xl">Smal (672px)</SelectItem>
+                  <SelectItem value="3xl">Smal+ (768px)</SelectItem>
+                  <SelectItem value="4xl">Gemiddeld (896px)</SelectItem>
+                  <SelectItem value="5xl">Breed (1024px)</SelectItem>
+                  <SelectItem value="6xl">Extra breed (1152px)</SelectItem>
+                  <SelectItem value="7xl">Volledig breed (1280px)</SelectItem>
+                  <SelectItem value="full">100%</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
@@ -554,9 +571,36 @@ const BlockInspector = ({ block, onChange }: Props) => {
               <Select value={p.padding || "medium"} onValueChange={(v) => set("padding", v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="none">Geen</SelectItem>
                   <SelectItem value="small">Klein</SelectItem>
                   <SelectItem value="medium">Gemiddeld</SelectItem>
                   <SelectItem value="large">Groot</SelectItem>
+                  <SelectItem value="xlarge">Extra groot</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Max. breedte inhoud">
+              <Select value={p.maxWidth || "none"} onValueChange={(v) => set("maxWidth", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Standaard (container)</SelectItem>
+                  <SelectItem value="2xl">Smal (672px)</SelectItem>
+                  <SelectItem value="3xl">Smal+ (768px)</SelectItem>
+                  <SelectItem value="4xl">Gemiddeld (896px)</SelectItem>
+                  <SelectItem value="5xl">Breed (1024px)</SelectItem>
+                  <SelectItem value="6xl">Extra breed (1152px)</SelectItem>
+                  <SelectItem value="7xl">Volledig breed (1280px)</SelectItem>
+                  <SelectItem value="full">100%</SelectItem>
+                </SelectContent>
+              </Select>
+            </Field>
+            <Field label="Responsief gedrag">
+              <Select value={p.responsive || "auto"} onValueChange={(v) => set("responsive", v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="auto">Automatisch (1 kolom op mobiel)</SelectItem>
+                  <SelectItem value="md2">Max. 2 kolommen op mobiel/tablet</SelectItem>
+                  <SelectItem value="always">Altijd vast aantal (geen stack)</SelectItem>
                 </SelectContent>
               </Select>
             </Field>
