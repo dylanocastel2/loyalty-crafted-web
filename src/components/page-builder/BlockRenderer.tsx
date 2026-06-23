@@ -293,7 +293,37 @@ const bgColorClass = (color?: string) => {
 };
 
 const paddingClass = (size?: string) =>
-  size === "small" ? "py-6" : size === "large" ? "py-16 md:py-24" : "py-10 md:py-14";
+  size === "none"
+    ? ""
+    : size === "small"
+      ? "py-6"
+      : size === "large"
+        ? "py-16 md:py-24"
+        : size === "xlarge"
+          ? "py-20 md:py-32"
+          : "py-10 md:py-14";
+
+const maxWidthClass = (size?: string) => {
+  switch (size) {
+    case "sm": return "max-w-sm";
+    case "md": return "max-w-md";
+    case "lg": return "max-w-lg";
+    case "xl": return "max-w-xl";
+    case "2xl": return "max-w-2xl";
+    case "3xl": return "max-w-3xl";
+    case "4xl": return "max-w-4xl";
+    case "5xl": return "max-w-5xl";
+    case "6xl": return "max-w-6xl";
+    case "7xl": return "max-w-7xl";
+    case "full": return "max-w-full";
+    default: return "";
+  }
+};
+
+const innerWrapperClass = (maxWidth?: string) =>
+  maxWidth && maxWidth !== "none"
+    ? `mx-auto px-4 w-full ${maxWidthClass(maxWidth)}`
+    : "container";
 
 type CtaItem = { label?: string; link?: string; variant?: string };
 
@@ -586,7 +616,7 @@ const BlockRenderer = ({ block }: Props) => {
     case "container":
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
-          <RT as="div" className="container" html={p.content} />
+          <RT as="div" className={innerWrapperClass(p.maxWidth)} html={p.content} />
         </section>
       );
 
@@ -600,12 +630,18 @@ const BlockRenderer = ({ block }: Props) => {
         5: "grid-cols-1 sm:grid-cols-2 md:grid-cols-5",
         6: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6",
       };
-      const colsClass = gridColsMap[cols] || gridColsMap[2];
+      const responsive = p.responsive || "auto";
+      const responsiveColsMap: Record<string, Record<number, string>> = {
+        auto: gridColsMap,
+        always: { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5", 6: "grid-cols-6" },
+        md2: { 2: "grid-cols-1 md:grid-cols-2", 3: "grid-cols-1 md:grid-cols-3", 4: "grid-cols-1 md:grid-cols-2", 5: "grid-cols-1 md:grid-cols-2", 6: "grid-cols-1 md:grid-cols-2" },
+      };
+      const colsClass = (responsiveColsMap[responsive] && responsiveColsMap[responsive][cols]) || gridColsMap[cols] || gridColsMap[2];
       const valign = p.verticalAlign === "center" ? "items-center" : p.verticalAlign === "end" ? "items-end" : p.verticalAlign === "start" ? "items-start" : "";
       const children = block.children || [];
       return (
         <section className={`${bgColorClass(p.bgColor)} ${paddingClass(p.padding)}`}>
-          <div className="container">
+          <div className={innerWrapperClass(p.maxWidth)}>
             <div className={`grid ${colsClass} ${valign}`} style={{ gap: `${p.gap ?? 32}px` }}>
               {Array.from({ length: cols }).map((_, ci) => (
                 <div key={ci} className="min-w-0 w-full h-full flex flex-col">
