@@ -11,6 +11,7 @@ import Spaarsysteem from "./pages/Spaarsysteem";
 import Klantcases from "./pages/Klantcases";
 import Support from "./pages/Support";
 import Contact from "./pages/Contact";
+import OverOns from "./pages/OverOns";
 import Demo from "./pages/Demo";
 import Branches from "./pages/Branches";
 import Branche from "./pages/Branche";
@@ -45,7 +46,7 @@ const App = () => (
             <Route path="/klantcases/nieuw" element={<KlantcaseCreator />} />
             <Route path="/klantcases/:id" element={<KlantcaseDetail />} />
             <Route path="/support" element={<Support />} />
-            <Route path="/over-ons" element={<CustomPage slug="over-ons" />} />
+            <Route path="/over-ons" element={<OverOns />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/branches" element={<Branches />} />
